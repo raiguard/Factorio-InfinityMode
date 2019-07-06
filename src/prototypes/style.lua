@@ -30,7 +30,7 @@ styles['green_icon_button'] = {
     size = 28
 }
 
-styles['draggable_space_filler'] = {
+styles['footer_filler'] = {
     type = 'frame_style',
     height = 32,
     graphical_set = styles['draggable_space'].graphical_set,
@@ -42,7 +42,7 @@ styles['draggable_space_filler'] = {
 
 styles['titlebar_filler'] = {
     type = 'frame_style',
-    parent = 'draggable_space_filler',
+    parent = 'footer_filler',
     height = 24
 }
 
@@ -58,7 +58,11 @@ styles['dialog_content_deep_frame'] = {
     parent = 'inside_deep_frame',
     direction = 'vertical',
     horizontally_stretchable = 'on',
-    vertically_stretchable = 'on'
+    vertically_stretchable = 'on',
+    horizontal_flow_style = {
+        type = 'horizontal_flow_style',
+        horizontal_spacing = 0
+    }
 }
 
 styles['invisible_horizontal_filler'] = {
@@ -139,8 +143,17 @@ styles['dark_inset_frame'] = {
     parent = 'dark_frame',
     graphical_set = {
         base = {
-            center = {position = {76,8}, size = {1,1}}
+            center = {position = {76,8}, size = {1,1}},
+            draw_type = 'outer'
         },
         shadow = default_inner_shadow
+    }
+}
+
+styles['dialog_page_frame'] = {
+    type = 'frame_style',
+    parent = 'dark_frame',
+    graphical_set = {
+        
     }
 }

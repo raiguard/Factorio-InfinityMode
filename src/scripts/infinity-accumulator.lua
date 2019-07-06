@@ -32,8 +32,16 @@ end)
 on_event(defines.events.on_gui_closed, function(e)
     local player = game.players[e.player_index]
     if e.gui_type == defines.gui_type.custom and e.element.name == 'im_entity_dialog_frame' then
-        e.element.destroy()
-        player.opened = nil
+        toggle_entity_dialog(player)
+    end
+end)
+
+on_event(defines.events.on_gui_click, function(e)
+    local player = game.players[e.player_index]
+    local name = e.element.name
+
+    if name == 'cps_entity_dialog_titlebar_button_close' then
+        toggle_entity_dialog(player)
     end
 end)
 
