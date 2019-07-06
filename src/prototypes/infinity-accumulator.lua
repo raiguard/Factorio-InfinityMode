@@ -7,7 +7,9 @@ data:extend{
         name = 'infinity-accumulator',
         stack_size = 50,
         icons = { {icon=data.raw['accumulator']['accumulator'].icon, icon_size=data.raw['accumulator']['accumulator'].icon_size, tint = infinity_tint} },
-        place_result = 'infinity-accumulator-tertiary'
+        place_result = 'infinity-accumulator-tertiary',
+        subgroup = 'im-electricity',
+        order = 'a'
     }
 }
 
@@ -24,6 +26,7 @@ for _,t in pairs(ia_types) do
     ia.energy_source = {type='electric', usage_priority=t}
     ia.subgroup = 'im-electricity'
     ia.order = 'a'
+    ia.minable.result = 'infinity-accumulator'
     data:extend{ia}
 end
 
