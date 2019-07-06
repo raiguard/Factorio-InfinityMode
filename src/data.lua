@@ -14,6 +14,7 @@ function register_recipes(t)
     end
 end
 
+require('prototypes.infinity-accumulator')
 require('prototypes.infinity-chest')
 require('prototypes.infinity-robot')
 require('prototypes.infinity-vanilla')

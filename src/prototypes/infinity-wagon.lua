@@ -62,7 +62,7 @@ data:extend{cw_entity,fw_entity}
 -- ------------------------------------------------------------------------------------------
 -- RECIPES
 
-register_recipes('infinity-cargo-wagon', 'infinity-fluid-wagon')
+register_recipes{'infinity-cargo-wagon', 'infinity-fluid-wagon'}
 
 
 -- ------------------------------------------------------------------------------------------

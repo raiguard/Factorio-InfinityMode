@@ -25,5 +25,10 @@ data:extend {
         type = 'item-subgroup',
         name = 'im-robots',
         group = 'im-tools'
+    },
+    {
+        type = 'item-subgroup',
+        name = 'im-electricity',
+        group = 'im-tools'
     }
 }
