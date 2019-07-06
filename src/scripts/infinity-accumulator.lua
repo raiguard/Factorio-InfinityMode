@@ -30,10 +30,10 @@ on_event(defines.events.on_gui_opened, function(e)
 end)
 
 on_event(defines.events.on_gui_closed, function(e)
-    game.print('close!')
     local player = game.players[e.player_index]
-    if player.opened and player.opened.name == 'im_entity_dialog_frame' then
-        player.opened.destroy()
+    if e.gui_type == defines.gui_type.custom and e.element.name == 'im_entity_dialog_frame' then
+        e.element.destroy()
+        player.opened = nil
     end
 end)
 
