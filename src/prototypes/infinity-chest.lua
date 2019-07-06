@@ -1,10 +1,10 @@
 local table = require('__stdlib__.stdlib.utils.table')
 local chest_data = {
-    ['active-provider'] = {s=0, t={218,115,255}, o='aa'},
-    ['passive-provider'] = {s=0, t={255,141,114}, o='ab'},
-    ['storage'] = {s=1, t={255,220,113}, o='ac'},
-    ['buffer'] = {s=30, t={114,255,135}, o='ad'},
-    ['requester'] = {s=30, t={114,236,255}, o='ae'}
+    ['active-provider'] = {s=0, t={218,115,255}, o='ab'},
+    ['passive-provider'] = {s=0, t={255,141,114}, o='ac'},
+    ['storage'] = {s=1, t={255,220,113}, o='ad'},
+    ['buffer'] = {s=30, t={114,255,135}, o='ae'},
+    ['requester'] = {s=30, t={114,236,255}, o='af'}
 }
 
 -- ------------------------------------------------------------------------------------------
@@ -23,6 +23,7 @@ for lm,d in pairs(chest_data) do
     chest.name = 'infinity-chest-' .. lm
     chest.icons = { {icon=chest.icon, tint = d.t} }
     chest.place_result = 'infinity-chest-' .. lm
+    chest.order = d.o
     data:extend{chest}
 end
 
