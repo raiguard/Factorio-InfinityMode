@@ -1,5 +1,5 @@
 function create_titlebar(parent, name, data)
-    local prefix = 'cps_' .. name .. '_'
+    local prefix = 'im_' .. name .. '_'
 
     local titlebar_flow = parent.add {
         type = 'flow',
@@ -29,7 +29,9 @@ function create_titlebar(parent, name, data)
                 type = 'sprite-button',
                 name = prefix .. 'button_' .. buttons[i].name,
                 style = 'close_button',
-                sprite = buttons[i].sprite
+                sprite = buttons[i].sprite,
+                hovered_sprite = buttons[i].hovered_sprite or nil,
+                clicked_sprite = buttons[i].clicked_sprite or nil
             }
         end
     end

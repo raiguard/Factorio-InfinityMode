@@ -12,6 +12,18 @@ function toggle_entity_dialog(player, entity)
         player.opened = nil
     else
         player.opened = create_entity_dialog(player, entity, 'infinity-accumulator')
+        global.players[player.index].opened_entity = entity
+    end
+end
+
+-- Destroy and recreate the dialog with the new parameters
+function refresh_entity_dialog(player, entity, page)
+    local entity_frame = player.gui.center.im_entity_dialog_frame
+
+    if entity_frame then
+        entity_frame.destroy()
+        player.opened = create_entity_dialog(player, entity, page)
+        global.players[player.index].opened_entity = entity
     end
 end
 
@@ -29,7 +41,9 @@ function create_entity_dialog(player, entity, page)
         buttons = {
             {
                 name = 'close',
-                sprite = 'utility/close_white'
+                sprite = 'utility/close_white',
+                hovered_sprite = 'utility/close_black',
+                clicked_sprite = 'utility/close_black'
             }
         }
     })
@@ -65,8 +79,7 @@ function create_entity_dialog(player, entity, page)
     entity_camera.style.width = 110
     entity_camera.style.height = 110
 
-    -- local page = require('entity-pages/' // page or entity/name)
-    create_page(content_frame, entity)
+    player_table(player).gui_elems = create_page(content_frame, entity)
 
     return main_frame
 end

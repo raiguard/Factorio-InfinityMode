@@ -4,11 +4,12 @@ local on_event = require('__stdlib__/stdlib/event/event').register
 -- on game init
 on_event('on_init', function(e)
     game.create_surface('soh', {width = 1, height = 1})
+    global.wagons = {}
 end)
 
 -- on every tick
 on_event(defines.events.on_tick, function(e)
-    for _,t in pairs(global) do
+    for _,t in pairs(global.wagons) do
         if t.wagon.valid and t.ref.valid then
             if t.wagon_name == 'infinity-cargo-wagon' then
                 if t.flip == 0 then
@@ -41,7 +42,7 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity},
     if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
         local ref = game.surfaces.soh.create_entity{name = 'infinity-' .. (entity.name == 'infinity-cargo-wagon' and 'chest' or 'pipe'), position = {0,0}, force = entity.force}
         -- create all api lookups here to save time in on_tick()
-        global[entity.unit_number] = {
+        global.wagons[entity.unit_number] = {
             wagon = entity,
             wagon_name = entity.name,
             wagon_inv = entity.get_inventory(defines.inventory.cargo_wagon),
@@ -59,7 +60,7 @@ on_event({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_
     local entity = e.entity
     if entity.name == 'infinity-cargo-wagon' then
         -- clear the wagon's inventory and set FLIP to 3 to prevent it from being refilled
-        global[entity.unit_number].flip = 3
+        global.wagons[entity.unit_number].flip = 3
         entity.get_inventory(defines.inventory.cargo_wagon).clear()
     end
 end)
@@ -68,7 +69,7 @@ end)
 on_event(defines.events.on_cancelled_deconstruction, function(e)
     local entity = e.entity
     if entity.name == 'infinity-cargo-wagon' then
-        global[entity.unit_number].flip = 0
+        global.wagons[entity.unit_number].flip = 0
     end
 end)
 
@@ -76,8 +77,8 @@ end)
 on_event({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity, defines.events.on_entity_died, defines.events.script_raised_destroy}, function(e)
     local entity = e.entity
     if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
-        global[entity.unit_number].ref.destroy()
-        global[entity.unit_number] = nil
+        global.wagons[entity.unit_number].ref.destroy()
+        global.wagons[entity.unit_number] = nil
     end
 end)
 
@@ -86,22 +87,22 @@ on_event('iw-open-gui', function(e)
     local player = game.players[e.player_index]
     local selected = player.selected
     if selected and (selected.name == 'infinity-cargo-wagon' or selected.name == 'infinity-fluid-wagon') then
-        player.opened = global[selected.unit_number].ref
+        player.opened = global.wagons[selected.unit_number].ref
     end
 end)
 
 -- override cargo wagon's default GUI opening
 on_event(defines.events.on_gui_opened, function(e)
     if e.entity and e.entity.name == 'infinity-cargo-wagon' then
-        game.players[e.player_index].opened = global[e.entity.unit_number].ref
+        game.players[e.player_index].opened = global.wagons[e.entity.unit_number].ref
     end
 end)
 
 -- when an entity copy/paste happens
 on_event(defines.events.on_entity_settings_pasted, function(e)
     if e.source.name == 'infinity-cargo-wagon' and e.destination.name == 'infinity-cargo-wagon' then
-        global[e.destination.unit_number].ref.copy_settings(global[e.source.unit_number].ref)
+        global.wagons[e.destination.unit_number].ref.copy_settings(global.wagons[e.source.unit_number].ref)
     elseif e.source.name == 'infinity-fluid-wagon' and e.destination.name == 'infinity-fluid-wagon' then
-        global[e.destination.unit_number].ref.copy_settings(global[e.source.unit_number].ref)
+        global.wagons[e.destination.unit_number].ref.copy_settings(global.wagons[e.source.unit_number].ref)
     end
 end)
