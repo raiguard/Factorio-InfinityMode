@@ -13,6 +13,16 @@ data:extend {
     },
     {
         type = 'item-subgroup',
+        name = 'im-fluids',
+        group = 'im-tools'
+    },
+    {
+        type = 'item-subgroup',
+        name = 'im-trains',
+        group = 'im-tools'
+    },
+    {
+        type = 'item-subgroup',
         name = 'im-robots',
         group = 'im-tools'
     }
