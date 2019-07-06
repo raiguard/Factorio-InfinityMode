@@ -1,2 +1,2 @@
-require('scripts.infinity-accumulator')
-require('scripts.infinity-wagon')
+require('scripts/infinity-accumulator')
+require('scripts/infinity-wagon')

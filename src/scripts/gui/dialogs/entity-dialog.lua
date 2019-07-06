@@ -1,7 +1,7 @@
 -- ELEMENTS
-local titlebar = require('scripts.gui.elements.titlebar')
-local position = require('__stdlib__.stdlib.area.position')
-local page = require('entity-pages.infinity-accumulator')
+local titlebar = require('scripts/gui/elements/titlebar')
+local position = require('__stdlib__/stdlib/area/position')
+local page = require('entity-pages/infinity-accumulator')
 
 -- Toggles the visibility of the interface
 function toggle_entity_dialog(player, entity)
@@ -65,7 +65,7 @@ function create_entity_dialog(player, entity, page)
     entity_camera.style.width = 110
     entity_camera.style.height = 110
 
-    -- local page = require('entity-pages.' .. page or entity.name)
+    -- local page = require('entity-pages/' // page or entity/name)
     create_page(content_frame, entity)
 
     return main_frame

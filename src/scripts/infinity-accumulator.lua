@@ -1,8 +1,8 @@
 -- INFINITY ACCUMULATOR CONTROL SCRIPTING
 
-local on_event = require('__stdlib__.stdlib.event.event').register
--- local gui = require('__stdlib__.stdlib.event.gui')
-local entity_dialog = require('scripts.gui.dialogs.entity-dialog')
+local on_event = require('__stdlib__/stdlib/event/event').register
+local gui = require('__stdlib__/stdlib/event/gui')
+local entity_dialog = require('scripts/gui/dialogs/entity-dialog')
 
 local entity_list = {
     'infinity-accumulator-primary-input',

@@ -1,5 +1,5 @@
 local abs = math.abs
-local on_event = require('__stdlib__.stdlib.event.event').register
+local on_event = require('__stdlib__/stdlib/event/event').register
 
 -- on game init
 on_event('on_init', function(e)

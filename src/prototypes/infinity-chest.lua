@@ -1,4 +1,4 @@
-local table = require('__stdlib__.stdlib.utils.table')
+local table = require('__stdlib__/stdlib/utils/table')
 local chest_data = {
     ['active-provider'] = {s=0, t={218,115,255}, o='ab'},
     ['passive-provider'] = {s=0, t={255,141,114}, o='ac'},
