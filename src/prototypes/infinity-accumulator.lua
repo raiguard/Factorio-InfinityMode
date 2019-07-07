@@ -7,7 +7,7 @@ data:extend{
         name = 'infinity-accumulator',
         stack_size = 50,
         icons = { {icon=data.raw['accumulator']['accumulator'].icon, icon_size=data.raw['accumulator']['accumulator'].icon_size, tint = infinity_tint} },
-        place_result = 'infinity-accumulator-tertiary',
+        place_result = 'infinity-accumulator-primary-output',
         subgroup = 'im-electricity',
         order = 'a'
     }

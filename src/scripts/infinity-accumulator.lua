@@ -69,6 +69,22 @@ local function change_ia_mode_or_priority(e)
     refresh_entity_dialog(get_player(e), new_entity, 'infinity-accumulator')
 end
 
+local function set_ia_params(entity, mode, value, exponent)
+    entity.power_usage = 0
+    entity.power_production = 0
+    entity.electric_buffer_size = 0
+
+    if mode == 'input' then
+        entity.power_usage = (value * 10^exponent) / 60
+        entity.electric_buffer_size = (value * 10^exponent)
+    elseif mode == 'output' then
+        entity.power_production = (value * 10^exponent) / 60
+        entity.electric_buffer_size = (value * 10^exponent)
+    elseif mode == 'buffer' then
+        entity.electric_buffer_size = (value * 10^exponent)
+    end
+end
+
 gui.on_click('im_entity_dialog_titlebar_button_close', function(e) toggle_entity_dialog(get_player(e)) end)
 
 gui.on_selection_state_changed('im_entity_dialog_ia_mode_dropdown', function(e)
@@ -89,23 +105,41 @@ gui.on_value_changed('im_entity_dialog_ia_slider', function(e)
     
     elems.slider_textfield.text = tostring(math.floor(e.element.slider_value))
     
-    if mode == 'input' then
-        entity.power_usage = (e.element.slider_value * 10^exponent) / 60
-        entity.electric_buffer_size = (e.element.slider_value * 10^exponent)
-    elseif mode == 'output' then
-        entity.power_production = (e.element.slider_value * 10^exponent) / 60
-        entity.electric_buffer_size = (e.element.slider_value * 10^exponent)
-    elseif mode == 'buffer' then
-        entity.electric_buffer_size = (e.element.slider_value * 10^exponent)
-    end
+    set_ia_params(entity, mode, e.element.slider_value, exponent)
 end)
 
 gui.on_text_changed('im_entity_dialog_ia_slider_textfield', function(e)
-    game.print('slider textfield')
+    local player_data = player_table(get_player(e))
+    local entity = player_data.opened_entity
+    local elems = player_data.gui_elems
+    local mode = ia_states.mode[elems.mode_dropdown.selected_index]
+
+    local exponent = elems.slider_dropdown.selected_index * 3
+
+    -- sanitize text
+    local text = e.element.text:gsub('%D','')
+    e.element.text = text
+
+    if text == '' or tonumber(text) < 1 or tonumber(text) > 1000 then
+        e.element.tooltip = 'Must be an integer between 1-1000'
+        return nil
+    else
+        e.element.tooltip = ''
+    end
+
+    set_ia_params(entity, mode, tonumber(text), exponent)
+
 end)
 
 gui.on_selection_state_changed('im_entity_dialog_ia_slider_dropdown', function(e)
-    game.print('slider dropdown')
+    local player_data = player_table(get_player(e))
+    local entity = player_data.opened_entity
+    local elems = player_data.gui_elems
+    local mode = ia_states.mode[player_data.gui_elems.mode_dropdown.selected_index]
+
+    local exponent = e.element.selected_index * 3
+
+    set_ia_params(entity, mode, elems.slider.slider_value, exponent)
 end)
 
 -- ----------------------------------------------------------------------------------------------------
