@@ -23,7 +23,7 @@ ia_entity.minable.result = 'infinity-accumulator'
 for _,t in pairs(ia_types) do
     local ia = table.deepcopy(ia_entity)
     ia.name = 'infinity-accumulator-' .. t
-    ia.energy_source = {type='electric', usage_priority=t}
+    ia.energy_source = {type='electric', usage_priority=t, buffer_capacity='500GJ'}
     ia.subgroup = 'im-electricity'
     ia.order = 'a'
     ia.minable.result = 'infinity-accumulator'
