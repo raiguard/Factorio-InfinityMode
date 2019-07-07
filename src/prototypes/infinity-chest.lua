@@ -51,6 +51,7 @@ for lm,d in pairs(chest_data) do
     chest.animation = nil
     chest.logistic_slots_count = d.s
     chest.minable.result = 'infinity-chest-' .. lm
+    chest.render_not_in_network_icon = true
     data:extend{chest}
 end
 
