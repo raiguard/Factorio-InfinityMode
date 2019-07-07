@@ -1,4 +1,52 @@
-function create_page(content_frame, entity)
+local pti_ref = {
+    input = 1,
+    output = 2,
+    buffer = 3,
+    primary = 1,
+    secondary = 2,
+    tertiary = 3
+}
+
+local function ia_priority_to_index(entity)
+    local name = entity.name:gsub('(%a+)-(%a+)-', '')
+    if name == 'tertiary' then return {mode=3, priority=3} end
+    local _,_,priority,mode = string.find(name, '(%a+)-(%a+)')
+    return {mode=pti_ref[mode], priority=pti_ref[priority]}
+end
+
+local function create_dropdown(parent, name, caption, items, selected_index)
+    local flow = parent.add {
+        type = 'flow',
+        name = name .. '_flow',
+        direction = 'horizontal'
+    }
+
+    flow.style.vertical_align = 'center'
+
+    flow.add {
+        type = 'label',
+        name = name .. '_label',
+        caption = caption,
+        style = 'bold_label'
+    }
+
+    flow.add {
+        type = 'flow',
+        name = name .. '_filler',
+        style = 'invisible_horizontal_filler'
+    }
+
+    return flow.add {
+        type = 'drop-down',
+        name = name .. '_dropdown',
+        items = items,
+        selected_index = selected_index
+    }
+end
+
+local page = {}
+
+function page.create(content_frame, entity)
     local elems = {}
     local mode = ia_priority_to_index(entity).mode
     local priority = ia_priority_to_index(entity).priority
@@ -6,14 +54,9 @@ function create_page(content_frame, entity)
     local page_frame = content_frame.add {
         type = 'frame',
         name = 'im_entity_dialog_ia_page_frame',
-        style = 'dark_inset_frame',
+        style = 'entity_dialog_page_frame',
         direction = 'vertical'
     }
-
-    page_frame.style.minimal_width = 250
-    page_frame.style.vertically_stretchable = true
-    page_frame.style.horizontally_stretchable = true
-    page_frame.style.padding = 8
 
     -- SETTINGS
     
@@ -22,6 +65,8 @@ function create_page(content_frame, entity)
 
     elems.priority_dropdown = create_dropdown(page_frame, 'im_entity_dialog_ia_priority',
         {'gui-entity-dialog.infinity-accumulator-priority-caption'}, {'primary', 'secondary', 'tertiary'}, priority)
+
+    page_frame.im_entity_dialog_ia_priority_flow.style.vertically_stretchable = true
 
     if priority == 3 then
         elems.priority_dropdown.enabled = false
@@ -71,86 +116,7 @@ function create_page(content_frame, entity)
 
     elems.slider_dropdown.style.width = 65
 
-    page_frame.add {
-        type = 'line',
-        name = 'im_entity_dialog_ia_separator',
-        direction = 'horizontal'
-    }
-
-    local buffer_flow = page_frame.add {
-        type = 'flow',
-        name = 'im_entity_dialog_ia_buffer_flow',
-        direction = 'horizontal'
-    }
-
-    buffer_flow.style.vertical_align = 'center'
-    buffer_flow.style.horizontal_spacing = 8
-
-    buffer_flow.add {
-        type = 'label',
-        name = 'im_entity_dialog_ia_buffer_label',
-        caption = 'Buffer',
-        style = 'bold_label'
-    }
-
-    buffer_flow.add {
-        type = 'progressbar',
-        name = 'im_entity_dialog_ia_buffer_bar',
-        value = 1
-    }
-
-    buffer_flow.add {
-        type = 'label',
-        name = 'im_entity_dialog_ia_buffer_value',
-        caption = '100%',
-        style = 'bold_label'
-    }
-
     return elems
 end
 
-local pti_ref = {
-    input = 1,
-    output = 2,
-    buffer = 3,
-    primary = 1,
-    secondary = 2,
-    tertiary = 3
-}
-
-function ia_priority_to_index(entity)
-    local name = entity.name:gsub('(%a+)-(%a+)-', '')
-    if name == 'tertiary' then return {mode=3, priority=3} end
-    local _,_,priority,mode = string.find(name, '(%a+)-(%a+)')
-    return {mode=pti_ref[mode], priority=pti_ref[priority]}
-end
-
-function create_dropdown(parent, name, caption, items, selected_index)
-    local flow = parent.add {
-        type = 'flow',
-        name = name .. '_flow',
-        direction = 'horizontal'
-    }
-
-    flow.style.vertical_align = 'center'
-
-    flow.add {
-        type = 'label',
-        name = name .. '_label',
-        caption = caption,
-        style = 'bold_label'
-    }
-
-    flow.add {
-        type = 'flow',
-        name = name .. '_filler',
-        style = 'invisible_horizontal_filler'
-    }
-
-    return flow.add {
-        type = 'drop-down',
-        name = name .. '_dropdown',
-        items = items,
-        selected_index = selected_index
-    }
-end
+return page

@@ -28,7 +28,7 @@ local gui_element_list = {}
 
 on_event(defines.events.on_gui_opened, function(e)
     if check_is_accumulator(e.entity) then
-        toggle_entity_dialog(get_player(e), e.entity)
+        toggle_entity_dialog(get_player(e), e.entity, 'ia_page')
     end
 end)
 
@@ -66,7 +66,7 @@ local function change_ia_mode_or_priority(e)
     }
     entity.destroy()
 
-    refresh_entity_dialog(get_player(e), new_entity, 'infinity-accumulator')
+    refresh_entity_dialog(get_player(e), new_entity, 'ia_page')
 end
 
 local function set_ia_params(entity, mode, value, exponent)

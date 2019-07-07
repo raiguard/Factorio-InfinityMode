@@ -1,4 +1,6 @@
-function create_titlebar(parent, name, data)
+local titlebar = {}
+
+function titlebar.create(parent, name, data)
     local prefix = 'im_' .. name .. '_'
 
     local titlebar_flow = parent.add {
@@ -36,3 +38,5 @@ function create_titlebar(parent, name, data)
         end
     end
 end
+
+return titlebar
