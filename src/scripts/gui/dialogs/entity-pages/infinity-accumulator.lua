@@ -52,6 +52,8 @@ function create_page(content_frame, entity)
         value = value
     }
 
+    elems.slider.style.horizontally_stretchable = true
+
     elems.slider_textfield = slider_flow.add {
         type = 'textfield',
         name = 'im_entity_dialog_ia_slider_textfield',
@@ -68,6 +70,41 @@ function create_page(content_frame, entity)
     }
 
     elems.slider_dropdown.style.width = 65
+
+    page_frame.add {
+        type = 'line',
+        name = 'im_entity_dialog_ia_separator',
+        direction = 'horizontal'
+    }
+
+    local buffer_flow = page_frame.add {
+        type = 'flow',
+        name = 'im_entity_dialog_ia_buffer_flow',
+        direction = 'horizontal'
+    }
+
+    buffer_flow.style.vertical_align = 'center'
+    buffer_flow.style.horizontal_spacing = 8
+
+    buffer_flow.add {
+        type = 'label',
+        name = 'im_entity_dialog_ia_buffer_label',
+        caption = 'Buffer',
+        style = 'bold_label'
+    }
+
+    buffer_flow.add {
+        type = 'progressbar',
+        name = 'im_entity_dialog_ia_buffer_bar',
+        value = 1
+    }
+
+    buffer_flow.add {
+        type = 'label',
+        name = 'im_entity_dialog_ia_buffer_value',
+        caption = '100%',
+        style = 'bold_label'
+    }
 
     return elems
 end

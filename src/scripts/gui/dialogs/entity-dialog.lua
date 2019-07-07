@@ -76,8 +76,8 @@ function create_entity_dialog(player, entity, page)
         zoom = player.display_scale
     }
 
-    entity_camera.style.width = 110
-    entity_camera.style.height = 110
+    entity_camera.style.width = 124
+    entity_camera.style.height = 124
 
     player_table(player).gui_elems = create_page(content_frame, entity)
 
