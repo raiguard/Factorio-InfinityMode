@@ -4,6 +4,7 @@
 local on_event = require('__stdlib__/stdlib/event/event').register
 local gui = require('__stdlib__/stdlib/event/gui')
 local entity_dialog = require('scripts/gui/dialogs/entity-dialog')
+local ia_page = require('scripts/gui/dialogs/entity-pages/infinity-accumulator')
 
 local entity_list = {
     'infinity-accumulator-primary-input',
@@ -28,7 +29,7 @@ local gui_element_list = {}
 
 on_event(defines.events.on_gui_opened, function(e)
     if check_is_accumulator(e.entity) then
-        toggle_entity_dialog(get_player(e), e.entity, 'ia_page')
+        toggle_entity_dialog(get_player(e), e.entity, ia_page)
     end
 end)
 
@@ -66,7 +67,7 @@ local function change_ia_mode_or_priority(e)
     }
     entity.destroy()
 
-    refresh_entity_dialog(get_player(e), new_entity, 'ia_page')
+    refresh_entity_dialog(get_player(e), new_entity, ia_page)
 end
 
 local function set_ia_params(entity, mode, value, exponent)

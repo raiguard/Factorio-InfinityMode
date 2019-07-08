@@ -2,8 +2,6 @@
 local entity_camera = require('scripts/gui/elements/entity-camera')
 local titlebar = require('scripts/gui/elements/titlebar')
 
-local ia_page = require('entity-pages/infinity-accumulator')
-
 -- Toggles the visibility of the interface
 function toggle_entity_dialog(player, entity, page)
     local entity_frame = player.gui.center.im_entity_dialog_frame
@@ -55,11 +53,11 @@ function create_entity_dialog(player, entity, page)
         direction = 'horizontal'
     }
 
-    content_flow.style.horizontal_spacing = 8
+    content_flow.style.horizontal_spacing = 10
 
     local camera = entity_camera.create(content_flow, 'im_entity_dialog_camera', 110, {player=player, entity=entity, camera_zoom=1, camera_offset={0,-0.5}})
 
-    player_table(player).gui_elems = ia_page.create(content_flow, entity)
+    player_table(player).gui_elems = page.create(content_flow, {entity=entity})
 
     return main_frame
 end

@@ -46,7 +46,8 @@ end
 
 local page = {}
 
-function page.create(content_frame, entity)
+function page.create(content_frame, data)
+    local entity = data.entity
     local elems = {}
     local mode = ia_priority_to_index(entity).mode
     local priority = ia_priority_to_index(entity).priority
