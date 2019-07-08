@@ -80,3 +80,112 @@ styles['camera_frame'] = {
     parent = 'window_content_frame',
     padding = 0
 }
+
+styles['inventory_slot_button'] = {
+    type = "button_style",
+    parent = "button",
+    draw_shadow_under_picture = true,
+    size = 40,
+    padding = 0,
+    default_graphical_set =
+    {
+        base = {border = 4, position = {0, 424}, size = 76},
+        shadow = offset_by_2_default_glow(default_dirt_color)
+    },
+    hovered_graphical_set =
+    {
+        base = {border = 4, position = {0, 500}, size = 76},
+        shadow = offset_by_2_default_glow(default_dirt_color),
+        glow = offset_by_2_default_glow(default_glow_color)
+    },
+    clicked_graphical_set =
+    {
+        base = {border = 4, position = {0, 576}, size = 76},
+        shadow = offset_by_2_default_glow(default_dirt_color)
+    },
+    pie_progress_color = {0.98, 0.66, 0.22, 0.5},
+    left_click_sound = {}
+}
+
+styles['inventory_slot_button_red'] = {
+    type = 'button_style',
+    parent = 'inventory_slot_button',
+    default_graphical_set =
+    {
+        base = {border = 4, position = {76, 424}, size = 76},
+        shadow = offset_by_2_default_glow(default_dirt_color)
+    },
+    hovered_graphical_set =
+    {
+        base = {border = 4, position = {76, 500}, size = 76},
+        shadow = offset_by_2_default_glow(default_dirt_color),
+        glow = offset_by_2_default_glow({236, 130, 130, 127}, 0.5)
+    },
+    clicked_graphical_set =
+    {
+        base = {border = 4, position = {76, 576}, size = 76},
+        shadow = offset_by_2_default_glow(default_dirt_color)
+    }
+}
+
+styles['inventory_slot_button_green'] = {
+    type = 'button_style',
+    parent = 'inventory_slot_button',
+    default_graphical_set =
+    {
+        base = {border = 4, position = {152, 424}, size = 76},
+        shadow = offset_by_2_default_glow(default_dirt_color)
+    },
+    hovered_graphical_set =
+    {
+        base = {border = 4, position = {152, 500}, size = 76},
+        shadow = offset_by_2_default_glow(default_dirt_color),
+        glow = offset_by_2_default_glow({110, 164, 104, 127}, 0.5)
+    },
+    clicked_graphical_set =
+    {
+        base = {border = 4, position = {152, 576}, size = 76},
+        shadow = offset_by_2_default_glow(default_dirt_color)
+    }
+}
+
+styles['inventory_slot_button_blue'] = {
+    type = 'button_style',
+    parent = 'inventory_slot_button',
+    default_graphical_set =
+    {
+        base = {border = 4, position = {228, 424}, size = 76},
+        shadow = offset_by_2_default_glow(default_dirt_color)
+    },
+    hovered_graphical_set =
+    {
+        base = {border = 4, position = {228, 500}, size = 76},
+        shadow = offset_by_2_default_glow(default_dirt_color),
+        glow = offset_by_2_default_glow({132, 177, 198, 127}, 0.5)
+    },
+    clicked_graphical_set =
+    {
+        base = {border = 4, position = {228, 576}, size = 76},
+        shadow = offset_by_2_default_glow(default_dirt_color)
+    }
+}
+
+
+data:extend{
+    {
+        type = 'sprite',
+        name = 'im_sprite_info',
+        filename = '__InfinityMode__/graphics/gui/info-blue.png',
+        priority = 'extra-high',
+        size = 32,
+        flags = {'icon'}
+    },
+    {
+        type = 'sprite',
+        name = 'im_sprite_info_black',
+        filename = '__InfinityMode__/graphics/gui/info-black.png',
+        priority = 'extra-high',
+        size = 32,
+        flags = {'icon'}
+    }
+}
