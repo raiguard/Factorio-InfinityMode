@@ -15,6 +15,7 @@ add_group('im-electricity', 'c')
 add_group('im-trains', 'd')
 add_group('im-robots', 'e')
 add_group('im-modules', 'f')
+add_group('im-equipment', 'g')
 
 data:extend {
     {
