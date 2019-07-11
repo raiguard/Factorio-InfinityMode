@@ -1,3 +1,21 @@
+local function add_group(name, order)
+    data:extend{
+        {
+            type = 'item-subgroup',
+            group = 'im-tools',
+            name = name,
+            order = order
+        }
+    }
+end
+
+add_group('im-inventories', 'a')
+add_group('im-misc', 'b')
+add_group('im-electricity', 'c')
+add_group('im-trains', 'd')
+add_group('im-robots', 'e')
+add_group('im-modules', 'f')
+
 data:extend {
     {
         type = 'item-group',
@@ -5,30 +23,5 @@ data:extend {
         order = 'zzzzz',
         icon = '__InfinityMode__/graphics/gui/crafting-group.png',
         icon_size = 128
-    },
-    {
-        type = 'item-subgroup',
-        name = 'im-inventories',
-        group = 'im-tools'
-    },
-    {
-        type = 'item-subgroup',
-        name = 'im-fluids',
-        group = 'im-tools'
-    },
-    {
-        type = 'item-subgroup',
-        name = 'im-trains',
-        group = 'im-tools'
-    },
-    {
-        type = 'item-subgroup',
-        name = 'im-robots',
-        group = 'im-tools'
-    },
-    {
-        type = 'item-subgroup',
-        name = 'im-electricity',
-        group = 'im-tools'
     }
 }

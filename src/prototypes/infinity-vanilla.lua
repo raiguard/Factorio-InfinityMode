@@ -1,6 +1,6 @@
 local ip_item = data.raw['item']['infinity-pipe']
 ip_item.icons = { apply_infinity_tint(ip_item.icons[1]) }
-ip_item.subgroup = 'im-fluids'
+ip_item.subgroup = 'im-misc'
 ip_item.order = 'aa'
 ip_item.stack_size = 50
 
@@ -14,7 +14,7 @@ for name, picture in pairs(data.raw['infinity-pipe']['infinity-pipe'].pictures) 
 end
 
 local hi_item = data.raw['item']['heat-interface']
-hi_item.subgroup = 'im-fluids'
+hi_item.subgroup = 'im-misc'
 hi_item.order = 'ab'
 hi_item.stack_size = 50
 
