@@ -22,10 +22,9 @@ end
 
 require('prototypes/infinity-accumulator')
 require('prototypes/infinity-chest')
+require('prototypes/infinity-misc')
 require('prototypes/infinity-pole')
-require('prototypes/infinity-radar')
 require('prototypes/infinity-robot')
-require('prototypes/infinity-vanilla')
 require('prototypes/infinity-wagon')
 require('prototypes/item-group')
 require('prototypes/style')
