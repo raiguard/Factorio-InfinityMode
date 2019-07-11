@@ -1,4 +1,10 @@
-infinity_tint = {r=1, g=0.8, b=1, a=1}
+infinity_tint = {r=1, g=0.65, b=1, a=1}
+
+function apply_infinity_tint(t)
+    t.tint = infinity_tint
+    -- t.blend_mode = 'additive'
+    return t
+end
 
 function register_recipes(t)
     for _,k in pairs(t) do

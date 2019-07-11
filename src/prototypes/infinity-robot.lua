@@ -3,7 +3,7 @@
 
 local cr_item = table.deepcopy(data.raw['item']['construction-robot'])
 cr_item.name = 'infinity-construction-robot'
-cr_item.icons = { {icon=cr_item.icon, tint=infinity_tint}}
+cr_item.icons = { apply_infinity_tint{icon=cr_item.icon} }
 cr_item.place_result = 'infinity-construction-robot'
 cr_item.subgroup = 'im-robots'
 cr_item.order = 'ba'
@@ -11,7 +11,7 @@ cr_item.stack_size = 100
 
 local lr_item = table.deepcopy(data.raw['item']['logistic-robot'])
 lr_item.name = 'infinity-logistic-robot'
-lr_item.icons = { {icon=lr_item.icon, tint=infinity_tint}}
+lr_item.icons = { apply_infinity_tint{icon=lr_item.icon} }
 lr_item.place_result = 'infinity-logistic-robot'
 lr_item.subgroup = 'im-robots'
 lr_item.order = 'bb'
@@ -19,7 +19,7 @@ lr_item.stack_size = 100
 
 local ir_item = table.deepcopy(data.raw['item']['roboport'])
 ir_item.name = 'infinity-roboport'
-ir_item.icons = { {icon=ir_item.icon, tint=infinity_tint} }
+ir_item.icons = { apply_infinity_tint{icon=ir_item.icon} }
 ir_item.place_result = 'infinity-roboport'
 ir_item.subgroup = 'im-robots'
 ir_item.order = 'a'
@@ -44,8 +44,8 @@ local modifiers = {
 local function set_params(e)
     for _,k in pairs(tint_keys) do
         if e[k] then
-            e[k].tint = infinity_tint
-            e[k].hr_version.tint = infinity_tint
+            apply_infinity_tint(e[k])
+            apply_infinity_tint(e[k].hr_version)
         end
     end
     for k,v in pairs(modifiers) do e[k] = v end
@@ -65,14 +65,14 @@ ir_entity.name = 'infinity-roboport'
 ir_entity.logistics_radius = 200
 ir_entity.construction_radius = 400
 ir_entity.energy_source = {type='void'}
-ir_entity.charging_energy = "1000GW"
+ir_entity.charging_energy = "1000YW"
 ir_entity.minable.result = 'infinity-roboport'
 
 for _,k in pairs(ir_tint_keys) do
     if ir_entity[k].layers then
         for _,k2 in pairs(ir_entity[k].layers) do
-            k2.tint = infinity_tint
-            k2.hr_version.tint = infinity_tint
+            apply_infinity_tint(k2)
+            apply_infinity_tint(k2.hr_version)
         end
     else
         ir_entity[k].tint = infinity_tint
