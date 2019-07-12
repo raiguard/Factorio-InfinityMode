@@ -50,27 +50,43 @@ gui.on_click('im_main_menu_button_cheats', function(e)
             }
         })
         local content_frame = window_frame.add{type='frame', name='im_cheats_content_frame', style='inside_deep_frame', direction='vertical'}
-        toolbar.create(content_frame, 'im_cheats_toolbar', {
-            buttons = {
-                {
-                    name = 'reset',
-                    style = 'red_icon_button',
-                    sprite = 'utility/reset',
-                    tooltip = 'Reset'
-                }
-            }
-        })
+        -- toolbar.create(content_frame, 'im_cheats_toolbar', {
+        --     buttons = {
+        --         {
+        --             name = 'reset',
+        --             style = 'red_icon_button',
+        --             sprite = 'utility/reset',
+        --             tooltip = 'Reset'
+        --         }
+        --     }
+        -- })
         local pane = tabbed_pane.create(content_frame, 'im_cheats', {
             items = {'Player', 'Team', 'Surface', 'Game'},
             width = 400,
-            height = 450,
-            use_scroll = true
+            height = 450
         })
 
-        local checkboxes_frame = pane.add{type='frame', name='im_cheats_personal_checkboxes_frame', style='bordered_frame', direction='vertical'}
-        checkboxes_frame.style.horizontally_stretchable = true
-        checkboxes_frame.style.height = 200
-        checkboxes_frame.add{type='label', name='im_cheats_personal_checkboxes_label', style='caption_label', caption='Toggles'}
+        local checkboxes_table = pane.add{type='table', name='im_cheats_personal_toggles_table', column_count=2, vertical_centering=false}
+        checkboxes_table.style.horizontally_stretchable = true
+        local checkboxes_flow_left = checkboxes_table.add{type='flow', name='im_cheats_personal_toggles_left_flow', direction='vertical'}
+        local checkboxes_left = {'Cheat Mode', 'Invincible player', 'Instant blueprint', 'Instant deconstruction', 'God Mode'}
+        for i,n in pairs(checkboxes_left) do
+            checkboxes_flow_left.add{type='checkbox', name='checkbox_left_'..i, caption=n, state = true}
+        end
+        local checkboxes_flow_right = checkboxes_table.add{type='flow', name='im_cheats_personal_toggles_right_flow', direction='vertical'}
+        local checkboxes_right = {'Keep last item', 'Repair mined item', 'Instant request', 'Instant trash'}
+        for i,n in pairs(checkboxes_right) do
+            checkboxes_flow_right.add{type='checkbox', name='checkbox_right_'..i, caption=n, state = true}
+        end
+
+        -- local tabs = {'Lorem', 'Ipsum', 'Dolor', 'Sit', 'Amet'}
+        -- local listbox_test = content_frame.add{type='list-box', name='listbox_test', style='tab_listbox', items=tabs, selected_index=1}
+        -- local tab_flow = content_frame.add{type='flow', name='tab_flow', direction='horizontal'}
+        -- for i,n in pairs(tabs) do
+        --     tab_flow.add{type='button', name='tab_' .. i, style='tab_button', caption=n}
+        -- end
+        -- tab_flow.children[1].enabled = false
+        
     else
         center.im_cheats_window.destroy()
     end

@@ -158,14 +158,16 @@ styles['tab_content_frame'] = build_style(styles.tabbed_pane.tab_content_frame, 
 
 styles['tab_listbox'] = {
     type = 'list_box_style',
-    -- scroll_pane_style = {
-    --     type = 'scroll_pane_style',
-    --     vertical_scroll_policy = 'never',
-    --     horizontal_spacing = 0
-    -- },
+    scroll_pane_style = {
+        type = 'scroll_pane_style',
+        vertical_scrollbar_style = {
+            type = 'vertical_scrollbar_style',
+            vertical_scroll_policy = 'never'
+        }
+    },
     item_style = {
         type = 'button_style',
-        parent = 'tab_button'
+        parent = 'button'
     }
 }
 
