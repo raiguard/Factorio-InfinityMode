@@ -80,3 +80,104 @@ styles['camera_frame'] = {
     parent = 'window_content_frame',
     padding = 0
 }
+
+styles['stretchable_button'] = {
+    type = 'button_style',
+    parent = 'button',
+    horizontally_stretchable = 'on'
+}
+
+-- ----------------------------------------------------------------------------------------------------
+-- TABBED PANE
+
+local tab_button_data = {
+    type = 'button_style',
+    parent = nil,
+    default_font_color = true,
+    selected_font_color = true,
+    disabled_font_color = true,
+    minimal_width = true,
+    horizontal_align = true,
+    vertical_align = true,
+    top_padding = true,
+    right_padding = true,
+    bottom_padding = true,
+    left_padding = true,
+    default_graphical_set = true,
+    selected_graphical_set = true,
+    hovered_graphical_set = 'hover_graphical_set',
+    clicked_graphical_set = 'press_graphical_set',
+    disabled_graphical_set = true
+}
+local tab_frame_data = {
+    type = 'frame_style',
+    top_padding = true,
+    right_padding = true,
+    bottom_padding = true,
+    left_padding = true,
+    graphical_set = true
+}
+local function build_style(source, data)
+    local obj = {}
+    obj.type = data.type
+    obj.parent = data.parent
+    data.type = nil
+    data.parent = nil
+    for k,v in pairs(data) do
+        if source[k] then
+            obj[k] = type(v) == 'boolean' and source[k] or source[v]
+        end
+    end
+    return obj
+end
+
+styles['tab_button'] = build_style(styles.tab, tab_button_data)
+styles['tab_button'].top_padding = 4
+styles['tab_button'].bottom_padding = 4
+-- styles['tab_button'].disabled_graphical_set = {
+--     base = {
+--         left_top = {position={136,0}, size={8,8}},
+--         top = {position={144,0}, size={1,8}},
+--         right_top = {position={145,0}, size={8,8}},
+--         right = {position={145,8}, size={8,1}},
+--         bottom = {position={144,9}, size={1,8}},
+--         left = {position={136,8}, size={8,1}},
+--         center = {position={144,8}, size={1,1}}
+--     },
+--     -- shadow = tab_glow(default_shadow_color, 0.5),
+--     glow = {
+--         left_bottom = {position={136,9}, size={8,8}},
+--         bottom = {position={144,9}, size={1,8}},
+--         right_bottom = {position={145,9}, size={8,8}},
+--         scale = 0.5,
+--         draw_type = 'outer'
+--     }
+-- }
+
+styles['tab_content_frame'] = build_style(styles.tabbed_pane.tab_content_frame, tab_frame_data)
+
+styles['tab_listbox'] = {
+    type = 'list_box_style',
+    -- scroll_pane_style = {
+    --     type = 'scroll_pane_style',
+    --     vertical_scroll_policy = 'never',
+    --     horizontal_spacing = 0
+    -- },
+    item_style = {
+        type = 'button_style',
+        parent = 'tab_button'
+    }
+}
+
+-- ----------------------------------------------------------------------------------------------------
+-- SPRITES
+
+data:extend{
+    {
+        type = 'sprite',
+        name = 'im-logo',
+        filename = '__InfinityMode__/graphics/gui/crafting-group.png',
+        size = 128,
+        flags = {'icon'}
+    }
+}

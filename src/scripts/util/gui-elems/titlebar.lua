@@ -1,7 +1,7 @@
 local titlebar = {}
 
 function titlebar.create(parent, name, data)
-    local prefix = 'im_' .. name .. '_'
+    local prefix = name .. '_'
 
     local titlebar_flow = parent.add {
         type = 'flow',
@@ -18,7 +18,7 @@ function titlebar.create(parent, name, data)
         }
     end
 
-    titlebar_flow.add {
+    local filler = titlebar_flow.add {
         type = 'frame',
         name = prefix .. 'filler',
         style = 'titlebar_filler'
@@ -36,6 +36,9 @@ function titlebar.create(parent, name, data)
                 clicked_sprite = buttons[i].clicked_sprite or nil
             }
         end
+    else
+        filler.style.right_padding = 0
+        filler.style.right_margin = 0
     end
 end
 

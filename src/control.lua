@@ -5,3 +5,5 @@ require('scripts/util/util')
 
 require('scripts/infinity-accumulator')
 require('scripts/infinity-wagon')
+
+require('scripts/cheats/cheats')
