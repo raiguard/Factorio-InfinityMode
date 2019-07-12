@@ -179,7 +179,7 @@ function create_entity_dialog(player, entity, page)
         direction = 'vertical'
     }
 
-    titlebar.create(main_frame, 'entity_dialog_titlebar', {
+    titlebar.create(main_frame, 'im_entity_dialog_titlebar', {
         label = {'gui-entity-dialog.titlebar-label-' .. entity.name},
         buttons = {
             {

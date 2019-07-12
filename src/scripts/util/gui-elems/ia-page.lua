@@ -15,33 +15,15 @@ local function ia_priority_to_index(entity)
 end
 
 local function create_dropdown(parent, name, caption, items, selected_index)
-    local flow = parent.add {
-        type = 'flow',
-        name = name .. '_flow',
-        direction = 'horizontal'
-    }
-
+    local flow = parent.add{type='flow', name=name..'_flow', direction='horizontal'}
     flow.style.vertical_align = 'center'
 
-    flow.add {
-        type = 'label',
-        name = name .. '_label',
-        caption = caption,
-        style = 'bold_label'
+    flow.add{type='label', name=name..'_label', caption=caption, style='bold_label'
     }
 
-    flow.add {
-        type = 'flow',
-        name = name .. '_filler',
-        style = 'invisible_horizontal_filler'
-    }
+    flow.add {type='flow', name=name..'_filler', style='invisible_horizontal_filler'}
 
-    return flow.add {
-        type = 'drop-down',
-        name = name .. '_dropdown',
-        items = items,
-        selected_index = selected_index
-    }
+    return flow.add{type='drop-down', name=name..'_dropdown', items=items, selected_index=selected_index}
 end
 
 local page = {}
@@ -52,12 +34,7 @@ function page.create(content_frame, data)
     local mode = ia_priority_to_index(entity).mode
     local priority = ia_priority_to_index(entity).priority
 
-    local page_frame = content_frame.add {
-        type = 'frame',
-        name = 'im_entity_dialog_ia_page_frame',
-        style = 'entity_dialog_page_frame',
-        direction = 'vertical'
-    }
+    local page_frame = content_frame.add{type='frame', name='im_entity_dialog_ia_page_frame', style='entity_dialog_page_frame', direction='vertical'}
 
     -- SETTINGS
     
@@ -73,47 +50,23 @@ function page.create(content_frame, data)
         elems.priority_dropdown.enabled = false
     end
 
-    local slider_flow = page_frame.add {
-        type = 'flow',
-        name = 'im_entity_dialog_ia_slider_flow',
-        direction = 'horizontal'
-    }
+    local slider_flow = page_frame.add{type='flow', name='im_entity_dialog_ia_slider_flow', direction='horizontal'}
 
     slider_flow.style.vertical_align = 'center'
 
-    local value
-    if mode == 1 then value = entity.power_usage
-    elseif mode == 2 then value = entity.power_production
-    elseif mode == 3 then value = entity.electric_buffer_size
-    end
+    local value = entity.electric_buffer_size
 
-    local exponent = (string.len(tostring(math.floor(value))) - 1)
-    value = math.floor(value * 60 / 10^exponent)
+    local exponent = (string.len(string.format("%.0f", math.floor(value))) - 3)
+    value = math.floor(value / 10^exponent)
 
-    elems.slider = slider_flow.add {
-        type = 'slider',
-        name = 'im_entity_dialog_ia_slider',
-        minimum_value = 0,
-        maximum_value = 1000,
-        value = value
-    }
+    elems.slider = slider_flow.add{type='slider', name='im_entity_dialog_ia_slider', minimum_value=0, maximum_value=1000, value=value}
 
     elems.slider.style.horizontally_stretchable = true
 
-    elems.slider_textfield = slider_flow.add {
-        type = 'textfield',
-        name = 'im_entity_dialog_ia_slider_textfield',
-        text = value
-    }
-
+    elems.slider_textfield = slider_flow.add{type='textfield', name='im_entity_dialog_ia_slider_textfield', text=value}
     elems.slider_textfield.style.width = 48
 
-    elems.slider_dropdown = slider_flow.add {
-        type = 'drop-down',
-        name = 'im_entity_dialog_ia_slider_dropdown',
-        items = {'kW', 'MW', 'GW', 'TW', 'PW', 'EW', 'ZW', 'YW'},
-        selected_index = exponent / 3
-    }
+    elems.slider_dropdown = slider_flow.add{type='drop-down', name='im_entity_dialog_ia_slider_dropdown', items={'kW','MW','GW','TW','PW','EW','ZW','YW'}, selected_index=(exponent/3)}
 
     elems.slider_dropdown.style.width = 65
 
