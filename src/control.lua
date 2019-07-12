@@ -5,5 +5,3 @@ require('scripts/util/util')
 
 require('scripts/infinity-accumulator')
 require('scripts/infinity-wagon')
-
-require('scripts/gui/dialogs/assembling-machine-dialog')

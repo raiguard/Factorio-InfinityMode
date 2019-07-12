@@ -3,8 +3,11 @@
 
 local on_event = require('__stdlib__/stdlib/event/event').register
 local gui = require('__stdlib__/stdlib/event/gui')
-local entity_dialog = require('scripts/gui/dialogs/entity-dialog')
-local ia_page = require('scripts/gui/dialogs/entity-pages/infinity-accumulator')
+
+-- GUI ELEMENTS
+local ia_page = require('scripts/util/gui-elems/ia-page')
+local entity_camera = require('scripts/util/gui-elems/entity-camera')
+local titlebar = require('scripts/util/gui-elems//titlebar')
 
 local entity_list = {
     'infinity-accumulator-primary-input',
@@ -142,5 +145,65 @@ gui.on_selection_state_changed('im_entity_dialog_ia_slider_dropdown', function(e
 
     set_ia_params(entity, mode, elems.slider.slider_value, exponent)
 end)
+
+-- Toggles the visibility of the interface
+function toggle_entity_dialog(player, entity, page)
+    local entity_frame = player.gui.center.im_entity_dialog_frame
+
+    if entity_frame then
+        entity_frame.destroy()
+        player.opened = nil
+    else
+        player.opened = create_entity_dialog(player, entity, page)
+        global.players[player.index].opened_entity = entity
+    end
+end
+
+-- Destroy and recreate the dialog with the new parameters
+function refresh_entity_dialog(player, entity, page)
+    local entity_frame = player.gui.center.im_entity_dialog_frame
+
+    if entity_frame then
+        entity_frame.destroy()
+        player.opened = create_entity_dialog(player, entity, page)
+        global.players[player.index].opened_entity = entity
+    end
+end
+
+-- Creates the main dialog frame
+function create_entity_dialog(player, entity, page)
+    local main_frame = player.gui.center.add {
+        type = 'frame',
+        name = 'im_entity_dialog_frame',
+        style = 'dialog_frame',
+        direction = 'vertical'
+    }
+
+    titlebar.create(main_frame, 'entity_dialog_titlebar', {
+        label = {'gui-entity-dialog.titlebar-label-' .. entity.name},
+        buttons = {
+            {
+                name = 'close',
+                sprite = 'utility/close_white',
+                hovered_sprite = 'utility/close_black',
+                clicked_sprite = 'utility/close_black'
+            }
+        }
+    })
+
+    local content_flow = main_frame.add {
+        type = 'flow',
+        name = 'im_entity_dialog_content_flow',
+        direction = 'horizontal'
+    }
+
+    content_flow.style.horizontal_spacing = 10
+
+    local camera = entity_camera.create(content_flow, 'im_entity_dialog_camera', 110, {player=player, entity=entity, camera_zoom=1, camera_offset={0,-0.5}})
+
+    player_table(player).gui_elems = page.create(content_flow, {entity=entity})
+
+    return main_frame
+end
 
 -- ----------------------------------------------------------------------------------------------------
