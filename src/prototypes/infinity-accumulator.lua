@@ -29,6 +29,7 @@ for _,t in pairs(ia_types) do
     ia.subgroup = 'im-electricity'
     ia.order = 'a'
     ia.minable.result = 'infinity-accumulator'
+    ia.placeable_by = {item='infinity-accumulator', count=1}
     data:extend{ia}
 end
 
