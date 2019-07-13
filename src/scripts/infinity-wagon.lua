@@ -84,7 +84,7 @@ end)
 
 -- when a gui is opened
 on_event('iw-open-gui', function(e)
-    local player = game.players[e.player_index]
+    local player = get_player(e)
     local selected = player.selected
     if selected and (selected.name == 'infinity-cargo-wagon' or selected.name == 'infinity-fluid-wagon') then
         player.opened = global.wagons[selected.unit_number].ref

@@ -36,3 +36,15 @@ end
 -- RECIPES
 
 register_recipes{'infinity-accumulator'}
+
+-- ------------------------------------------------------------------------------------------
+-- CUSTOM INPUTS
+
+data:extend{
+    {
+        type = 'custom-input',
+        name = 'im-smart-pipette',
+        key_sequence = '',
+        linked_game_control = 'smart-pipette'
+    }
+}

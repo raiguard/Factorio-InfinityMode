@@ -7,6 +7,9 @@ local pti_ref = {
     tertiary = 3
 }
 
+local power_prefixes = {'kilo','mega','giga','tera','peta','exa','zetta','yotta'}
+local power_suffixes_by_mode = {'watt','watt','joule'}
+
 local function ia_priority_to_index(entity)
     local name = entity.name:gsub('(%a+)-(%a+)-', '')
     if name == 'tertiary' then return {mode=3, priority=3} end
@@ -14,12 +17,11 @@ local function ia_priority_to_index(entity)
     return {mode=pti_ref[mode], priority=pti_ref[priority]}
 end
 
-local function create_dropdown(parent, name, caption, items, selected_index)
+local function create_dropdown(parent, name, caption, items, selected_index, button_disabled)
     local flow = parent.add{type='flow', name=name..'_flow', direction='horizontal'}
     flow.style.vertical_align = 'center'
 
-    flow.add{type='label', name=name..'_label', caption=caption, style='bold_label'
-    }
+    flow.add{type='label', name=name..'_label', caption=caption, style='bold_label'}
 
     flow.add {type='flow', name=name..'_filler', style='invisible_horizontal_filler'}
 
@@ -39,15 +41,19 @@ function page.create(content_frame, data)
     -- SETTINGS
     
     elems.mode_dropdown = create_dropdown(page_frame, 'im_entity_dialog_ia_mode',
-        {'gui-entity-dialog.infinity-accumulator-mode-caption'}, {'input', 'output', 'buffer'}, mode)
+        {'gui-entity-dialog.infinity-accumulator-mode-caption'}, {{'gui-entity-dialog.infinity-accumulator-mode-input'}, {'gui-entity-dialog.infinity-accumulator-mode-output'}, {'gui-entity-dialog.infinity-accumulator-mode-buffer'}}, mode)
 
     elems.priority_dropdown = create_dropdown(page_frame, 'im_entity_dialog_ia_priority',
-        {'gui-entity-dialog.infinity-accumulator-priority-caption'}, {'primary', 'secondary', 'tertiary'}, priority)
+        {'gui-entity-dialog.infinity-accumulator-priority-caption'}, {{'gui-entity-dialog.infinity-accumulator-priority-primary'}, {'gui-entity-dialog.infinity-accumulator-priority-secondary'}, {'gui-entity-dialog.infinity-accumulator-priority-tertiary'}}, priority)
 
     page_frame.im_entity_dialog_ia_priority_flow.style.vertically_stretchable = true
 
-    if priority == 3 then
-        elems.priority_dropdown.enabled = false
+    if mode == 3 then
+        elems.priority_dropdown.visible = false
+        local disabled = page_frame.im_entity_dialog_ia_priority_flow.add{type='button', name='im_entity_dialog_ia_priority_disabled_button', caption={'gui-entity-dialog.infinity-accumulator-priority-tertiary'}}
+        disabled.enabled = false
+        disabled.style.horizontal_align = 'left'
+        disabled.style.minimal_width = 116
     end
 
     local slider_flow = page_frame.add{type='flow', name='im_entity_dialog_ia_slider_flow', direction='horizontal'}
@@ -59,14 +65,19 @@ function page.create(content_frame, data)
     local exponent = (string.len(string.format("%.0f", math.floor(value))) - 3)
     value = math.floor(value / 10^exponent)
 
-    elems.slider = slider_flow.add{type='slider', name='im_entity_dialog_ia_slider', minimum_value=0, maximum_value=1000, value=value}
+    elems.slider = slider_flow.add{type='slider', name='im_entity_dialog_ia_slider', minimum_value=1, maximum_value=999, value=value}
 
     elems.slider.style.horizontally_stretchable = true
 
     elems.slider_textfield = slider_flow.add{type='textfield', name='im_entity_dialog_ia_slider_textfield', text=value}
     elems.slider_textfield.style.width = 48
 
-    elems.slider_dropdown = slider_flow.add{type='drop-down', name='im_entity_dialog_ia_slider_dropdown', items={'kW','MW','GW','TW','PW','EW','ZW','YW'}, selected_index=(exponent/3)}
+    local items = {}
+    for i,v in pairs(power_prefixes) do
+        items[i] = {'', {'si-prefix-symbol-' .. v}, {'si-unit-symbol-' .. power_suffixes_by_mode[mode]}}
+    end
+
+    elems.slider_dropdown = slider_flow.add{type='drop-down', name='im_entity_dialog_ia_slider_dropdown', items=items, selected_index=(exponent/3)}
 
     elems.slider_dropdown.style.width = 65
 

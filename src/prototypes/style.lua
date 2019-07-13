@@ -87,6 +87,9 @@ styles['stretchable_button'] = {
     horizontally_stretchable = 'on'
 }
 
+styles['dropdown_button'].disabled_font_color = styles['button'].disabled_font_color
+styles['dropdown_button'].disabled_graphical_set = styles['button'].disabled_graphical_set
+
 -- ----------------------------------------------------------------------------------------------------
 -- TABBED PANE
 

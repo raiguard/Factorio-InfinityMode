@@ -5,7 +5,7 @@ function entity_camera.create(parent, name, size, data)
     local frame = parent.add {
         type = 'frame',
         name = name .. '_frame',
-        style = 'camera_frame'
+        style = 'inside_deep_frame'
     }
 
     local camera = frame.add {

@@ -10,16 +10,16 @@ local entity_camera = require('scripts/util/gui-elems/entity-camera')
 local titlebar = require('scripts/util/gui-elems//titlebar')
 
 local entity_list = {
-    'infinity-accumulator-primary-input',
-    'infinity-accumulator-primary-output',
-    'infinity-accumulator-secondary-input',
-    'infinity-accumulator-secondary-output',
-    'infinity-accumulator-tertiary'
+    ['infinity-accumulator-primary-input'] = true,
+    ['infinity-accumulator-primary-output'] = true,
+    ['infinity-accumulator-secondary-input'] = true,
+    ['infinity-accumulator-secondary-output'] = true,
+    ['infinity-accumulator-tertiary'] = true
 }
 
 local function check_is_accumulator(e)
     if not e then return false end
-    for _,n in pairs(entity_list) do
+    for n,t in pairs(entity_list) do
         if e.name == n then return true end
     end
     return false
@@ -28,8 +28,7 @@ end
 -- ----------------------------------------------------------------------------------------------------
 -- GUI
 
-local gui_element_list = {}
-
+-- gui management
 on_event(defines.events.on_gui_opened, function(e)
     if check_is_accumulator(e.entity) then
         toggle_entity_dialog(get_player(e), e.entity, ia_page)
@@ -49,30 +48,6 @@ local ia_states = {
     mode = {'input', 'output', 'buffer'}
 }
 
-local function change_ia_mode_or_priority(e)
-    local player_data = player_table(get_player(e))
-    local entity = player_data.opened_entity
-    local elems = player_data.gui_elems
-
-    local priority = ia_states.priority[elems.priority_dropdown.selected_index]
-    local mode = ia_states.mode[elems.mode_dropdown.selected_index]
-
-    if priority == 'tertiary' and mode ~= 'buffer' then priority = 'primary' end
-    if mode == 'buffer' then priority = 'tertiary' end
-
-    local new_entity = entity.surface.create_entity{
-        name = 'infinity-accumulator-' .. (mode == 'buffer' and 'tertiary' or priority) .. (mode ~= 'buffer' and ('-' .. mode) or ''),
-        position = entity.position,
-        power_production = entity.power_production,
-        power_usage = entity.power_usage,
-        electric_buffer_size = entity.electric_buffer_size,
-        force = entity.force
-    }
-    entity.destroy()
-
-    refresh_entity_dialog(get_player(e), new_entity, ia_page)
-end
-
 local function set_ia_params(entity, mode, value, exponent)
     entity.power_usage = 0
     entity.power_production = 0
@@ -87,6 +62,28 @@ local function set_ia_params(entity, mode, value, exponent)
     elseif mode == 'buffer' then
         entity.electric_buffer_size = (value * 10^exponent)
     end
+end
+
+local function change_ia_mode_or_priority(e)
+    local player_data = player_table(get_player(e))
+    local entity = player_data.opened_entity
+    local elems = player_data.gui_elems
+
+    local priority = ia_states.priority[elems.priority_dropdown.selected_index]
+    local mode = ia_states.mode[elems.mode_dropdown.selected_index]
+
+    if priority == 'tertiary' and mode ~= 'buffer' then priority = 'primary' end
+    if mode == 'buffer' then priority = 'tertiary' end
+
+    local new_entity = entity.surface.create_entity{
+        name = 'infinity-accumulator-' .. (mode == 'buffer' and 'tertiary' or priority) .. (mode ~= 'buffer' and ('-' .. mode) or ''),
+        position = entity.position,
+        force = entity.force
+    }
+    entity.destroy()
+    set_ia_params(new_entity, mode, elems.slider.slider_value, elems.slider_dropdown.selected_index * 3)
+
+    refresh_entity_dialog(get_player(e), new_entity, ia_page)
 end
 
 gui.on_click('im_entity_dialog_titlebar_button_close', function(e) toggle_entity_dialog(get_player(e)) end)
@@ -124,13 +121,14 @@ gui.on_text_changed('im_entity_dialog_ia_slider_textfield', function(e)
     local text = e.element.text:gsub('%D','')
     e.element.text = text
 
-    if text == '' or tonumber(text) < 1 or tonumber(text) > 1000 then
-        e.element.tooltip = 'Must be an integer between 1-1000'
+    if text == '' or tonumber(text) < 1 or tonumber(text) > 999 then
+        e.element.tooltip = 'Must be an integer between 1-999'
         return nil
     else
         e.element.tooltip = ''
     end
 
+    elems.slider.slider_value = tonumber(text)
     set_ia_params(entity, mode, tonumber(text), exponent)
 
 end)
