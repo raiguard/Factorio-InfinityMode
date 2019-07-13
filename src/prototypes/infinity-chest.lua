@@ -59,4 +59,5 @@ end
 -- ------------------------------------------------------------------------------------------
 -- RECIPES
 
+register_recipes{'infinity-chest'}
 register_recipes(table.map(table.keys(chest_data), function(v) return 'infinity-chest-' .. v end))
