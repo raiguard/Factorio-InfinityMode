@@ -61,8 +61,8 @@ function page.create(content_frame, data)
     slider_flow.style.vertical_align = 'center'
 
     local value = entity.electric_buffer_size
-
-    local exponent = (string.len(string.format("%.0f", math.floor(value))) - 3)
+    local len = string.len(string.format("%.0f", math.floor(value)))
+    local exponent = len - (len % 3 == 0 and 3 or len % 3)
     value = math.floor(value / 10^exponent)
 
     elems.slider = slider_flow.add{type='slider', name='im_entity_dialog_ia_slider', minimum_value=1, maximum_value=999, value=value}
