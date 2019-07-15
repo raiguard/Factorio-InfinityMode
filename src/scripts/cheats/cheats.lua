@@ -3,6 +3,7 @@
 
 local on_event = require('__stdlib__/stdlib/event/event').register
 local gui = require('__stdlib__/stdlib/event/gui')
+local util = require('scripts/util/util')
 local mod_gui = require('mod-gui')
 
 -- GUI ELEMENTS
@@ -11,14 +12,14 @@ local titlebar = require('scripts/util/gui-elems/titlebar')
 local toolbar = require('scripts/util/gui-elems/toolbar')
 
 on_event(defines.events.on_player_joined_game, function(e)
-    local flow = mod_gui.get_button_flow(get_player(e))
+    local flow = mod_gui.get_button_flow(util.get_player(e))
     if not flow.im_button then
         flow.add{type='sprite-button', name='im_button', style=mod_gui.button_style, sprite='im-logo'}
     end
 end)
 
 gui.on_click('im_button', function(e)
-    local player = get_player(e)
+    local player = util.get_player(e)
     local frame_flow = mod_gui.get_frame_flow(player)
     if not frame_flow.im_flow then
         local flow = frame_flow.add{type='flow', name='im_flow', direction='horizontal'}
@@ -36,7 +37,7 @@ gui.on_click('im_button', function(e)
 end)
 
 gui.on_click('im_main_menu_button_cheats', function(e)
-    local player = get_player(e)
+    local player = util.get_player(e)
     local center = player.gui.center
     -- local mod_flow = mod_gui.get_frame_flow(player).im_flow
     if not center.im_cheats_window then

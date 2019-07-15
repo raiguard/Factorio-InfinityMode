@@ -1,5 +1,6 @@
 local abs = math.abs
 local on_event = require('__stdlib__/stdlib/event/event').register
+local util = require('scripts/util/util')
 
 -- on game init
 on_event('on_init', function(e)
@@ -84,7 +85,7 @@ end)
 
 -- when a gui is opened
 on_event('iw-open-gui', function(e)
-    local player = get_player(e)
+    local player = util.get_player(e)
     local selected = player.selected
     if selected and (selected.name == 'infinity-cargo-wagon' or selected.name == 'infinity-fluid-wagon') then
         player.opened = global.wagons[selected.unit_number].ref

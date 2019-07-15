@@ -69,7 +69,7 @@ function page.create(content_frame, data)
 
     elems.slider.style.horizontally_stretchable = true
 
-    elems.slider_textfield = slider_flow.add{type='textfield', name='im_entity_dialog_ia_slider_textfield', text=value}
+    elems.slider_textfield = slider_flow.add{type='textfield', name='im_entity_dialog_ia_slider_textfield', text=value, numeric=true, lose_focus_on_confirm=true}
     elems.slider_textfield.style.width = 48
 
     local items = {}

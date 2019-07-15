@@ -3,6 +3,7 @@
 
 local on_event = require('__stdlib__/stdlib/event/event').register
 local gui = require('__stdlib__/stdlib/event/gui')
+local util = require('scripts/util/util')
 
 -- GUI ELEMENTS
 local ia_page = require('scripts/util/gui-elems/ia-page')
@@ -37,14 +38,7 @@ end
 -- gui management
 on_event(defines.events.on_gui_opened, function(e)
     if check_is_accumulator(e.entity) then
-        toggle_entity_dialog(get_player(e), e.entity, ia_page)
-    end
-end)
-
-on_event(defines.events.on_gui_closed, function(e)
-    local player = get_player(e)
-    if e.gui_type == defines.gui_type.custom and e.element.name == 'im_entity_dialog_frame' then
-        toggle_entity_dialog(player)
+        create_entity_dialog(util.get_player(e), e.entity, ia_page)
     end
 end)
 
@@ -71,9 +65,9 @@ local function set_ia_params(entity, mode, value, exponent)
 end
 
 local function change_ia_mode_or_priority(e)
-    local player_data = player_table(get_player(e))
-    local entity = player_data.opened_entity
-    local elems = player_data.gui_elems
+    local data = util.get_center_gui(util.get_player(e))
+    local entity = data.entity
+    local elems = data.page_elems
 
     local priority = ia_states.priority[elems.priority_dropdown.selected_index]
     local mode = ia_states.mode[elems.mode_dropdown.selected_index]
@@ -89,10 +83,10 @@ local function change_ia_mode_or_priority(e)
     entity.destroy()
     set_ia_params(new_entity, mode, elems.slider.slider_value, elems.slider_dropdown.selected_index * 3)
 
-    refresh_entity_dialog(get_player(e), new_entity, ia_page)
+    refresh_entity_dialog(util.get_player(e), new_entity, ia_page)
 end
 
-gui.on_click('im_entity_dialog_titlebar_button_close', function(e) toggle_entity_dialog(get_player(e)) end)
+gui.on_click('im_entity_dialog_titlebar_button_close', function(e) util.close_center_gui(util.get_player(e)) end)
 
 gui.on_selection_state_changed('im_entity_dialog_ia_mode_dropdown', function(e)
     change_ia_mode_or_priority(e)
@@ -103,9 +97,9 @@ gui.on_selection_state_changed('im_entity_dialog_ia_priority_dropdown', function
 end)
 
 gui.on_value_changed('im_entity_dialog_ia_slider', function(e)
-    local player_data = player_table(get_player(e))
-    local entity = player_data.opened_entity
-    local elems = player_data.gui_elems
+    local data = util.get_center_gui(util.get_player(e))
+    local entity = data.entity
+    local elems = data.page_elems
     local mode = ia_states.mode[elems.mode_dropdown.selected_index]
 
     local exponent = elems.slider_dropdown.selected_index * 3
@@ -116,9 +110,9 @@ gui.on_value_changed('im_entity_dialog_ia_slider', function(e)
 end)
 
 gui.on_text_changed('im_entity_dialog_ia_slider_textfield', function(e)
-    local player_data = player_table(get_player(e))
-    local entity = player_data.opened_entity
-    local elems = player_data.gui_elems
+    local data = util.get_center_gui(util.get_player(e))
+    local entity = data.entity
+    local elems = data.page_elems
     local mode = ia_states.mode[elems.mode_dropdown.selected_index]
 
     local exponent = elems.slider_dropdown.selected_index * 3
@@ -134,34 +128,26 @@ gui.on_text_changed('im_entity_dialog_ia_slider_textfield', function(e)
         e.element.tooltip = ''
     end
 
+    data.textfield_value = text
     elems.slider.slider_value = tonumber(text)
     set_ia_params(entity, mode, tonumber(text), exponent)
 
 end)
 
+-- on_event(defines.events.on_gui_confirmed, function(e)
+--     game.print('confirmed!')
+-- end)
+
 gui.on_selection_state_changed('im_entity_dialog_ia_slider_dropdown', function(e)
-    local player_data = player_table(get_player(e))
-    local entity = player_data.opened_entity
-    local elems = player_data.gui_elems
-    local mode = ia_states.mode[player_data.gui_elems.mode_dropdown.selected_index]
+    local data = util.get_center_gui(util.get_player(e))
+    local entity = data.entity
+    local elems = data.page_elems
+    local mode = ia_states.mode[elems.mode_dropdown.selected_index]
 
     local exponent = e.element.selected_index * 3
 
     set_ia_params(entity, mode, elems.slider.slider_value, exponent)
 end)
-
--- Toggles the visibility of the interface
-function toggle_entity_dialog(player, entity, page)
-    local entity_frame = player.gui.center.im_entity_dialog_frame
-
-    if entity_frame then
-        entity_frame.destroy()
-        player.opened = nil
-    else
-        player.opened = create_entity_dialog(player, entity, page)
-        global.players[player.index].opened_entity = entity
-    end
-end
 
 -- Destroy and recreate the dialog with the new parameters
 function refresh_entity_dialog(player, entity, page)
@@ -169,8 +155,7 @@ function refresh_entity_dialog(player, entity, page)
 
     if entity_frame then
         entity_frame.destroy()
-        player.opened = create_entity_dialog(player, entity, page)
-        global.players[player.index].opened_entity = entity
+        create_entity_dialog(player, entity, page)
     end
 end
 
@@ -205,9 +190,11 @@ function create_entity_dialog(player, entity, page)
 
     local camera = entity_camera.create(content_flow, 'im_entity_dialog_camera', 110, {player=player, entity=entity, camera_zoom=1, camera_offset={0,-0.5}})
 
-    player_table(player).gui_elems = page.create(content_flow, {entity=entity})
-
-    return main_frame
+    local gui_data = {}
+    gui_data.element = main_frame
+    gui_data.entity = entity
+    gui_data.page_elems = page.create(content_flow, {entity=entity})
+    util.set_center_gui(player, gui_data)
 end
 
 -- ----------------------------------------------------------------------------------------------------
