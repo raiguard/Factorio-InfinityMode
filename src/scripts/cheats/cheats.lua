@@ -100,13 +100,17 @@ gui.on_click('im_main_menu_button_cheats', function(e)
 
         -- TEXTFIELDS
 
-        pane.add{type='label', name='im_cheats_personal_textfields_label', style='caption_label', caption='Bonuses'}.style.top_margin = 5
+        local labels_flow = pane.add{type='flow', name='im_cheats_personal_textfields_label_flow', direction='horizontal'}
+        labels_flow.style.top_margin = 5
+        labels_flow.add{type='label', name='im_cheats_personal_textfields_label', style='caption_label', caption='Bonuses'}
+        labels_flow.add{type='flow', name='im_cheats_personal_textfields_label_filler', style='invisible_horizontal_filler', direciton='horizontal'}
+        labels_flow.add{type='label', name='im_cheats_personal_textfields_help', style='info_label', caption='Press enter to confirm'}
         local textfields_table = pane.add{type='table', name='im_cheats_personal_textfields_table', column_count=2, vertical_centering=true}
         local textfields = {'Reach distance', 'Build distance', 'Resource reach distance', 'Item drop distance', 'Item pickup distance', 'Loot pickup distance', 'Mining speed', 'Running speed', 'Crafting speed', 'Inventory size', 'Health'}
         for i=1,#textfields do
             local label = textfields_table.add{type='label', name='im_cheats_personal_textfield_' .. i .. '_label', caption=textfields[i]}
             label.style.horizontally_stretchable = true
-            textfields_table.add{type='textfield', name='im_cheats_personal_textfield_'..i, style='short_number_textfield', text='0'}
+            textfields_table.add{type='textfield', name='im_cheats_personal_textfield_'..i, style='short_number_textfield', text='0', numeric=true, lose_focus_on_confirm=true}
         end
 
         util.set_center_gui(player, {element=window_frame, close_button=titlebar.children[4]})
