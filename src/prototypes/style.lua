@@ -161,16 +161,16 @@ styles['tab_content_frame'] = build_style(styles.tabbed_pane.tab_content_frame, 
 
 styles['tab_listbox'] = {
     type = 'list_box_style',
-    scroll_pane_style = {
-        type = 'scroll_pane_style',
-        vertical_scrollbar_style = {
-            type = 'vertical_scrollbar_style',
-            vertical_scroll_policy = 'never'
-        }
-    },
+    -- scroll_pane_style = {
+    --     type = 'scroll_pane_style',
+    --     vertical_scrollbar_style = {
+    --         type = 'vertical_scrollbar_style',
+    --         vertical_scroll_policy = 'never'
+    --     }
+    -- },
     item_style = {
         type = 'button_style',
-        parent = 'button'
+        parent = 'tab_button'
     }
 }
 
@@ -183,6 +183,34 @@ data:extend{
         name = 'im-logo',
         filename = '__InfinityMode__/graphics/gui/crafting-group.png',
         size = 128,
+        flags = {'icon'}
+    },
+    {
+        type = 'sprite',
+        name = 'im-to-top-black',
+        filename = '__InfinityMode__/graphics/gui/to-top-black.png',
+        size = 32,
+        flags = {'icon'}
+    },
+    {
+        type = 'sprite',
+        name = 'im-to-top-white',
+        filename = '__InfinityMode__/graphics/gui/to-top-white.png',
+        size = 32,
+        flags = {'icon'}
+    },
+    {
+        type = 'sprite',
+        name = 'im-from-top-black',
+        filename = '__InfinityMode__/graphics/gui/from-top-black.png',
+        size = 32,
+        flags = {'icon'}
+    },
+    {
+        type = 'sprite',
+        name = 'im-from-top-white',
+        filename = '__InfinityMode__/graphics/gui/from-top-white.png',
+        size = 32,
         flags = {'icon'}
     }
 }

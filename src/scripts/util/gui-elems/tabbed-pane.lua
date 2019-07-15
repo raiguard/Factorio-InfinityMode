@@ -10,17 +10,22 @@ function tabbed_pane.create(parent, name, data)
     tab_frame.style.height = data.height or nil
 
     local pane
-    -- if use_scroll then
-    --     pane = tab_frame.add{type='scroll-pane', name=prefix..'pane'}
-    --     pane.style.horizontal_scroll_policy = 'never'
-    -- else
-    --     pane = tab_frame.add{type='flow', name=prefix..'pane', direction='vertical'}
-    --     pane.style.left
-    -- end
-    -- pane.style.horizontally_stretchable = true
-    -- pane.style.vertically_stretchable = true
+    if data.use_scroll then
+        pane = tab_frame.add{type='scroll-pane', name=prefix..'pane', style='scroll_pane_light'}
+        pane.style.left_margin = 8
+        pane.style.right_margin = 8
+        pane.style.top_padding = 0
+        pane.style.bottom_padding = 0
+        pane.style.extra_padding_when_activated = 8
+    else
+        pane = tab_frame.add{type='flow', name=prefix..'pane', direction='vertical'}
+        pane.style.left_margin = 8
+        pane.style.right_margin = 8
+    end
+    pane.style.horizontally_stretchable = true
+    pane.style.vertically_stretchable = true
 
-    return tab_frame
+    return pane
 end
 
 return tabbed_pane
