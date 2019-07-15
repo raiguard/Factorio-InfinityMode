@@ -71,6 +71,7 @@ function page.create(content_frame, data)
 
     elems.slider_textfield = slider_flow.add{type='textfield', name='im_entity_dialog_ia_slider_textfield', text=value, numeric=true, lose_focus_on_confirm=true}
     elems.slider_textfield.style.width = 48
+    elems.prev_textfield_value = value
 
     local items = {}
     for i,v in pairs(power_prefixes) do

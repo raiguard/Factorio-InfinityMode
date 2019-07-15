@@ -128,15 +128,26 @@ gui.on_text_changed('im_entity_dialog_ia_slider_textfield', function(e)
         e.element.tooltip = ''
     end
 
-    data.textfield_value = text
+    elems.prev_textfield_value = text
     elems.slider.slider_value = tonumber(text)
     set_ia_params(entity, mode, tonumber(text), exponent)
+    LOG(data)
 
 end)
 
--- on_event(defines.events.on_gui_confirmed, function(e)
---     game.print('confirmed!')
--- end)
+on_event(defines.events.on_gui_confirmed, function(e)
+    local center_gui = util.get_center_gui(util.get_player(e))
+    local elems = center_gui.page_elems
+    local entity = center_gui.entity
+    local mode = ia_states.mode[elems.mode_dropdown.selected_index]
+    local exponent = elems.slider_dropdown.selected_index * 3
+    if elems.prev_textfield_value ~= elems.slider_textfield.text then
+        elems.slider_textfield.text = elems.prev_textfield_value
+        elems.slider_textfield.tooltip = ''
+        elems.slider.slider_value = tonumber(elems.prev_textfield_value)
+        set_ia_params(entity, mode, tonumber(elems.prev_textfield_value), exponent)
+    end
+end)
 
 gui.on_selection_state_changed('im_entity_dialog_ia_slider_dropdown', function(e)
     local data = util.get_center_gui(util.get_player(e))
