@@ -86,8 +86,6 @@ local function change_ia_mode_or_priority(e)
     refresh_entity_dialog(util.get_player(e), new_entity, ia_page)
 end
 
-gui.on_click('im_entity_dialog_titlebar_button_close', function(e) util.close_center_gui(util.get_player(e)) end)
-
 gui.on_selection_state_changed('im_entity_dialog_ia_mode_dropdown', function(e)
     change_ia_mode_or_priority(e)
 end)
@@ -179,7 +177,7 @@ function create_entity_dialog(player, entity, page)
         direction = 'vertical'
     }
 
-    titlebar.create(main_frame, 'im_entity_dialog_titlebar', {
+    local titlebar = titlebar.create(main_frame, 'im_entity_dialog_titlebar', {
         label = {'gui-entity-dialog.titlebar-label-' .. entity.name},
         buttons = {
             {
@@ -204,6 +202,7 @@ function create_entity_dialog(player, entity, page)
     local gui_data = {}
     gui_data.element = main_frame
     gui_data.entity = entity
+    gui_data.close_button = titlebar.children[3]
     gui_data.page_elems = page.create(content_flow, {entity=entity})
     util.set_center_gui(player, gui_data)
 end

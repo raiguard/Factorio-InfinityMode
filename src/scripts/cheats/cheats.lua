@@ -42,7 +42,7 @@ gui.on_click('im_main_menu_button_cheats', function(e)
     -- local mod_flow = mod_gui.get_frame_flow(player).im_flow
     if not center.im_cheats_window then
         local window_frame = center.add{type='frame', name='im_cheats_window', style='dialog_frame', direction='vertical'}
-        titlebar.create(window_frame, 'im_cheats_titlebar', {
+        local titlebar = titlebar.create(window_frame, 'im_cheats_titlebar', {
             label = 'Cheats',
             buttons = {
                 {
@@ -108,6 +108,8 @@ gui.on_click('im_main_menu_button_cheats', function(e)
             label.style.horizontally_stretchable = true
             textfields_table.add{type='textfield', name='im_cheats_personal_textfield_'..i, style='short_number_textfield', text='0'}
         end
+
+        util.set_center_gui(player, {element=window_frame, close_button=titlebar.children[4]})
         
     else
         center.im_cheats_window.destroy()

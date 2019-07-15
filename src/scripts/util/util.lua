@@ -21,6 +21,16 @@ on_event(defines.events.on_gui_closed, function(e)
     end
 end)
 
+-- handle window close buttons
+on_event(defines.events.on_gui_click, function(e)
+    local player = util.get_player(e)
+    local element = e.element
+    local center_gui = util.get_center_gui(player)
+    if center_gui and center_gui.close_button == element then
+        util.close_center_gui(player)
+    end
+end)
+
 function util.set_center_gui(player, data, keep_previous)
     -- data table must contain ELEMENT, which is the root element of the open GUI (the frame, most of the time)
     -- other data is specific to each gui

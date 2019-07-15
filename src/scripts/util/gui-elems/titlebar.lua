@@ -40,6 +40,8 @@ function titlebar.create(parent, name, data)
         filler.style.right_padding = 0
         filler.style.right_margin = 0
     end
+
+    return titlebar_flow
 end
 
 return titlebar
