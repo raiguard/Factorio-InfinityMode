@@ -101,7 +101,6 @@ gui.on_click('im_main_menu_button_cheats', function(e)
         -- TEXTFIELDS
 
         local labels_flow = pane.add{type='flow', name='im_cheats_personal_textfields_label_flow', direction='horizontal'}
-        labels_flow.style.top_margin = 5
         labels_flow.add{type='label', name='im_cheats_personal_textfields_label', style='caption_label', caption='Bonuses'}
         labels_flow.add{type='flow', name='im_cheats_personal_textfields_label_filler', style='invisible_horizontal_filler', direciton='horizontal'}
         labels_flow.add{type='label', name='im_cheats_personal_textfields_help', style='info_label', caption='Press enter to confirm'}
