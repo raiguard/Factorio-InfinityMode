@@ -10,7 +10,7 @@ local pti_ref = {
 local power_prefixes = {'kilo','mega','giga','tera','peta','exa','zetta','yotta'}
 local power_suffixes_by_mode = {'watt','watt','joule'}
 
-local function ia_priority_to_index(entity)
+local function get_ia_options(entity)
     local name = entity.name:gsub('(%a+)-(%a+)-', '')
     if name == 'tertiary' then return {mode=3, priority=3} end
     local _,_,priority,mode = string.find(name, '(%a+)-(%a+)')
@@ -33,8 +33,8 @@ local page = {}
 function page.create(content_frame, data)
     local entity = data.entity
     local elems = {}
-    local mode = ia_priority_to_index(entity).mode
-    local priority = ia_priority_to_index(entity).priority
+    local mode = get_ia_options(entity).mode
+    local priority = get_ia_options(entity).priority
 
     local page_frame = content_frame.add{type='frame', name='im_entity_dialog_ia_page_frame', style='entity_dialog_page_frame', direction='vertical'}
 
@@ -62,10 +62,10 @@ function page.create(content_frame, data)
 
     local value = entity.electric_buffer_size
     local len = string.len(string.format("%.0f", math.floor(value)))
-    local exponent = len - (len % 3 == 0 and 3 or len % 3)
+    local exponent = math.max(len - (len % 3 == 0 and 3 or len % 3),3)
     value = math.floor(value / 10^exponent)
 
-    elems.slider = slider_flow.add{type='slider', name='im_entity_dialog_ia_slider', minimum_value=1, maximum_value=999, value=value}
+    elems.slider = slider_flow.add{type='slider', name='im_entity_dialog_ia_slider', minimum_value=0, maximum_value=999, value=value}
 
     elems.slider.style.horizontally_stretchable = true
 

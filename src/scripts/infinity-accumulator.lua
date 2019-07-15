@@ -25,6 +25,12 @@ local function check_is_accumulator(e)
     return false
 end
 
+-- on_event(defines.events.on_entity_settings_pasted, function(e)
+--     if check_is_accumulator(e.source) and check_is_accumulator(e.destination) and e.source.name ~= e.destination.name then
+--         local name = entity.name:gsub('(%a+)-(%a+)-', '')
+--     end
+-- end)
+
 -- ----------------------------------------------------------------------------------------------------
 -- GUI
 
@@ -121,8 +127,8 @@ gui.on_text_changed('im_entity_dialog_ia_slider_textfield', function(e)
     local text = e.element.text:gsub('%D','')
     e.element.text = text
 
-    if text == '' or tonumber(text) < 1 or tonumber(text) > 999 then
-        e.element.tooltip = 'Must be an integer between 1-999'
+    if text == '' or tonumber(text) < 0 or tonumber(text) > 999 then
+        e.element.tooltip = 'Must be an integer from 0-999'
         return nil
     else
         e.element.tooltip = ''
