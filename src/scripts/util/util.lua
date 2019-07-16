@@ -48,9 +48,9 @@ function util.get_center_gui(player)
 end
 
 function util.close_center_gui(player)
-    local center_gui = util.get_center_gui(player)
-    center_gui.element.destroy()
-    center_gui = nil
+    local player_table = util.player_table(player)
+    player_table.center_gui.element.destroy()
+    player_table.center_gui = nil
     player.opened = nil
 end
 
@@ -66,7 +66,12 @@ on_event(defines.events.on_player_joined_game, function(e)
     global.players[e.player_index] = data
 end)
 
-function util.player_table(player) return global.players[player.index] end
+function util.player_table(player)
+    if type(player) == 'number' then
+        return global.players[player]
+    end
+    return global.players[player.index]
+end
 
 -- ----------------------------------------------------------------------------------------------------
 
