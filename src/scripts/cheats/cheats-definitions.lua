@@ -2,17 +2,40 @@
 -- INFINITY CHEATS DEFINITIONS
 -- Definitions for infinity cheats. Basically just a bunch of enormous tables!
 
+local util = require('scripts/util/util')
+
 local defs = {}
 
 -- cheat data and functions
 defs.cheats = {
-    personal = {
+    player = {
         god_mode = {type='toggle', default=false, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, new_value)
-
+                local player_table = util.player_table(player)
+                local character = player.character
+                if new_value == true then
+                    -- make sure the player is not in god mode
+                    if player.controller_type == defines.controllers.character then
+                        -- store character in global
+                        player_table.character = character
+                        -- switch controller type and transfer inventory
+                        player.set_controller{type=defines.controllers.god}
+                        util.transfer_inventory_contents(character.get_inventory(defines.inventory.character_main), player.get_inventory(defines.inventory.god_main))
+                    end
+                else
+                    -- make sure the player is in god mode
+                    if player.controller_type == defines.controllers.god then
+                        local god_inventory = player.get_inventory(defines.inventory.god_main)
+                        if not player_table.character then
+                            player_table.character = player.surface.create_entity{name='character', position=player.position, force=player.force}
+                        end
+                        util.transfer_inventory_contents(god_inventory, player_table.character.get_inventory(defines.inventory.character_main))
+                        player.set_controller{type=defines.controllers.character, character=player_table.character}
+                    end
+                end
             end,
             get_value = function(player)
-                
+                return player.controller_type == defines.controllers.god
             end
         }},
         invincible_player = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
@@ -63,7 +86,7 @@ defs.cheats = {
 
             end
         }},
-        repair_mined_item = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
+        repair_damaged_item = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, new_value)
 
             end,
@@ -92,7 +115,7 @@ defs.cheats = {
                 if player.character then player.character_reach_distance_bonus = new_value end
             end,
             get_value = function(player)
-                return player.character and player.character_reach_distance_bonus or 0
+                return player.character and player.character_reach_distance_bonus
             end
         }},
         character_build_distance_bonus = {type='number', default=1000000, in_god_mode=false, in_editor=false, functions={
@@ -100,7 +123,7 @@ defs.cheats = {
                 if player.character then player.character_build_distance_bonus = new_value end
             end,
             get_value = function(player)
-                return player.character and player.character_build_distance_bonus or 0
+                return player.character and player.character_build_distance_bonus
             end
         }},
         character_resource_reach_distance_bonus = {type='number', default=1000000, in_god_mode=false, in_editor=false, functions={
@@ -108,7 +131,7 @@ defs.cheats = {
                 if player.character then player.character_resource_reach_distance_bonus = new_value end
             end,
             get_value = function(player)
-                return player.character and player.character_resource_reach_distance_bonus or 0
+                return player.character and player.character_resource_reach_distance_bonus
             end
         }},
         character_item_drop_distance_bonus = {type='number', default=1000000, in_god_mode=false, in_editor=false, functions={
@@ -116,7 +139,7 @@ defs.cheats = {
                 if player.character then player.character_item_drop_distance_bonus = new_value end
             end,
             get_value = function(player)
-                return player.character and player.character_item_drop_distance_bonus or 0
+                return player.character and player.character_item_drop_distance_bonus
             end
         }},
         character_item_pickup_distance_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
@@ -124,7 +147,7 @@ defs.cheats = {
                 if player.character then player.character_item_pickup_distance_bonus = new_value end
             end,
             get_value = function(player)
-                return player.character and player.character_item_pickup_distance_bonus or 0
+                return player.character and player.character_item_pickup_distance_bonus
             end
         }},
         character_loot_pickup_distance_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
@@ -132,7 +155,7 @@ defs.cheats = {
                 if player.character then player.character_loot_pickup_distance_bonus = new_value end
             end,
             get_value = function(player)
-                return player.character and player.character_loot_pickup_distance_bonus or 0
+                return player.character and player.character_loot_pickup_distance_bonus
             end
         }},
         character_mining_speed_modifier = {type='number', default=1000, in_god_mode=false, in_editor=false, functions={
@@ -140,7 +163,7 @@ defs.cheats = {
                 if player.character then player.character_mining_speed_modifier = new_value end
             end,
             get_value = function(player)
-                return player.character and player.character_mining_speed_modifier or 0
+                return player.character and player.character_mining_speed_modifier
             end
         }},
         character_running_speed_modifier = {type='number', default=2, in_god_mode=false, in_editor=false, functions={
@@ -148,7 +171,7 @@ defs.cheats = {
                 if player.character then player.character_running_speed_modifier = new_value end
             end,
             get_value = function(player)
-                return player.character and player.character_running_speed_modifier or 0
+                return player.character and player.character_running_speed_modifier
             end
         }},
         character_crafting_speed_modifier = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
@@ -156,7 +179,7 @@ defs.cheats = {
                 if player.character then player.character_crafting_speed_modifier = new_value end
             end,
             get_value = function(player)
-                return player.character and player.character_crafting_speed_modifier or 0
+                return player.character and player.character_crafting_speed_modifier
             end
         }},
         character_inventory_slots_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
@@ -164,7 +187,7 @@ defs.cheats = {
                 if player.character then player.character_inventory_slots_bonus = new_value end
             end,
             get_value = function(player)
-                return player.character and player.character_inventory_slots_bonus or 0
+                return player.character and player.character_inventory_slots_bonus
             end
         }},
         character_health_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
@@ -172,18 +195,44 @@ defs.cheats = {
                 if player.character then player.character_health_bonus = new_value end
             end,
             get_value = function(player)
-                return player.character and player.character_health_bonus or 0
+                return player.character and player.character_health_bonus
             end
         }}
     }
 }
 
 -- cheats GUI parameters
-defs.gui_elems = {
-    personal = {
-        {category='toggles', table_columns=2, groups={
-            {group='interaction', caption={'personal-cheats-gui.group-interaction-caption'}, tooltip={'personal-cheats-gui.group-interaction-tooltip'}, settings={
-                {name='god_mode', type='toggle', caption={'personal-cheats-gui.setting-god-mode-caption'}, tooltip={'personal-cheats-gui.setting-god-mode-tooltip'}}
+defs.cheats_gui_elems = {
+    player = {
+        {category='toggles', table_columns=2, vertical_centering=false, groups={
+            {group='interaction', settings={
+                {name='god_mode', type='toggle'},
+                {name='invincible_player', type='toggle'},
+                {name='instant_blueprint', type='toggle'},
+                {name='instant_upgrade', type='toggle'},
+                {name='instant_deconstruction', type='toggle'}
+            }},
+            {group='inventory', settings={
+                {name='cheat_mode', type='toggle'},
+                {name='keep_last_item', type='toggle'},
+                {name='repair_damaged_item', type='toggle'},
+                {name='instant_request', type='toggle'},
+                {name='instant_trash', type='toggle'}
+            }}
+        }},
+        {category='bonuses', table_columns=2, groups={
+            {group='bonuses', settings={
+                {name='character_reach_distance_bonus', type='number'},
+                {name='character_build_distance_bonus', type='number'},
+                {name='character_resource_reach_distance_bonus', type='number'},
+                {name='character_item_drop_distance_bonus', type='number'},
+                {name='character_item_pickup_distance_bonus', type='number'},
+                {name='character_loot_pickup_distance_bonus', type='number'},
+                {name='character_mining_speed_modifier', type='number'},
+                {name='character_running_speed_modifier', type='number'},
+                {name='character_crafting_speed_modifier', type='number'},
+                {name='character_inventory_slots_bonus', type='number'},
+                {name='character_health_bonus', type='number'}
             }}
         }}
     }

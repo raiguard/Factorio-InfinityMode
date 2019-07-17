@@ -74,5 +74,20 @@ function util.player_table(player)
 end
 
 -- ----------------------------------------------------------------------------------------------------
+-- INVENTORIES
+
+-- Transfers the contents of the source inventory to the destination inventory.
+function util.transfer_inventory_contents(source_inventory, destination_inventory)
+	for i = 1, math.min(#source_inventory, #destination_inventory), 1 do
+		local source_slot = source_inventory[i]
+		if source_slot.valid_for_read then
+			if destination_inventory[i].set_stack(source_slot) then
+				source_inventory[i].clear()
+			end
+		end
+	end
+end
+
+-- ----------------------------------------------------------------------------------------------------
 
 return util

@@ -26,21 +26,21 @@ end)
 
 gui.on_click('im_button', function(e)
     local player = util.get_player(e)
-    -- local frame_flow = mod_gui.get_frame_flow(player)
-    -- if not frame_flow.im_cheats_window then
-    --     cheats_gui.create(player, frame_flow)
-    -- else
-    --     frame_flow.im_cheats_window.destroy()
-    -- end
-    local center_gui = util.get_center_gui(player)
-    if center_gui and center_gui.element.name ~= 'im_cheats_window' then
-        util.close_center_gui(player)
-        util.set_center_gui(player, cheats_gui.create(player, player.gui.center))
-    elseif center_gui and center_gui.element.name == 'im_cheats_window' then
-        util.close_center_gui(player)
-    elseif not center_gui then
-        util.set_center_gui(player, cheats_gui.create(player, player.gui.center))
+    local frame_flow = mod_gui.get_frame_flow(player)
+    if not frame_flow.im_cheats_window then
+        cheats_gui.create(player, frame_flow)
+    else
+        frame_flow.im_cheats_window.destroy()
     end
+    -- local center_gui = util.get_center_gui(player)
+    -- if center_gui and center_gui.element.name ~= 'im_cheats_window' then
+    --     util.close_center_gui(player)
+    --     util.set_center_gui(player, cheats_gui.create(player, player.gui.center))
+    -- elseif center_gui and center_gui.element.name == 'im_cheats_window' then
+    --     util.close_center_gui(player)
+    -- elseif not center_gui then
+    --     util.set_center_gui(player, cheats_gui.create(player, player.gui.center))
+    -- end
 end)
 
 -- ----------------------------------------------------------------------------------------------------
