@@ -9,6 +9,10 @@ function util.get_player(obj)
     if obj.player_index then return game.players[obj.player_index] end
 end
 
+function util.is_player_god(player)
+    return player.controller_type == defines.controllers.god
+end
+
 -- ----------------------------------------------------------------------------------------------------
 -- GUI
 

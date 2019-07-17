@@ -46,16 +46,17 @@ end)
 -- ----------------------------------------------------------------------------------------------------
 -- CHEATS WINDOW
 
-on_event(defines.events.on_gui_checked_state_changed, function(e)
+on_event({defines.events.on_gui_checked_state_changed, defines.events.on_gui_confirmed}, function(e)
     local params = string.split(e.element.name, '-')
+    local player = util.get_player(e)
     if params[1] == 'im_cheats' and params[4] == 'checkbox' and cheats.is_valid(params[2], params[3]) then
-        cheats.update(util.get_player(e), {params[2], params[3]}, e.element.state)
+        local param = e.element.type == 'checkbox' and 'state' or 'value'
+        cheats.update(player, {params[2], params[3]}, e.element[param])
+        cheats_gui.refresh(player, mod_gui.get_frame_flow(player))
     end
 end)
 
-on_event(defines.events.on_gui_confirmed, function(e)
-    local params = string.split(e.element.name, '-')
-    if params[1] == 'im_cheats' and params[4] == 'textfield' and cheats.is_valid(params[2], params[3]) then
-        cheats.update(util.get_player(e), {params[2], params[3]}, tonumber(e.element.text))
-    end
+on_event(defines.events.on_player_toggled_map_editor, function(e)
+    local player = util.get_player(e)
+    cheats_gui.refresh(player, mod_gui.get_frame_flow(player))
 end)

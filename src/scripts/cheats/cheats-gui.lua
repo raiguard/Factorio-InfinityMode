@@ -40,6 +40,8 @@ function cheats_gui.create(player, parent)
         })
 
         local category_num = 0
+        local player_is_god = player.controller_type == defines.controllers.god
+        local player_is_editor = player.controller_type == defines.controllers.editor
         for _,category in pairs(defs.cheats_gui_elems.player) do
             category_num = category_num + 1
             local table = pane.add{type='table', name='im_cheats-player-'..category.category..'-table', column_count=category.table_columns, vertical_centering=category.vertical_centering}
@@ -49,20 +51,37 @@ function cheats_gui.create(player, parent)
                 local flow = table.add{type='flow', name='im_cheats-player-'..category.category..'-flow-'..i, direction='vertical'}
                 flow.add{type='label', name='im_cheats-player-'..group.group..'-flow-'..i..'-label', style='caption_label', caption={'gui-cheats-player.group-'..group.group..'-caption'}}.style.horizontally_stretchable = true
                 for _,setting in pairs(group.settings) do
+                    local setting_def = defs.cheats.player[setting.name]
+                    local element
                     if setting.type == 'toggle' then
-                        flow.add{type='checkbox', name='im_cheats-player-'..setting.name..'-checkbox', state=defs.cheats.player[setting.name].functions.get_value(player) or false, caption={'gui-cheats-player.setting-'..setting.name..'-caption'}}.style.horizontally_stretchable = true
+                        element = flow.add{type='checkbox', name='im_cheats-player-'..setting.name..'-checkbox', state=setting_def.functions.get_value(player) or false, caption={'gui-cheats-player.setting-'..setting.name..'-caption'}}
+                        element.style.horizontally_stretchable = true
                     elseif setting.type == 'number' then
                         local setting_flow = flow.add{type='flow', name='im_cheats-player-'..setting.name..'-flow', direction='horizontal'}
                         setting_flow.style.vertical_align = 'center'
                         setting_flow.add{type='label', name='im_cheats-player-'..setting.name..'-label', caption={'gui-cheats-player.setting-'..setting.name..'-caption'}}
                         setting_flow.add{type='flow', name='im_cheats-player-'..setting.name..'-filler', style='invisible_horizontal_filler'}
-                        setting_flow.add{type='textfield', name='im_cheats-player-'..setting.name..'-textfield', style='short_number_textfield', text=tostring(defs.cheats.player[setting.name].functions.get_value(player) or '---'), numeric=true, lose_focus_on_confirm=true}
+                        element = setting_flow.add{type='textfield', name='im_cheats-player-'..setting.name..'-textfield', style='short_number_textfield', text=tostring(setting_def.functions.get_value(player) or '---'), numeric=true, lose_focus_on_confirm=true}
+                    end
+                    if player_is_god and setting_def.in_god_mode == false then
+                        element.enabled = false
+                        element.tooltip = {'gui-cheats.disabled-in-god-mode-tooltip'}
+                    elseif player_is_editor and setting_def.in_editor == false then
+                        element.enabled = false
+                        element.tooltip = {'gui-cheats.disabled-in-editor-tooltip'}
                     end
                 end
             end
         end
 
         return {element=window_frame, close_button=titlebar.children[4]}
+end
+
+function cheats_gui.refresh(player, parent)
+    if parent.im_cheats_window then
+        parent.im_cheats_window.destroy()
+        cheats_gui.create(player, parent)
+    end
 end
 
 return cheats_gui

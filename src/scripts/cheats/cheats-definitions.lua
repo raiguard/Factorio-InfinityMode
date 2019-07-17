@@ -80,7 +80,7 @@ defs.cheats = {
 
             end
         }},
-        cheat_mode = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+        cheat_mode = {type='toggle', default=true, in_god_mode=true, in_editor=false, functions={
             value_changed = function(player, cheat, new_value)
                 player.cheat_mode = new_value
             end,
@@ -104,7 +104,7 @@ defs.cheats = {
 
             end
         }},
-        instant_request = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+        instant_request = {type='toggle', default=true, in_god_mode=true, in_editor=false, functions={
             value_changed = function(player, cheat, new_value)
 
             end,
@@ -112,7 +112,7 @@ defs.cheats = {
 
             end
         }},
-        instant_trash = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+        instant_trash = {type='toggle', default=true, in_god_mode=true, in_editor=false, functions={
             value_changed = function(player, cheat, new_value)
 
             end,
