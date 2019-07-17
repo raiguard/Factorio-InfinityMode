@@ -44,7 +44,15 @@ ib_item.place_result = 'infinity-beacon'
 ib_item.subgroup='im-modules'
 ib_item.order = 'aa'
 
-data:extend{ip_item, hi_item, ir_item, ib_item}
+-- infinity lab
+local lab_item = table.deepcopy(data.raw['item']['lab'])
+lab_item.name = 'infinity-lab'
+lab_item.icons = {apply_infinity_tint{icon=lab_item.icon}}
+lab_item.place_result = 'infinity-lab'
+lab_item.subgroup = 'im-misc'
+lab_item.order = 'ca'
+
+data:extend{ip_item, hi_item, ir_item, ib_item, lab_item}
 
 data:extend{
     {
@@ -71,7 +79,7 @@ data:extend{
     }
 }
 
-register_recipes{'infinity-pipe', 'heat-interface', 'infinity-radar', 'infinity-beacon', 'infinity-fusion-reactor-equipment', 'infinity-personal-roboport-equipment'}
+register_recipes{'infinity-pipe', 'heat-interface', 'infinity-radar', 'infinity-beacon', 'infinity-lab', 'infinity-fusion-reactor-equipment', 'infinity-personal-roboport-equipment'}
 
 
 -- ------------------------------------------------------------------------------------------
@@ -102,7 +110,23 @@ ib_entity.module_specification = {module_slots=12}
 apply_infinity_tint(ib_entity.base_picture)
 apply_infinity_tint(ib_entity.animation)
 
-data:extend{ir_entity, ib_entity}
+-- infinity lab
+local lab_entity = table.deepcopy(data.raw['lab']['lab'])
+lab_entity.name = 'infinity-lab'
+lab_entity.icons = lab_item.icons
+lab_entity.minable.result = 'infinity-lab'
+lab_entity.energy_source = {type='void'}
+lab_entity.energy_usage = '1W'
+lab_entity.researching_speed = 100
+lab_entity.module_specification = {module_slots=12}
+for _,k in pairs{'on_animation', 'off_animation'} do
+    for i=1,2 do
+        apply_infinity_tint(lab_entity[k].layers[i])
+        apply_infinity_tint(lab_entity[k].layers[i].hr_version)
+    end
+end
+
+data:extend{ir_entity, ib_entity, lab_entity}
 
 
 -- ------------------------------------------------------------------------------------------
