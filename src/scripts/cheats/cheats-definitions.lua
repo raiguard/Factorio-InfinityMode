@@ -18,6 +18,8 @@ defs.cheats = {
                     if player.controller_type == defines.controllers.character then
                         -- store character in global
                         player_table.character = character
+                        -- 'deactivate' (freeze) character
+                        player_table.character.active = false
                         -- switch controller and transfer inventory
                         player.set_controller{type=defines.controllers.god}
                         util.transfer_inventory_contents(character.get_inventory(defines.inventory.character_main), player.get_inventory(defines.inventory.god_main))
@@ -31,6 +33,9 @@ defs.cheats = {
                         if not player_table.character then
                             player_table.character = player.surface.create_entity{name='character', position=player.position, force=player.force}
                         end
+                        -- teleport character to current position and reenable movement
+                        player_table.character.teleport(player.position)
+                        player_table.character.active = true
                         -- transfer inventory and switch controller
                         util.transfer_inventory_contents(god_inventory, player_table.character.get_inventory(defines.inventory.character_main))
                         player.set_controller{type=defines.controllers.character, character=player_table.character}
