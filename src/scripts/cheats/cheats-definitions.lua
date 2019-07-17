@@ -9,7 +9,7 @@ local defs = {}
 -- cheat data and functions
 defs.cheats = {
     player = {
-        god_mode = {type='toggle', default=false, in_god_mode=false, in_editor=false, functions={
+        god_mode = {type='toggle', default=false, in_god_mode=true, in_editor=false, functions={
             value_changed = function(player, cheat, new_value)
                 local player_table = util.player_table(player)
                 local character = player.character
@@ -18,17 +18,20 @@ defs.cheats = {
                     if player.controller_type == defines.controllers.character then
                         -- store character in global
                         player_table.character = character
-                        -- switch controller type and transfer inventory
+                        -- switch controller and transfer inventory
                         player.set_controller{type=defines.controllers.god}
                         util.transfer_inventory_contents(character.get_inventory(defines.inventory.character_main), player.get_inventory(defines.inventory.god_main))
                     end
                 else
                     -- make sure the player is in god mode
                     if player.controller_type == defines.controllers.god then
+                        -- save inventory
                         local god_inventory = player.get_inventory(defines.inventory.god_main)
+                        -- if the player does not own a character, create one
                         if not player_table.character then
                             player_table.character = player.surface.create_entity{name='character', position=player.position, force=player.force}
                         end
+                        -- transfer inventory and switch controller
                         util.transfer_inventory_contents(god_inventory, player_table.character.get_inventory(defines.inventory.character_main))
                         player.set_controller{type=defines.controllers.character, character=player_table.character}
                     end
@@ -38,7 +41,17 @@ defs.cheats = {
                 return player.controller_type == defines.controllers.god
             end
         }},
-        invincible_player = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
+        invincible_character = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
+            value_changed = function(player, cheat, new_value)
+                if player.character then
+                    player.character.destructible = not new_value
+                end
+            end,
+            get_value = function(player)
+                return player.character and not player.character.destructible
+            end
+        }},
+        instant_blueprint = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
             value_changed = function(player, cheat, new_value)
 
             end,
@@ -46,7 +59,7 @@ defs.cheats = {
 
             end
         }},
-        instant_blueprint = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
+        instant_upgrade = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
             value_changed = function(player, cheat, new_value)
 
             end,
@@ -54,7 +67,7 @@ defs.cheats = {
 
             end
         }},
-        instant_upgrade = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
+        instant_deconstruction = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
             value_changed = function(player, cheat, new_value)
 
             end,
@@ -62,15 +75,7 @@ defs.cheats = {
 
             end
         }},
-        instant_deconstruction = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
-            value_changed = function(player, cheat, new_value)
-
-            end,
-            get_value = function(player)
-
-            end
-        }},
-        cheat_mode = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
+        cheat_mode = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
             value_changed = function(player, cheat, new_value)
                 player.cheat_mode = new_value
             end,
@@ -78,7 +83,7 @@ defs.cheats = {
                 return player.cheat_mode
             end
         }},
-        keep_last_item = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
+        keep_last_item = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
             value_changed = function(player, cheat, new_value)
 
             end,
@@ -86,7 +91,7 @@ defs.cheats = {
 
             end
         }},
-        repair_damaged_item = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
+        repair_damaged_item = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
             value_changed = function(player, cheat, new_value)
 
             end,
@@ -94,7 +99,7 @@ defs.cheats = {
 
             end
         }},
-        instant_request = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
+        instant_request = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
             value_changed = function(player, cheat, new_value)
 
             end,
@@ -102,7 +107,7 @@ defs.cheats = {
 
             end
         }},
-        instant_trash = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
+        instant_trash = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
             value_changed = function(player, cheat, new_value)
 
             end,
@@ -207,7 +212,7 @@ defs.cheats_gui_elems = {
         {category='toggles', table_columns=2, vertical_centering=false, groups={
             {group='interaction', settings={
                 {name='god_mode', type='toggle'},
-                {name='invincible_player', type='toggle'},
+                {name='invincible_character', type='toggle'},
                 {name='instant_blueprint', type='toggle'},
                 {name='instant_upgrade', type='toggle'},
                 {name='instant_deconstruction', type='toggle'}
@@ -220,7 +225,7 @@ defs.cheats_gui_elems = {
                 {name='instant_trash', type='toggle'}
             }}
         }},
-        {category='bonuses', table_columns=2, groups={
+        {category='bonuses', table_columns=1, groups={
             {group='bonuses', settings={
                 {name='character_reach_distance_bonus', type='number'},
                 {name='character_build_distance_bonus', type='number'},
