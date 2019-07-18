@@ -1,15 +1,24 @@
 local abs = math.abs
-local on_event = require('__stdlib__/stdlib/event/event').register
+local event = require('__stdlib__/stdlib/event/event')
+local on_event = event.register
 local util = require('scripts/util/util')
 
+local conditional_event = require('scripts/util/conditional-event')
+
 -- on game init
-on_event('on_init', function(e)
+event.on_init(function()
     game.create_surface('soh', {width = 1, height = 1})
     global.wagons = {}
 end)
 
+event.on_load(function(e)
+    if table_size(global.wagons) > 0 then
+        conditional_event.register(defines.events.on_tick, on_tick)
+    end
+end)
+
 -- on every tick
-on_event(defines.events.on_tick, function(e)
+function on_tick(e)
     for _,t in pairs(global.wagons) do
         if t.wagon.valid and t.ref.valid then
             if t.wagon_name == 'infinity-cargo-wagon' then
@@ -35,13 +44,16 @@ on_event(defines.events.on_tick, function(e)
             end
         end
     end
-end)
+end
 
 -- when an entity is built
-on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity}, function(e)
-    local entity = e.created_entity
+on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built}, function(e)
+    local entity = e.created_entity or e.entity
     if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
         local ref = game.surfaces.soh.create_entity{name = 'infinity-' .. (entity.name == 'infinity-cargo-wagon' and 'chest' or 'pipe'), position = {0,0}, force = entity.force}
+        if table_size(global.wagons) == 0 then
+            conditional_event.register(defines.events.on_tick, on_tick)
+        end
         -- create all api lookups here to save time in on_tick()
         global.wagons[entity.unit_number] = {
             wagon = entity,
@@ -80,6 +92,9 @@ on_event({defines.events.on_player_mined_entity, defines.events.on_robot_mined_e
     if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
         global.wagons[entity.unit_number].ref.destroy()
         global.wagons[entity.unit_number] = nil
+        if table_size(global.wagons) == 0 then
+            conditional_event.deregister(defines.events.on_tick, on_tick)
+        end
     end
 end)
 
