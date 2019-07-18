@@ -13,6 +13,10 @@ function util.is_player_god(player)
     return player.controller_type == defines.controllers.god
 end
 
+function util.is_ghost(obj)
+    return obj.name == 'entity-ghost' or obj.name == 'tile-ghost'
+end
+
 -- ----------------------------------------------------------------------------------------------------
 -- GUI
 

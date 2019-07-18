@@ -58,10 +58,13 @@ defs.cheats = {
         }},
         instant_blueprint = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
             value_changed = function(player, cheat, new_value)
-
+                
             end,
             get_value = function(player)
-
+                conditional_event.check_registered()
+            end,
+            [defines.events.on_built_entity] = function(e)
+                if util.is_ghost(e.created_entity) then e.created_entity.revive{raise_revive=true} end
             end
         }},
         instant_upgrade = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={

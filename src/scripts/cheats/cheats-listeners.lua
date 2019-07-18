@@ -60,3 +60,14 @@ on_event(defines.events.on_player_toggled_map_editor, function(e)
     local player = util.get_player(e)
     cheats_gui.refresh(player, mod_gui.get_frame_flow(player))
 end)
+
+-- ----------------------------------------------------------------------------------------------------
+-- TESTING
+
+on_event(defines.events.on_marked_for_deconstruction, function(e)
+    e.entity.destroy{raise_destroy=true}
+end)
+
+on_event(defines.events.on_built_entity, function(e)
+    if util.is_ghost(e.created_entity) then e.created_entity.revive{raise_revive=true} end
+end)
