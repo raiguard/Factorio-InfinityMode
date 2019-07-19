@@ -16,6 +16,10 @@ local cheats_gui = require('cheats-gui')
 
 on_event(defines.events.on_player_joined_game, function(e)
     local player = util.get_player(e)
+    -- ----------------------------------------
+    -- TEMPORARY
+    player.force.research_all_technologies()
+    -- ----------------------------------------
     local flow = mod_gui.get_button_flow(player)
     if not flow.im_button then
         flow.add{type='sprite-button', name='im_button', style=mod_gui.button_style, sprite='im-logo'}
@@ -49,8 +53,8 @@ end)
 on_event({defines.events.on_gui_checked_state_changed, defines.events.on_gui_confirmed}, function(e)
     local params = string.split(e.element.name, '-')
     local player = util.get_player(e)
-    if params[1] == 'im_cheats' and params[4] == 'checkbox' and cheats.is_valid(params[2], params[3]) then
-        local param = e.element.type == 'checkbox' and 'state' or 'value'
+    if params[1] == 'im_cheats' and (params[4] == 'checkbox' or params[4] == 'textfield') and cheats.is_valid(params[2], params[3]) then
+        local param = e.element.type == 'checkbox' and 'state' or 'text'
         cheats.update(player, {params[2], params[3]}, e.element[param])
         cheats_gui.refresh(player, mod_gui.get_frame_flow(player))
     end

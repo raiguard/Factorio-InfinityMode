@@ -11,12 +11,6 @@ event.on_init(function()
     global.wagons = {}
 end)
 
-event.on_load(function(e)
-    if table_size(global.wagons) > 0 then
-        conditional_event.register(defines.events.on_tick, on_tick)
-    end
-end)
-
 -- on every tick
 function on_tick(e)
     for _,t in pairs(global.wagons) do
