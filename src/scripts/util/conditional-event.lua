@@ -3,8 +3,20 @@
 -- This script creates and handles conditional events.
 
 local event = require('__stdlib__/stdlib/event/event')
+local string = require('__stdlib__/stdlib/utils/string')
+
+local defs = require('scripts/util/definitions')
 local util = require('scripts/util/util')
+
 local conditional_event = {}
+
+local function get_object(string)
+    local def = defs
+    for _,key in pairs(string.split(string)) do
+        def = def[key]
+    end
+    return def
+end
 
 event.on_init(function()
     global.events = {}
@@ -12,34 +24,29 @@ end)
 
 event.on_load(function()
     for e,t in pairs(global.events) do
-        for _,h in pairs(t) do
-            event.register(e,h)
+        for def,_ in pairs(t) do
+            event.register(e, get_object(def))
         end
     end
 end)
 
-function conditional_event.register(e, handler)
+-- handler must be a function reference from the definitions file
+function conditional_event.register(e, def)
     local events = global.events
     if not events[e] then events[e] = {} end
-    if not events[e][handler] then
-        table.insert(events[e], handler)
+    if not events[e][def] then
+        events[e][def] = true
     end
-    event.register(e, handler)
+    event.register(e, get_object(def))
     LOG(global.events)
 end
 
-function conditional_event.deregister(e, handler)
+function conditional_event.deregister(e, def)
     local events = global.events
-    events[e][handler] = nil
-    event.remove(e, handler)
+    events[e][def] = nil
+    if table_size(events[e]) == 0 then events[e] = nil end
+    event.remove(e, get_object(def))
     LOG(global.events)
-end
-
-function conditional_event.is_registered(event, handler)
-    local events = global.events
-    if handler then return events[event] and events[event][handler] and true or false
-    else return events[event] and true or false
-    end
 end
 
 function conditional_event.cheat_event(e)
@@ -49,7 +56,6 @@ function conditional_event.cheat_event(e)
     end
     local player = util.get_player(e)
     local events = global.events
-    
 end
 
 return conditional_event

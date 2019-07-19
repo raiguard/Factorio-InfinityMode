@@ -5,7 +5,7 @@
 local tabbed_pane = require('scripts/util/gui-elems/tabbed-pane')
 local titlebar = require('scripts/util/gui-elems/titlebar')
 
-local defs = require('cheats-definitions')
+local defs = require('scripts/util/definitions')
 
 local cheats_gui = {}
 

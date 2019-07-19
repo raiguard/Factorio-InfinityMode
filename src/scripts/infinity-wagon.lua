@@ -11,42 +11,13 @@ event.on_init(function()
     global.wagons = {}
 end)
 
--- on every tick
-function on_tick(e)
-    for _,t in pairs(global.wagons) do
-        if t.wagon.valid and t.ref.valid then
-            if t.wagon_name == 'infinity-cargo-wagon' then
-                if t.flip == 0 then
-                    t.wagon_inv.clear()
-                    for n,c in pairs(t.ref_inv.get_contents()) do t.wagon_inv.insert{name=n, count=c} end
-                    t.flip = 1
-                elseif t.flip == 1 then
-                    t.ref_inv.clear()
-                    for n,c in pairs(t.wagon_inv.get_contents()) do t.ref_inv.insert{name=n, count=c} end
-                    t.flip = 0
-                end
-            elseif t.wagon_name == 'infinity-fluid-wagon' then
-                if t.flip == 0 then
-                    local fluid = t.ref_fluidbox[1]
-                    t.wagon_fluidbox[1] = fluid and {name=fluid.name, amount=(abs(fluid.amount) * 250), temperature=fluid.temperature} or nil
-                    t.flip = 1
-                elseif t.flip == 1 then
-                    local fluid = t.wagon_fluidbox[1]
-                    t.ref_fluidbox[1] = fluid and {name=fluid.name, amount=(abs(fluid.amount) / 250), temperature=fluid.temperature} or nil
-                    t.flip = 0
-                end
-            end
-        end
-    end
-end
-
 -- when an entity is built
 on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built}, function(e)
     local entity = e.created_entity or e.entity
     if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
         local ref = game.surfaces.soh.create_entity{name = 'infinity-' .. (entity.name == 'infinity-cargo-wagon' and 'chest' or 'pipe'), position = {0,0}, force = entity.force}
         if table_size(global.wagons) == 0 then
-            conditional_event.register(defines.events.on_tick, on_tick)
+            conditional_event.register(defines.events.on_tick, 'events.ia_on_tick')
         end
         -- create all api lookups here to save time in on_tick()
         global.wagons[entity.unit_number] = {
@@ -87,7 +58,7 @@ on_event({defines.events.on_player_mined_entity, defines.events.on_robot_mined_e
         global.wagons[entity.unit_number].ref.destroy()
         global.wagons[entity.unit_number] = nil
         if table_size(global.wagons) == 0 then
-            conditional_event.deregister(defines.events.on_tick, on_tick)
+            conditional_event.deregister(defines.events.on_tick, 'events.ia_on_tick')
         end
     end
 end)
