@@ -12,7 +12,7 @@ event.on_init(function()
 end)
 
 -- when an entity is built
-on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built}, function(e)
+on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built, defines.events.script_raised_revive}, function(e)
     local entity = e.created_entity or e.entity
     if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
         local ref = game.surfaces.soh.create_entity{name = 'infinity-' .. (entity.name == 'infinity-cargo-wagon' and 'chest' or 'pipe'), position = {0,0}, force = entity.force}

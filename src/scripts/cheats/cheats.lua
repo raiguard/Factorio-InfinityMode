@@ -18,7 +18,7 @@ function cheats.create(player)
     for category,list in pairs(defs.cheats) do
         player_cheats[category] = {}
         for name,table in pairs(list) do
-            player_cheats[category][name] = table.functions.setup_global and table.functions.setup_global(table.default)
+            player_cheats[category][name] = table.functions.setup_global and table.functions.setup_global(player, table.default)
             if table.functions.get_value then
                 cheats.update(player, {category, name}, table.default)
             end
@@ -30,7 +30,7 @@ end
 function cheats.update(player, cheat, value)
     game.print(player.name .. ' :: ' .. cheat[1] .. '.' .. cheat[2] .. ' = ' .. tostring(value))
     local cheat_def = defs.cheats[cheat[1]][cheat[2]]
-    cheat_def.functions.value_changed(player, cheat, util.cheat_table(player, cheat[1], cheat[2]), value)
+    cheat_def.functions.value_changed(player, cheat_def, util.cheat_table(player, cheat[1], cheat[2]), value)
 end
 
 function cheats.is_valid(category, name)

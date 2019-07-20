@@ -2,8 +2,10 @@
 -- CONDITIONAL EVENT HANDLER
 -- This script creates and handles conditional events.
 
+local abs = math.abs
 local event = require('__stdlib__/stdlib/event/event')
 local string = require('__stdlib__/stdlib/utils/string')
+local table = require('__stdlib__/stdlib/utils/table')
 
 local util = require('scripts/util/util')
 
@@ -19,6 +21,16 @@ local events_def = {
             instant_deconstruction = {
                 on_deconstruction = {{defines.events.on_marked_for_deconstruction}, function(e)
                     e.entity.destroy{raise_destroy=true}
+                end}
+            },
+            keep_last_item = {
+                on_put_item = {{defines.events.on_put_item}, function(e)
+                    local player = util.get_player(e)
+                    local cheat_table = util.cheat_table(player, 'player', 'keep_last_item')
+                    local cursor_stack = player.cursor_stack
+                    if cursor_stack.count == 1 then
+                        player.get_main_inventory().insert{name=cursor_stack.name, count=cursor_stack.count}
+                    end
                 end}
             }
         }
@@ -64,6 +76,18 @@ local function get_object(string)
     return def
 end
 
+local function other_players_using_cheat(player, cheat_def, cheat_table_def)
+    local players = table.deepcopy(global.players)
+    players[player.index] = nil
+    for i,t in pairs(players) do
+        local cheat_table = t.cheats[cheat_table_def[1]][cheat_table_def[2]]
+        if cheat_def.functions.get_value(player, cheat_table) then
+            return true
+        end
+    end
+    return false
+end
+
 event.on_init(function()
     global.events = {}
 end)
@@ -99,13 +123,19 @@ function conditional_event.deregister(def)
     end
 end
 
-function conditional_event.cheat_event(e)
-    if not e.player_index then
-        game.print('cannot follow cheat event without a player index!')
-        return
+-- only register if nobody else has the cheat active
+function conditional_event.cheat_register(player, cheat_def, event_def)
+    local string_table = string.split(event_def)
+    if other_players_using_cheat(player, cheat_def, {string_table[2], string_table[3]}) == false then
+        conditional_event.register(event_def)
     end
-    local player = util.get_player(e)
-    local events = global.events
+end
+
+function conditional_event.cheat_deregister(player, cheat_def, event_def)
+    local string_table = string.split(event_def)
+    if other_players_using_cheat(player, cheat_def, {string_table[2], string_table[3]}) == false then
+        conditional_event.deregister(event_def)
+    end
 end
 
 return conditional_event

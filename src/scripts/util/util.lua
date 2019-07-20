@@ -89,6 +89,18 @@ end
 -- ----------------------------------------------------------------------------------------------------
 -- INVENTORIES
 
+-- -- subtracts two sets of inventory contents and returns the difference
+-- function util.subtract_inventory_contents(inv_1, inv_2)
+--     local results = {}
+--     for name_1,count_1 in pairs(inv_1) do
+--         local count_2 = inv_2[name_1] or 1000000
+--         if count_1 - count_2 == 1 then
+--             results[name_1] = count_1 - count_2
+--         end
+--     end
+--     return results
+-- end
+
 -- Transfers the contents of the source inventory to the destination inventory.
 function util.transfer_inventory_contents(source_inventory, destination_inventory)
 	for i = 1, math.min(#source_inventory, #destination_inventory), 1 do

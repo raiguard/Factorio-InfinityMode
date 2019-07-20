@@ -59,15 +59,15 @@ defs.cheats = {
             end
         }},
         instant_blueprint = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
-            setup_global = function(default_value)
+            setup_global = function(player, default_value)
                 return { cur_value = default_value }
             end,
             value_changed = function(player, cheat, cheat_table, new_value)
                 cheat_table.cur_value = new_value
                 if new_value then
-                    conditional_event.register('cheats.player.instant_blueprint.on_built_entity')
+                    conditional_event.cheat_register(player, cheat, 'cheats.player.instant_blueprint.on_built_entity')
                 else
-                    conditional_event.deregister('cheats.player.instant_blueprint.on_built_entity')
+                    conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_blueprint.on_built_entity')
                 end
             end,
             get_value = function(player, cheat_table)
@@ -83,15 +83,15 @@ defs.cheats = {
             end
         }},
         instant_deconstruction = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
-            setup_global = function(default_value)
+            setup_global = function(player, default_value)
                 return { cur_value = default_value }
             end,
             value_changed = function(player, cheat, cheat_table, new_value)
                 cheat_table.cur_value = new_value
                 if new_value then
-                    conditional_event.register('cheats.player.instant_deconstruction.on_deconstruction')
+                    conditional_event.cheat_register(player, cheat, 'cheats.player.instant_deconstruction.on_deconstruction')
                 else
-                    conditional_event.deregister('cheats.player.instant_deconstruction.on_deconstruction')
+                    conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_deconstruction.on_deconstruction')
                 end
             end,
             get_value = function(player, cheat_table)
@@ -107,11 +107,19 @@ defs.cheats = {
             end
         }},
         keep_last_item = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+            setup_global = function(player, default_value)
+                return { cur_value = default_value }
+            end,
             value_changed = function(player, cheat, cheat_table, new_value)
-
+                cheat_table.cur_value = new_value
+                if new_value then
+                    conditional_event.cheat_register(player, cheat, 'cheats.player.keep_last_item.on_put_item')
+                else
+                    conditional_event.cheat_deregister(player, cheat, 'cheats.player.keep_last_item.on_put_item')
+                end
             end,
             get_value = function(player, cheat_table)
-
+                return cheat_table.cur_value
             end
         }},
         repair_damaged_item = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
@@ -122,7 +130,7 @@ defs.cheats = {
 
             end
         }},
-        instant_request = {type='toggle', default=true, in_god_mode=true, in_editor=false, functions={
+        instant_request = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_table, new_value)
 
             end,
@@ -130,7 +138,7 @@ defs.cheats = {
 
             end
         }},
-        instant_trash = {type='toggle', default=true, in_god_mode=true, in_editor=false, functions={
+        instant_trash = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_table, new_value)
 
             end,
