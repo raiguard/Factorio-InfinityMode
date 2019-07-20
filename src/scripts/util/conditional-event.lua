@@ -9,7 +9,7 @@ local table = require('__stdlib__/stdlib/utils/table')
 
 local util = require('scripts/util/util')
 
--- all conditional events are contained here for easy lookup
+-- all conditional events are contained here for enable lookup
 local events_def = {
     cheats = {
         player = {
@@ -31,6 +31,40 @@ local events_def = {
                     if cursor_stack.count == 1 then
                         player.get_main_inventory().insert{name=cursor_stack.name, count=cursor_stack.count}
                     end
+                end}
+            },
+            instant_request = {
+                on_main_inventory_changed = {{defines.events.on_player_main_inventory_changed}, function(e)
+                    local player = util.get_player(e)
+                    -- check if the player has a character
+                    if not player.character then return end
+                    local character = player.character
+                    local inventory = player.get_main_inventory()
+                    local contents = inventory.get_contents()
+                    -- combine the cursor stack with the main inventory contents
+                    if player.cursor_stack.valid_for_read then
+                        local stack = player.cursor_stack
+                        contents[stack.name] = stack.count + (contents[stack.name] or 0)
+                    end
+                    -- iterate over all request slots
+                    for i=1,character.request_slot_count do
+                        local request = character.get_request_slot(i)
+                        if request then
+                            -- subtract request from the actual count
+                            local diff = request.count - (contents[request.name] or 0)
+                            if diff > 0 then
+                                inventory.insert{name=request.name, count=diff}
+                            end
+                        end
+                    end
+                end}
+            },
+            instant_trash = {
+                on_trash_inventory_changed = {{defines.events.on_player_trash_inventory_changed}, function(e)
+                    local player = util.get_player(e)
+                    -- check if the player has a character
+                    if not player.character then return end
+                    player.character.get_inventory(defines.inventory.character_trash).clear()
                 end}
             }
         }

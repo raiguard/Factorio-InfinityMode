@@ -4,6 +4,7 @@
 
 local abs = math.abs
 local conditional_event = require('scripts/util/conditional-event')
+local event = require('__stdlib__/stdlib/event/event')
 local util = require('scripts/util/util')
 
 local defs = {}
@@ -131,19 +132,37 @@ defs.cheats = {
             end
         }},
         instant_request = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
+            setup_global = function(player, default_value)
+                return { cur_value = default_value }
+            end,
             value_changed = function(player, cheat, cheat_table, new_value)
-
+                cheat_table.cur_value = new_value
+                if new_value then
+                    conditional_event.cheat_register(player, cheat, 'cheats.player.instant_request.on_main_inventory_changed')
+                    event.dispatch{name=defines.events.on_player_main_inventory_changed, player_index=player.index}
+                else
+                    conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_request.on_main_inventory_changed')
+                end
             end,
             get_value = function(player, cheat_table)
-
+                return cheat_table.cur_value
             end
         }},
         instant_trash = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
+            setup_global = function(player, default_value)
+                return { cur_value = default_value }
+            end,
             value_changed = function(player, cheat, cheat_table, new_value)
-
+                cheat_table.cur_value = new_value
+                if new_value then
+                    conditional_event.cheat_register(player, cheat, 'cheats.player.instant_trash.on_trash_inventory_changed')
+                    event.dispatch{name=defines.events.on_player_trash_inventory_changed, player_index=player.index}
+                else
+                    conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_trash.on_trash_inventory_changed')
+                end
             end,
             get_value = function(player, cheat_table)
-
+                return cheat_table.cur_value
             end
         }},
         character_reach_distance_bonus = {type='number', default=1000000, in_god_mode=false, in_editor=false, functions={
