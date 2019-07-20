@@ -5,13 +5,54 @@
 local event = require('__stdlib__/stdlib/event/event')
 local string = require('__stdlib__/stdlib/utils/string')
 
-local defs = require('scripts/util/definitions')
 local util = require('scripts/util/util')
+
+-- all conditional events are contained here for easy lookup
+local events_def = {
+    cheats = {
+        player = {
+            instant_blueprint = {
+                on_built_entity = function(e)
+                    if util.is_ghost(e.created_entity) then e.created_entity.revive{raise_revive=true} end
+                end
+            }
+        }
+    },
+    infinity_wagon = {
+        on_tick = function(e)
+            for _,t in pairs(global.wagons) do
+                if t.wagon.valid and t.ref.valid then
+                    if t.wagon_name == 'infinity-cargo-wagon' then
+                        if t.flip == 0 then
+                            t.wagon_inv.clear()
+                            for n,c in pairs(t.ref_inv.get_contents()) do t.wagon_inv.insert{name=n, count=c} end
+                            t.flip = 1
+                        elseif t.flip == 1 then
+                            t.ref_inv.clear()
+                            for n,c in pairs(t.wagon_inv.get_contents()) do t.ref_inv.insert{name=n, count=c} end
+                            t.flip = 0
+                        end
+                    elseif t.wagon_name == 'infinity-fluid-wagon' then
+                        if t.flip == 0 then
+                            local fluid = t.ref_fluidbox[1]
+                            t.wagon_fluidbox[1] = fluid and {name=fluid.name, amount=(abs(fluid.amount) * 250), temperature=fluid.temperature} or nil
+                            t.flip = 1
+                        elseif t.flip == 1 then
+                            local fluid = t.wagon_fluidbox[1]
+                            t.ref_fluidbox[1] = fluid and {name=fluid.name, amount=(abs(fluid.amount) / 250), temperature=fluid.temperature} or nil
+                            t.flip = 0
+                        end
+                    end
+                end
+            end
+        end
+    }
+}
 
 local conditional_event = {}
 
 local function get_object(string)
-    local def = defs
+    local def = events_def
     for _,key in pairs(string.split(string)) do
         def = def[key]
     end
@@ -38,7 +79,6 @@ function conditional_event.register(e, def)
         events[e][def] = true
     end
     event.register(e, get_object(def))
-    LOG(global.events)
 end
 
 function conditional_event.deregister(e, def)
@@ -46,7 +86,6 @@ function conditional_event.deregister(e, def)
     events[e][def] = nil
     if table_size(events[e]) == 0 then events[e] = nil end
     event.remove(e, get_object(def))
-    LOG(global.events)
 end
 
 function conditional_event.cheat_event(e)

@@ -6,6 +6,7 @@ local tabbed_pane = require('scripts/util/gui-elems/tabbed-pane')
 local titlebar = require('scripts/util/gui-elems/titlebar')
 
 local defs = require('scripts/util/definitions')
+local util = require('scripts/util/util')
 
 local cheats_gui = {}
 
@@ -54,14 +55,14 @@ function cheats_gui.create(player, parent)
                     local setting_def = defs.cheats.player[setting.name]
                     local element
                     if setting.type == 'toggle' then
-                        element = flow.add{type='checkbox', name='im_cheats-player-'..setting.name..'-checkbox', state=setting_def.functions.get_value(player) or false, caption={'gui-cheats-player.setting-'..setting.name..'-caption'}}
+                        element = flow.add{type='checkbox', name='im_cheats-player-'..setting.name..'-checkbox', state=setting_def.functions.get_value(player, util.cheat_table(player, 'player', setting.name)) or false, caption={'gui-cheats-player.setting-'..setting.name..'-caption'}}
                         element.style.horizontally_stretchable = true
                     elseif setting.type == 'number' then
                         local setting_flow = flow.add{type='flow', name='im_cheats-player-'..setting.name..'-flow', direction='horizontal'}
                         setting_flow.style.vertical_align = 'center'
                         setting_flow.add{type='label', name='im_cheats-player-'..setting.name..'-label', caption={'gui-cheats-player.setting-'..setting.name..'-caption'}}
                         setting_flow.add{type='flow', name='im_cheats-player-'..setting.name..'-filler', style='invisible_horizontal_filler'}
-                        element = setting_flow.add{type='textfield', name='im_cheats-player-'..setting.name..'-textfield', style='short_number_textfield', text=tostring(setting_def.functions.get_value(player) or '---'), numeric=true, lose_focus_on_confirm=true}
+                        element = setting_flow.add{type='textfield', name='im_cheats-player-'..setting.name..'-textfield', style='short_number_textfield', text=tostring(setting_def.functions.get_value(player, util.cheat_table(player, 'player', setting.name)) or '---'), numeric=true, lose_focus_on_confirm=true}
                     end
                     if player_is_god and setting_def.in_god_mode == false then
                         element.enabled = false

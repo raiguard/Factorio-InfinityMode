@@ -13,24 +13,24 @@ local cheats = {}
 -- CHEATS DATA MANAGEMENT
 
 function cheats.create(player)
-    local player_table = util.player_table(player)
-    local player_cheats = {}
+    util.player_table(player).cheats = {}
+    local player_cheats = util.player_table(player).cheats
     for category,list in pairs(defs.cheats) do
         player_cheats[category] = {}
         for name,table in pairs(list) do
+            player_cheats[category][name] = table.functions.setup_global and table.functions.setup_global(table.default)
             if table.functions.get_value then
                 cheats.update(player, {category, name}, table.default)
             end
         end
     end
-    player_table.cheats = player_cheats
 end
 
 -- update a cheat to the new value
 function cheats.update(player, cheat, value)
     game.print(player.name .. ' :: ' .. cheat[1] .. '.' .. cheat[2] .. ' = ' .. tostring(value))
-    cheat = table.deepcopy(defs.cheats[cheat[1]][cheat[2]])
-    cheat.functions.value_changed(player, cheat, value)
+    local cheat_def = defs.cheats[cheat[1]][cheat[2]]
+    cheat_def.functions.value_changed(player, cheat, util.cheat_table(player, cheat[1], cheat[2]), value)
 end
 
 function cheats.is_valid(category, name)

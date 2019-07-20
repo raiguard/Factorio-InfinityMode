@@ -81,6 +81,11 @@ function util.player_table(player)
     return global.players[player.index]
 end
 
+function util.cheat_table(player, category, name)
+    local table = util.player_table(player).cheats
+    return table[category] and table[category][name]
+end
+
 -- ----------------------------------------------------------------------------------------------------
 -- INVENTORIES
 

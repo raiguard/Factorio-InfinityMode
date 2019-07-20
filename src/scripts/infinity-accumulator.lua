@@ -129,8 +129,6 @@ gui.on_text_changed('im_entity_dialog_ia_slider_textfield', function(e)
     elems.prev_textfield_value = text
     elems.slider.slider_value = tonumber(text)
     set_ia_params(entity, mode, tonumber(text), exponent)
-    LOG(data)
-
 end)
 
 on_event(defines.events.on_gui_confirmed, function(e)
