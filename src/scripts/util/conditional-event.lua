@@ -12,14 +12,19 @@ local events_def = {
     cheats = {
         player = {
             instant_blueprint = {
-                on_built_entity = function(e)
+                on_built_entity = {{defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built}, function(e)
                     if util.is_ghost(e.created_entity) then e.created_entity.revive{raise_revive=true} end
-                end
+                end}
+            },
+            instant_deconstruction = {
+                on_deconstruction = {{defines.events.on_marked_for_deconstruction}, function(e)
+                    e.entity.destroy{raise_destroy=true}
+                end}
             }
         }
     },
     infinity_wagon = {
-        on_tick = function(e)
+        on_tick = {{defines.events.on_tick}, function(e)
             for _,t in pairs(global.wagons) do
                 if t.wagon.valid and t.ref.valid then
                     if t.wagon_name == 'infinity-cargo-wagon' then
@@ -45,7 +50,7 @@ local events_def = {
                     end
                 end
             end
-        end
+        end}
     }
 }
 
@@ -66,26 +71,32 @@ end)
 event.on_load(function()
     for e,t in pairs(global.events) do
         for def,_ in pairs(t) do
-            event.register(e, get_object(def))
+            conditional_event.register(def)
         end
     end
 end)
 
 -- handler must be a function reference from the definitions file
-function conditional_event.register(e, def)
+function conditional_event.register(def)
     local events = global.events
-    if not events[e] then events[e] = {} end
-    if not events[e][def] then
-        events[e][def] = true
+    local object = get_object(def)
+    for i,e in pairs(object[1]) do
+        if not events[e] then events[e] = {} end
+        if not events[e][def] then
+            events[e][def] = true
+        end
+        event.register(e, object[2])
     end
-    event.register(e, get_object(def))
 end
 
-function conditional_event.deregister(e, def)
+function conditional_event.deregister(def)
     local events = global.events
-    events[e][def] = nil
-    if table_size(events[e]) == 0 then events[e] = nil end
-    event.remove(e, get_object(def))
+    local object = get_object(def)
+    for i,e in pairs(object[1]) do
+        events[e][def] = nil
+        if table_size(events[e]) == 0 then events[e] = nil end
+        event.remove(e, object[2])
+    end
 end
 
 function conditional_event.cheat_event(e)

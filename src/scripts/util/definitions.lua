@@ -65,9 +65,9 @@ defs.cheats = {
             value_changed = function(player, cheat, cheat_table, new_value)
                 cheat_table.cur_value = new_value
                 if new_value then
-                    conditional_event.register(defines.events.on_built_entity, 'cheats.player.instant_blueprint.on_built_entity')
+                    conditional_event.register('cheats.player.instant_blueprint.on_built_entity')
                 else
-                    conditional_event.deregister(defines.events.on_built_entity, 'cheats.player.instant_blueprint.on_built_entity')
+                    conditional_event.deregister('cheats.player.instant_blueprint.on_built_entity')
                 end
             end,
             get_value = function(player, cheat_table)
@@ -83,11 +83,19 @@ defs.cheats = {
             end
         }},
         instant_deconstruction = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+            setup_global = function(default_value)
+                return { cur_value = default_value }
+            end,
             value_changed = function(player, cheat, cheat_table, new_value)
-
+                cheat_table.cur_value = new_value
+                if new_value then
+                    conditional_event.register('cheats.player.instant_deconstruction.on_deconstruction')
+                else
+                    conditional_event.deregister('cheats.player.instant_deconstruction.on_deconstruction')
+                end
             end,
             get_value = function(player, cheat_table)
-
+                return cheat_table.cur_value
             end
         }},
         cheat_mode = {type='toggle', default=true, in_god_mode=true, in_editor=false, functions={

@@ -17,7 +17,7 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
     if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
         local ref = game.surfaces.soh.create_entity{name = 'infinity-' .. (entity.name == 'infinity-cargo-wagon' and 'chest' or 'pipe'), position = {0,0}, force = entity.force}
         if table_size(global.wagons) == 0 then
-            conditional_event.register(defines.events.on_tick, 'infinity_wagon.on_tick')
+            conditional_event.register('infinity_wagon.on_tick')
         end
         -- create all api lookups here to save time in on_tick()
         global.wagons[entity.unit_number] = {
@@ -58,7 +58,7 @@ on_event({defines.events.on_player_mined_entity, defines.events.on_robot_mined_e
         global.wagons[entity.unit_number].ref.destroy()
         global.wagons[entity.unit_number] = nil
         if table_size(global.wagons) == 0 then
-            conditional_event.deregister(defines.events.on_tick, 'infinity_wagon.on_tick')
+            conditional_event.deregister('infinity_wagon.on_tick')
         end
     end
 end)
