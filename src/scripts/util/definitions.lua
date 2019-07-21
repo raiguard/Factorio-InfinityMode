@@ -269,6 +269,30 @@ defs.cheats = {
                 return player.character and player.character_health_bonus
             end
         }}
+    },
+    force = {
+        instant_research = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+            setup_global = function(player, default_value)
+                return { cur_value = default_value }
+            end,
+            value_changed = function(player, cheat, cheat_table, new_value)
+                cheat_table.cur_value = new_value
+                if new_value then
+                    conditional_event.cheat_register(player, cheat, 'cheats.force.instant_research.on_research_started')
+                else
+                    conditional_event.cheat_deregister(player, cheat, 'cheats.force.instant_research.on_research_started')
+                end
+            end,
+            get_value = function(player, cheat_table)
+                return cheat_table.cur_value
+            end
+        }}
+    },
+    surface = {
+
+    },
+    game = {
+
     }
 }
 

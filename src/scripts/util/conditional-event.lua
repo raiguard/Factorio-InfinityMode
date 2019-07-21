@@ -112,6 +112,15 @@ local events_def = {
                     player.character.get_inventory(defines.inventory.character_trash).clear()
                 end}
             }
+        },
+        force = {
+            instant_research = {
+                on_research_started = {{defines.events.on_research_started}, function(e)
+                    local research = e.research
+                    local force = research.force
+                    force.research_progress = 1
+                end}
+            }
         }
     },
     infinity_wagon = {

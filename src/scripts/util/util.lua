@@ -67,6 +67,7 @@ end
 
 on_event('on_init', function(e)
     global.players = {}
+    global.cheats = {}
 end)
 
 on_event(defines.events.on_player_joined_game, function(e)
