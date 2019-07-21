@@ -76,11 +76,19 @@ defs.cheats = {
             end
         }},
         instant_upgrade = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+            setup_global = function(player, default_value)
+                return { cur_value = default_value }
+            end,
             value_changed = function(player, cheat, cheat_table, new_value)
-
+                cheat_table.cur_value = new_value
+                if new_value then
+                    conditional_event.cheat_register(player, cheat, 'cheats.player.instant_upgrade.on_marked_for_upgrade')
+                else
+                    conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_upgrade.on_marked_for_upgrade')
+                end
             end,
             get_value = function(player, cheat_table)
-
+                return cheat_table.cur_value
             end
         }},
         instant_deconstruction = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
@@ -124,11 +132,19 @@ defs.cheats = {
             end
         }},
         repair_damaged_item = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+            setup_global = function(player, default_value)
+                return { cur_value = default_value }
+            end,
             value_changed = function(player, cheat, cheat_table, new_value)
-
+                cheat_table.cur_value = new_value
+                if new_value then
+                    conditional_event.cheat_register(player, cheat, 'cheats.player.repair_damaged_item.on_main_inv_changed')
+                else
+                    conditional_event.cheat_deregister(player, cheat, 'cheats.player.repair_damaged_item.on_main_inv_changed')
+                end
             end,
             get_value = function(player, cheat_table)
-
+                return cheat_table.cur_value
             end
         }},
         instant_request = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
