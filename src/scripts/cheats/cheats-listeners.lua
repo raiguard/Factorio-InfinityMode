@@ -2,7 +2,8 @@
 -- CHEATS LISTENERS
 -- Entry point for the cheat scripting, where all listeners are created and managed
 
-local on_event = require('__stdlib__/stdlib/event/event').register
+local event = require('__stdlib__/stdlib/event/event')
+local on_event = event.register
 local gui = require('__stdlib__/stdlib/event/gui')
 local string = require('__stdlib__/stdlib/utils/string')
 local util = require('scripts/util/util')
@@ -11,10 +12,28 @@ local mod_gui = require('mod-gui')
 local cheats = require('cheats')
 local cheats_gui = require('cheats-gui')
 
+local function apply_defaults(e)
+    if e.player_index then
+        cheats.apply_defaults('player', util.get_player(e))
+    elseif e.surface_index then
+        cheats.apply_defaults('surface', game.surfaces[e.surface_index])
+    elseif e.force then
+        cheats.apply_defaults('force', e.force)
+    end
+    LOG(global)
+end
+
 -- ----------------------------------------------------------------------------------------------------
 -- MOD GUI
 
-on_event(defines.events.on_player_joined_game, function(e)
+event.on_init(function()
+    cheats.create()
+    apply_defaults{force=game.forces['player']}
+    apply_defaults{force=game.forces['enemy']}
+    apply_defaults{force=game.forces['neutral']}
+end)
+
+on_event(defines.events.on_player_created, function(e)
     local player = util.get_player(e)
     -- ----------------------------------------
     -- TEMPORARY
@@ -25,8 +44,6 @@ on_event(defines.events.on_player_joined_game, function(e)
     if not flow.im_button then
         flow.add{type='sprite-button', name='im_button', style=mod_gui.button_style, sprite='im-logo'}
     end
-    cheats.create(player)
-    LOG(global)
 end)
 
 gui.on_click('im_button', function(e)
@@ -59,12 +76,12 @@ on_event(defines.events.on_player_toggled_map_editor, function(e)
 end)
 
 -- ----------------------------------------------------------------------------------------------------
--- TESTING
+-- CHEATS
 
--- on_event(defines.events.on_marked_for_deconstruction, function(e)
---     e.entity.destroy{raise_destroy=true}
+-- event.on_init(function()
+--     apply_defaults{force=game.forces['player']}
+--     apply_defaults{force=game.forces['enemy']}
+--     apply_defaults{force=game.forces['neutral']}
 -- end)
 
--- on_event(defines.events.on_built_entity, function(e)
---     if util.is_ghost(e.created_entity) then e.created_entity.revive{raise_revive=true} end
--- end)
+on_event({defines.events.on_player_created, defines.events.on_force_created, defines.events.on_surface_created}, apply_defaults)

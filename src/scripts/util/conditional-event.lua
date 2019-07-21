@@ -16,7 +16,7 @@ local events_def = {
             instant_blueprint = {
                 on_built_entity = {{defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built}, function(e)
                     if not e.player_index then return end
-                    if not util.player_cheat_enabled(util.get_player(e), 'player', 'instant_blueprint') then return end
+                    if not util.cheat_enabled('player', 'instant_blueprint', e.player_index) then return end
                     local entity = e.created_entity or e.entity
                     if util.is_ghost(entity) then entity.revive{raise_revive=true} end
                 end}
@@ -24,7 +24,7 @@ local events_def = {
             instant_upgrade = {
                 on_marked_for_upgrade = {{defines.events.on_marked_for_upgrade}, function(e)
                     if not e.player_index then return end
-                    if not util.player_cheat_enabled(util.get_player(e), 'player', 'instant_upgrade') then return end
+                    if not util.cheat_enabled('player', 'instant_upgrade', e.player_index) then return end
                     local entity = e.entity
                     -- game.print('upgrading entity ' .. entity.name .. ' at position ' .. entity.position.x .. ',' .. entity.position.y .. ' to: ' .. e.target.name)
                     entity.surface.create_entity{
@@ -33,7 +33,6 @@ local events_def = {
                         direction = entity.direction or nil,
                         force = entity.force,
                         fast_replace = true,
-                        -- player = entity.player,
                         spill = false,
                         raise_built = true
                     }
@@ -42,15 +41,14 @@ local events_def = {
             instant_deconstruction = {
                 on_deconstruction = {{defines.events.on_marked_for_deconstruction}, function(e)
                     if not e.player_index then return end
-                    if not util.player_cheat_enabled(util.get_player(e), 'player', 'instant_deconstruction') then return end
+                    if not util.cheat_enabled('player', 'instant_deconstruction', e.player_index) then return end
                     e.entity.destroy{raise_destroy=true}
                 end}
             },
             keep_last_item = {
                 on_put_item = {{defines.events.on_put_item}, function(e)
                     local player = util.get_player(e)
-                    if not util.player_cheat_enabled(player, 'player', 'keep_last_item') then return end
-                    local cheat_table = util.cheat_table(player, 'player', 'keep_last_item')
+                    if not util.cheat_enabled('player', 'keep_last_item', player.index) then return end
                     local cursor_stack = player.cursor_stack
                     if cursor_stack.valid_for_read and cursor_stack.count == 1 then
                         player.get_main_inventory().insert{name=cursor_stack.name, count=cursor_stack.count}
@@ -60,7 +58,7 @@ local events_def = {
             repair_damaged_item = {
                 on_main_inv_changed = {{defines.events.on_player_main_inventory_changed}, function(e)
                     local player = util.get_player(e)
-                    if not util.player_cheat_enabled(player, 'player', 'repair_damaged_item') then return end
+                    if not util.cheat_enabled('player', 'repair_damaged_item', player.index) then return end
                     local inventory = player.get_main_inventory()
                     -- iterate over every slot in the inventory, repairing any damaged items
                     for i=1,#inventory do
@@ -79,7 +77,7 @@ local events_def = {
             instant_request = {
                 on_main_inventory_changed = {{defines.events.on_player_main_inventory_changed}, function(e)
                     local player = util.get_player(e)
-                    if not util.player_cheat_enabled(player, 'player', 'instant_request') then return end
+                    if not util.cheat_enabled('player', 'instant_request', player.index) then return end
                     -- check if the player has a character
                     if not player.character then return end
                     local character = player.character
@@ -106,7 +104,7 @@ local events_def = {
             instant_trash = {
                 on_trash_inventory_changed = {{defines.events.on_player_trash_inventory_changed}, function(e)
                     local player = util.get_player(e)
-                    if not util.player_cheat_enabled(player, 'player', 'instant_trash') then return end
+                    if not util.cheat_enabled('player', 'instant_trash', player.index) then return end
                     -- check if the player has a character
                     if not player.character then return end
                     player.character.get_inventory(defines.inventory.character_trash).clear()

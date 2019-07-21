@@ -1,4 +1,5 @@
 local on_event = require('__stdlib__/stdlib/event/event').register
+local table = require('__stdlib__/stdlib/utils/table')
 
 local util = {}
 
@@ -82,13 +83,22 @@ function util.player_table(player)
     return global.players[player.index]
 end
 
-function util.cheat_table(player, category, name)
-    local table = util.player_table(player).cheats
-    return table[category] and table[category][name]
+function util.cheat_table(category, name, index)
+    return index and global.cheats[category][name][index] or global.cheats[category][name]
 end
 
-function util.player_cheat_enabled(player, category, name)
-    return util.cheat_table(player, category, name).cur_value
+local function find_value(data)
+    return data.cur_value
+end
+
+function util.cheat_enabled(category, name, index)
+    local cheat_table = util.cheat_table(category, name)
+    if not index then
+        -- check if any players have the cheat enabled
+        return table.any(cheat_table, find_value(data))
+    else
+        return find_value(cheat_table[index])
+    end
 end
 
 -- ----------------------------------------------------------------------------------------------------

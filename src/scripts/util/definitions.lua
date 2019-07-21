@@ -13,7 +13,7 @@ local defs = {}
 defs.cheats = {
     player = {
         god_mode = {type='toggle', default=false, in_god_mode=true, in_editor=false, functions={
-            value_changed = function(player, cheat, cheat_table, new_value)
+            value_changed = function(player, cheat, cheat_global, new_value)
                 local player_table = util.player_table(player)
                 local character = player.character
                 if new_value == true then
@@ -45,114 +45,90 @@ defs.cheats = {
                     end
                 end
             end,
-            get_value = function(player, cheat_table)
+            get_value = function(player, cheat_global)
                 return player.controller_type == defines.controllers.god
             end
         }},
         invincible_character = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
-            value_changed = function(player, cheat, cheat_table, new_value)
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then
                     player.character.destructible = not new_value
                 end
             end,
-            get_value = function(player, cheat_table)
+            get_value = function(player, cheat_global)
                 return player.character and not player.character.destructible
             end
         }},
         instant_blueprint = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
-            setup_global = function(player, default_value)
-                return { cur_value = default_value }
-            end,
-            value_changed = function(player, cheat, cheat_table, new_value)
-                cheat_table.cur_value = new_value
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.instant_blueprint.on_built_entity')
                 else
                     conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_blueprint.on_built_entity')
                 end
             end,
-            get_value = function(player, cheat_table)
-                return cheat_table.cur_value
+            get_value = function(player, cheat_global)
+                return cheat_global.cur_value
             end
         }},
         instant_upgrade = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
-            setup_global = function(player, default_value)
-                return { cur_value = default_value }
-            end,
-            value_changed = function(player, cheat, cheat_table, new_value)
-                cheat_table.cur_value = new_value
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.instant_upgrade.on_marked_for_upgrade')
                 else
                     conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_upgrade.on_marked_for_upgrade')
                 end
             end,
-            get_value = function(player, cheat_table)
-                return cheat_table.cur_value
+            get_value = function(player, cheat_global)
+                return cheat_global.cur_value
             end
         }},
         instant_deconstruction = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
-            setup_global = function(player, default_value)
-                return { cur_value = default_value }
-            end,
-            value_changed = function(player, cheat, cheat_table, new_value)
-                cheat_table.cur_value = new_value
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.instant_deconstruction.on_deconstruction')
                 else
                     conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_deconstruction.on_deconstruction')
                 end
             end,
-            get_value = function(player, cheat_table)
-                return cheat_table.cur_value
+            get_value = function(player, cheat_global)
+                return cheat_global.cur_value
             end
         }},
         cheat_mode = {type='toggle', default=true, in_god_mode=true, in_editor=false, functions={
-            value_changed = function(player, cheat, cheat_table, new_value)
+            value_changed = function(player, cheat, cheat_global, new_value)
                 player.cheat_mode = new_value
             end,
-            get_value = function(player, cheat_table)
+            get_value = function(player, cheat_global)
                 return player.cheat_mode
             end
         }},
         keep_last_item = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
-            setup_global = function(player, default_value)
-                return { cur_value = default_value }
-            end,
-            value_changed = function(player, cheat, cheat_table, new_value)
-                cheat_table.cur_value = new_value
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.keep_last_item.on_put_item')
                 else
                     conditional_event.cheat_deregister(player, cheat, 'cheats.player.keep_last_item.on_put_item')
                 end
             end,
-            get_value = function(player, cheat_table)
-                return cheat_table.cur_value
+            get_value = function(player, cheat_global)
+                return cheat_global.cur_value
             end
         }},
         repair_damaged_item = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
-            setup_global = function(player, default_value)
-                return { cur_value = default_value }
-            end,
-            value_changed = function(player, cheat, cheat_table, new_value)
-                cheat_table.cur_value = new_value
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.repair_damaged_item.on_main_inv_changed')
                 else
                     conditional_event.cheat_deregister(player, cheat, 'cheats.player.repair_damaged_item.on_main_inv_changed')
                 end
             end,
-            get_value = function(player, cheat_table)
-                return cheat_table.cur_value
+            get_value = function(player, cheat_global)
+                return cheat_global.cur_value
             end
         }},
         instant_request = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
-            setup_global = function(player, default_value)
-                return { cur_value = default_value }
-            end,
-            value_changed = function(player, cheat, cheat_table, new_value)
-                cheat_table.cur_value = new_value
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.instant_request.on_main_inventory_changed')
                     event.dispatch{name=defines.events.on_player_main_inventory_changed, player_index=player.index}
@@ -160,16 +136,12 @@ defs.cheats = {
                     conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_request.on_main_inventory_changed')
                 end
             end,
-            get_value = function(player, cheat_table)
-                return cheat_table.cur_value
+            get_value = function(player, cheat_global)
+                return cheat_global.cur_value
             end
         }},
         instant_trash = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
-            setup_global = function(player, default_value)
-                return { cur_value = default_value }
-            end,
-            value_changed = function(player, cheat, cheat_table, new_value)
-                cheat_table.cur_value = new_value
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.instant_trash.on_trash_inventory_changed')
                     event.dispatch{name=defines.events.on_player_trash_inventory_changed, player_index=player.index}
@@ -177,114 +149,110 @@ defs.cheats = {
                     conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_trash.on_trash_inventory_changed')
                 end
             end,
-            get_value = function(player, cheat_table)
-                return cheat_table.cur_value
+            get_value = function(player, cheat_global)
+                return cheat_global.cur_value
             end
         }},
         character_reach_distance_bonus = {type='number', default=1000000, in_god_mode=false, in_editor=false, functions={
-            value_changed = function(player, cheat, cheat_table, new_value)
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_reach_distance_bonus = new_value end
             end,
-            get_value = function(player, cheat_table)
+            get_value = function(player, cheat_global)
                 return player.character and player.character_reach_distance_bonus
             end
         }},
         character_build_distance_bonus = {type='number', default=1000000, in_god_mode=false, in_editor=false, functions={
-            value_changed = function(player, cheat, cheat_table, new_value)
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_build_distance_bonus = new_value end
             end,
-            get_value = function(player, cheat_table)
+            get_value = function(player, cheat_global)
                 return player.character and player.character_build_distance_bonus
             end
         }},
         character_resource_reach_distance_bonus = {type='number', default=1000000, in_god_mode=false, in_editor=false, functions={
-            value_changed = function(player, cheat, cheat_table, new_value)
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_resource_reach_distance_bonus = new_value end
             end,
-            get_value = function(player, cheat_table)
+            get_value = function(player, cheat_global)
                 return player.character and player.character_resource_reach_distance_bonus
             end
         }},
         character_item_drop_distance_bonus = {type='number', default=1000000, in_god_mode=false, in_editor=false, functions={
-            value_changed = function(player, cheat, cheat_table, new_value)
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_item_drop_distance_bonus = new_value end
             end,
-            get_value = function(player, cheat_table)
+            get_value = function(player, cheat_global)
                 return player.character and player.character_item_drop_distance_bonus
             end
         }},
         character_item_pickup_distance_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
-            value_changed = function(player, cheat, cheat_table, new_value)
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_item_pickup_distance_bonus = new_value end
             end,
-            get_value = function(player, cheat_table)
+            get_value = function(player, cheat_global)
                 return player.character and player.character_item_pickup_distance_bonus
             end
         }},
         character_loot_pickup_distance_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
-            value_changed = function(player, cheat, cheat_table, new_value)
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_loot_pickup_distance_bonus = new_value end
             end,
-            get_value = function(player, cheat_table)
+            get_value = function(player, cheat_global)
                 return player.character and player.character_loot_pickup_distance_bonus
             end
         }},
         character_mining_speed_modifier = {type='number', default=1000, in_god_mode=false, in_editor=false, functions={
-            value_changed = function(player, cheat, cheat_table, new_value)
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_mining_speed_modifier = new_value end
             end,
-            get_value = function(player, cheat_table)
+            get_value = function(player, cheat_global)
                 return player.character and player.character_mining_speed_modifier
             end
         }},
         character_running_speed_modifier = {type='number', default=2, in_god_mode=false, in_editor=false, functions={
-            value_changed = function(player, cheat, cheat_table, new_value)
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_running_speed_modifier = new_value end
             end,
-            get_value = function(player, cheat_table)
+            get_value = function(player, cheat_global)
                 return player.character and player.character_running_speed_modifier
             end
         }},
         character_crafting_speed_modifier = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
-            value_changed = function(player, cheat, cheat_table, new_value)
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_crafting_speed_modifier = new_value end
             end,
-            get_value = function(player, cheat_table)
+            get_value = function(player, cheat_global)
                 return player.character and player.character_crafting_speed_modifier
             end
         }},
         character_inventory_slots_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
-            value_changed = function(player, cheat, cheat_table, new_value)
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_inventory_slots_bonus = new_value end
             end,
-            get_value = function(player, cheat_table)
+            get_value = function(player, cheat_global)
                 return player.character and player.character_inventory_slots_bonus
             end
         }},
         character_health_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
-            value_changed = function(player, cheat, cheat_table, new_value)
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_health_bonus = new_value end
             end,
-            get_value = function(player, cheat_table)
+            get_value = function(player, cheat_global)
                 return player.character and player.character_health_bonus
             end
         }}
     },
     force = {
         instant_research = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
-            setup_global = function(player, default_value)
-                return { cur_value = default_value }
-            end,
-            value_changed = function(player, cheat, cheat_table, new_value)
-                cheat_table.cur_value = new_value
+            value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.force.instant_research.on_research_started')
                 else
                     conditional_event.cheat_deregister(player, cheat, 'cheats.force.instant_research.on_research_started')
                 end
             end,
-            get_value = function(player, cheat_table)
-                return cheat_table.cur_value
+            get_value = function(player, cheat_global)
+                return cheat_global.cur_value
             end
         }}
     },

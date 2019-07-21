@@ -12,25 +12,33 @@ local cheats = {}
 -- ----------------------------------------------------------------------------------------------------
 -- CHEATS DATA MANAGEMENT
 
-function cheats.create(player)
-    util.player_table(player).cheats = {}
-    local player_cheats = util.player_table(player).cheats
+-- create cheat data structure in global
+function cheats.create()
+    local cheats = global.cheats
     for category,list in pairs(defs.cheats) do
-        player_cheats[category] = {}
+        cheats[category] = {}
         for name,table in pairs(list) do
-            player_cheats[category][name] = table.functions.setup_global and table.functions.setup_global(player, table.default)
-            if table.functions.get_value then
-                cheats.update(player, {category, name}, table.default)
-            end
+            cheats[category][name] = {}
         end
     end
 end
 
+function cheats.apply_defaults(category, obj)
+    for name,data in pairs(global.cheats[category]) do
+        local def = defs.cheats[category][name]
+        data[obj.index] = def.functions.setup_global and def.functions.setup_global(obj, def.default) or {cur_value=def.default}
+        -- or {cur_value=def.default}
+        cheats.update(obj, {category,name}, def.default)
+    end
+end
+
 -- update a cheat to the new value
-function cheats.update(player, cheat, value)
-    game.print(player.name .. ' :: ' .. cheat[1] .. '.' .. cheat[2] .. ' = ' .. tostring(value))
+function cheats.update(obj, cheat, value)
+    game.print(obj.name .. ' :: ' .. cheat[1] .. '.' .. cheat[2] .. ' = ' .. tostring(value))
     local cheat_def = defs.cheats[cheat[1]][cheat[2]]
-    cheat_def.functions.value_changed(player, cheat_def, util.cheat_table(player, cheat[1], cheat[2]), value)
+    local cheat_global = util.cheat_table(cheat[1], cheat[2], obj.index)
+    cheat_global.cur_value = value
+    cheat_def.functions.value_changed(obj, cheat_def, util.cheat_table(cheat[1], cheat[2], obj.index), value)
 end
 
 function cheats.is_valid(category, name)
