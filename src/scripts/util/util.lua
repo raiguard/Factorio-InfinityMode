@@ -87,17 +87,15 @@ function util.cheat_table(category, name, index)
     return index and global.cheats[category][name][index] or global.cheats[category][name]
 end
 
-local function find_value(data)
-    return data.cur_value
-end
-
-function util.cheat_enabled(category, name, index)
-    local cheat_table = util.cheat_table(category, name)
-    if not index then
-        -- check if any players have the cheat enabled
-        return table.any(cheat_table, find_value(data))
+function util.cheat_enabled(category, name, index, exclude_idx)
+    local cheat_table = table.deepcopy(util.cheat_table(category, name))
+    -- LOG{category .. '.' .. name, cheat_table}
+    if exclude_idx then cheat_table[exclude_idx] = nil end
+    if index then
+        return cheat_table[index].cur_value
     else
-        return find_value(cheat_table[index])
+        -- check if any players have the cheat enabled
+        return table.any(cheat_table, function(data) return data.cur_value end)
     end
 end
 

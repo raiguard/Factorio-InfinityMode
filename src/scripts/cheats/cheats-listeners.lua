@@ -12,38 +12,25 @@ local mod_gui = require('mod-gui')
 local cheats = require('cheats')
 local cheats_gui = require('cheats-gui')
 
-local function apply_defaults(e)
-    if e.player_index then
-        cheats.apply_defaults('player', util.get_player(e))
-    elseif e.surface_index then
-        cheats.apply_defaults('surface', game.surfaces[e.surface_index])
-    elseif e.force then
-        cheats.apply_defaults('force', e.force)
-    end
-    LOG(global)
-end
-
 -- ----------------------------------------------------------------------------------------------------
 -- MOD GUI
 
 event.on_init(function()
     cheats.create()
-    apply_defaults{force=game.forces['player']}
-    apply_defaults{force=game.forces['enemy']}
-    apply_defaults{force=game.forces['neutral']}
+    cheats.apply_defaults('force', game.forces['player'])
+    cheats.apply_defaults('force', game.forces['enemy'])
+    cheats.apply_defaults('force', game.forces['neutral'])
+    cheats.apply_defaults('surface', game.surfaces['nauvis'])
 end)
 
 on_event(defines.events.on_player_created, function(e)
     local player = util.get_player(e)
-    -- ----------------------------------------
-    -- TEMPORARY
-    player.force.research_all_technologies()
-    player.surface.always_day = true
-    -- ----------------------------------------
     local flow = mod_gui.get_button_flow(player)
     if not flow.im_button then
         flow.add{type='sprite-button', name='im_button', style=mod_gui.button_style, sprite='im-logo'}
+        flow.add{type='button', name='im_DEBUG', style=mod_gui.button_style, caption='DEBUG'}
     end
+    cheats.apply_defaults('player', player)
 end)
 
 gui.on_click('im_button', function(e)
@@ -56,6 +43,11 @@ gui.on_click('im_button', function(e)
     end
 end)
 
+gui.on_click('im_DEBUG', function(e)
+    local cur_value = global.cheats.force.instant_research[1].cur_value
+    cheats.update(game.forces['player'], {'force','instant_research'}, not cur_value)
+end)
+
 -- ----------------------------------------------------------------------------------------------------
 -- CHEATS WINDOW
 
@@ -66,7 +58,6 @@ on_event({defines.events.on_gui_checked_state_changed, defines.events.on_gui_con
         local param = e.element.type == 'checkbox' and 'state' or 'text'
         cheats.update(player, {params[2], params[3]}, e.element[param])
         cheats_gui.refresh(player, mod_gui.get_frame_flow(player))
-        LOG(global)
     end
 end)
 
@@ -78,10 +69,12 @@ end)
 -- ----------------------------------------------------------------------------------------------------
 -- CHEATS
 
--- event.on_init(function()
---     apply_defaults{force=game.forces['player']}
---     apply_defaults{force=game.forces['enemy']}
---     apply_defaults{force=game.forces['neutral']}
--- end)
-
-on_event({defines.events.on_player_created, defines.events.on_force_created, defines.events.on_surface_created}, apply_defaults)
+on_event({defines.events.on_player_created, defines.events.on_force_created, defines.events.on_surface_created}, function(e)
+    if e.player_index then
+        cheats.apply_defaults('player', util.get_player(e))
+    elseif e.surface_index then
+        cheats.apply_defaults('surface', game.surfaces[e.surface_index])
+    elseif e.force then
+        cheats.apply_defaults('force', e.force)
+    end
+end)

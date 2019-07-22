@@ -244,11 +244,23 @@ defs.cheats = {
     },
     force = {
         instant_research = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
-            value_changed = function(player, cheat, cheat_global, new_value)
+            value_changed = function(force, cheat, cheat_global, new_value)
                 if new_value then
-                    conditional_event.cheat_register(player, cheat, 'cheats.force.instant_research.on_research_started')
+                    conditional_event.cheat_register(force, cheat, 'cheats.force.instant_research.on_research_started')
                 else
-                    conditional_event.cheat_deregister(player, cheat, 'cheats.force.instant_research.on_research_started')
+                    conditional_event.cheat_deregister(force, cheat, 'cheats.force.instant_research.on_research_started')
+                end
+            end,
+            get_value = function(player, cheat_global)
+                return cheat_global.cur_value
+            end
+        }},
+        research_all_technologies = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                if new_value then
+                    force.research_all_technologies()
+                else
+                    force.reset_technologies()
                 end
             end,
             get_value = function(player, cheat_global)
@@ -257,7 +269,14 @@ defs.cheats = {
         }}
     },
     surface = {
-
+        freeze_time = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+            value_changed = function(surface, cheat, cheat_global, new_value)
+                surface.freeze_daytime = new_value
+            end,
+            get_value = function(surface, cheat_global)
+                return surface.freeze_daytime
+            end 
+        }}
     },
     game = {
 

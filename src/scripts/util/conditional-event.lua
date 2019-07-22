@@ -116,6 +116,7 @@ local events_def = {
                 on_research_started = {{defines.events.on_research_started}, function(e)
                     local research = e.research
                     local force = research.force
+                    if not util.cheat_enabled('force', 'instant_research', force.index) then return end
                     force.research_progress = 1
                 end}
             }
@@ -162,18 +163,6 @@ local function get_object(string)
     return def
 end
 
-local function other_players_using_cheat(player, cheat_def, cheat_table_def)
-    local players = table.deepcopy(global.players)
-    players[player.index] = nil
-    for i,t in pairs(players) do
-        local cheat_table = t.cheats[cheat_table_def[1]][cheat_table_def[2]]
-        if cheat_def.functions.get_value(player, cheat_table) then
-            return true
-        end
-    end
-    return false
-end
-
 event.on_init(function()
     global.events = {}
 end)
@@ -210,16 +199,16 @@ function conditional_event.deregister(def)
 end
 
 -- only register if nobody else has the cheat active
-function conditional_event.cheat_register(player, cheat_def, event_def)
+function conditional_event.cheat_register(obj, cheat_def, event_def)
     local string_table = string.split(event_def)
-    if other_players_using_cheat(player, cheat_def, {string_table[2], string_table[3]}) == false then
+    if not util.cheat_enabled(string_table[2], string_table[3], nil, obj.index) then
         conditional_event.register(event_def)
     end
 end
 
-function conditional_event.cheat_deregister(player, cheat_def, event_def)
+function conditional_event.cheat_deregister(obj, cheat_def, event_def)
     local string_table = string.split(event_def)
-    if other_players_using_cheat(player, cheat_def, {string_table[2], string_table[3]}) == false then
+    if not util.cheat_enabled(string_table[2], string_table[3], nil, obj.index) then
         conditional_event.deregister(event_def)
     end
 end
