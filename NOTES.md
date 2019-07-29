@@ -14,3 +14,6 @@ Each cheat has a `functions` parameter that contains a table of functions:
 - `value_changed(new_value)` - When the player changes the cheat setting through the GUI. The cheat's `value` parameter is set to the return value of this function.
 - `setup_global(player, default_value)` (optional) - Return value is set as that cheat's data table in GLOBAL.
 
+## Global structure
+- Foo
+-- Bar

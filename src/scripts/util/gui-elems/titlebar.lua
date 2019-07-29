@@ -19,10 +19,15 @@ function titlebar.create(parent, name, data)
     end
 
     local filler = titlebar_flow.add {
-        type = 'frame',
+        type = 'empty-widget',
         name = prefix .. 'filler',
-        style = 'titlebar_filler'
+        style = 'draggable_space_header'
     }
+    filler.style.horizontally_stretchable = true
+    if data.draggable then
+        filler.drag_target = parent
+        filler.style.natural_height = 24
+    end
 
     if data.buttons then
         local buttons = data.buttons

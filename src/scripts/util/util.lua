@@ -71,7 +71,7 @@ on_event('on_init', function(e)
     global.cheats = {}
 end)
 
-on_event(defines.events.on_player_joined_game, function(e)
+on_event(defines.events.on_player_created, function(e)
     local data = {}
     global.players[e.player_index] = data
 end)

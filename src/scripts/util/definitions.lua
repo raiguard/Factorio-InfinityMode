@@ -286,37 +286,48 @@ defs.cheats = {
 -- cheats GUI parameters
 defs.cheats_gui_elems = {
     player = {
-        {category='toggles', table_columns=2, vertical_centering=false, groups={
-            {group='interaction', settings={
-                {name='god_mode', type='toggle'},
-                {name='invincible_character', type='toggle'},
-                {name='instant_blueprint', type='toggle'},
-                {name='instant_upgrade', type='toggle'},
-                {name='instant_deconstruction', type='toggle'}
-            }},
-            {group='inventory', settings={
-                {name='cheat_mode', type='toggle'},
-                {name='keep_last_item', type='toggle'},
-                {name='repair_damaged_item', type='toggle'},
-                {name='instant_request', type='toggle'},
-                {name='instant_trash', type='toggle'}
-            }}
-        }},
-        {category='bonuses', table_columns=1, groups={
-            {group='bonuses', settings={
-                {name='character_reach_distance_bonus', type='number'},
-                {name='character_build_distance_bonus', type='number'},
-                {name='character_resource_reach_distance_bonus', type='number'},
-                {name='character_item_drop_distance_bonus', type='number'},
-                {name='character_item_pickup_distance_bonus', type='number'},
-                {name='character_loot_pickup_distance_bonus', type='number'},
-                {name='character_mining_speed_modifier', type='number'},
-                {name='character_running_speed_modifier', type='number'},
-                {name='character_crafting_speed_modifier', type='number'},
-                {name='character_inventory_slots_bonus', type='number'},
-                {name='character_health_bonus', type='number'}
-            }}
-        }}
+        toggles = {
+            interaction = {
+                'god_mode',
+                'invincible_character',
+                'instant_blueprint',
+                'instant_upgrade',
+                'instant_deconstruction'
+            },
+            inventory = {
+                'cheat_mode',
+                'keep_last_item',
+                'repair_damaged_item',
+                'instant_request',
+                'instant_trash'
+            }
+        },
+        bonuses = {
+            'character_reach_distance_bonus',
+            'character_build_distance_bonus',
+            'character_resource_reach_distance_bonus',
+            'character_item_drop_distance_bonus',
+            'character_item_pickup_distance_bonus',
+            'character_loot_pickup_distance_bonus',
+            'character_mining_speed_modifier',
+            'character_running_speed_modifier',
+            'character_crafting_speed_modifier',
+            'character_inventory_slots_bonus',
+            'character_health_bonus'
+        }
+    },
+    force = {
+        toggles = {
+            'instant_research'
+        }
+    },
+    surface = {
+        toggles = {
+            'freeze_time'
+        }
+    },
+    game = {
+
     }
 }
 
