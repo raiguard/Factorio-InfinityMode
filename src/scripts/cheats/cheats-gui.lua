@@ -12,18 +12,21 @@ local util = require('scripts/util/util')
 
 local cheats_gui = {}
 
-local function create_cheat_ui(parent, obj, cheat, player_is_god, player_is_editor)
+local function create_cheat_ui(parent, obj, cheat, elem_table, player_is_god, player_is_editor)
     local cheat_def = defs.cheats[cheat[1]][cheat[2]]
     local cheat_table = util.cheat_table(cheat[1], cheat[2], obj.index)
     local cheat_name = cheat[1]..'-'..cheat[2]
     local element
     if cheat_def.type == 'toggle' then
-        element = parent.add{type='checkbox', name='im_cheats-'..cheat_name..'-checkbox', state=util.cheat_table(cheat[1], cheat[2], obj.index).cur_value, caption={'gui-cheats-'..cheat[1]..'.setting-'..cheat[2]..'-caption'}}
-        element.style.horizontally_stretchable = true
+        element = parent.add{type='checkbox', name='im_cheats-'..cheat_name..'-checkbox', state=util.cheat_table(cheat[1], cheat[2], obj.index).cur_value,
+            caption={'', {'gui-cheats-'..cheat[1]..'.setting-'..cheat[2]..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
+            tooltip=elem_table.tooltip and {'gui-cheats-'..cheat[1]..'.setting-'..cheat[2]..'-tooltip'} or nil}
     elseif cheat_def.type == 'number' then
         local setting_flow = parent.add{type='flow', name='im_cheats-'..cheat_name..'-flow', direction='horizontal'}
         setting_flow.style.vertical_align = 'center'
-        setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-label', caption={'gui-cheats-player.setting-'..cheat[2]..'-caption'}}
+        setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-label',
+            caption={'', {'gui-cheats-'..cheat[1]..'.setting-'..cheat[2]..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
+            tooltip=elem_table.tooltip and {'gui-cheats-'..cheat[1]..'.setting-'..cheat[2]..'-tooltip'} or nil}
         setting_flow.add{type='flow', name='im_cheats-'..cheat_name..'-filler', style='invisible_horizontal_filler'}
         element = setting_flow.add{type='textfield', name='im_cheats-'..cheat_name..'-textfield', style='short_number_textfield', text=util.cheat_table(cheat[1], cheat[2], obj.index).cur_value, numeric=true, lose_focus_on_confirm=true}
     end
@@ -77,15 +80,14 @@ local function create_tabbed_pane(player, window_frame)
         local flow = toggles_flow_table.add{type='flow', name='im_cheats_player_toggles_'..group..'_flow', direction='vertical'}
         flow.style.horizontally_stretchable = true
         flow.add{type='label', name='im_cheats_player_toggles_'..group..'_label', style='caption_label', caption={'gui-cheats-player.group-'..group..'-caption'}}
-        for i,n in pairs(cheats) do
-            create_cheat_ui(flow, cur_player, {'player',n}, player_is_god, player_is_editor)
+        for n,t in pairs(cheats) do
+            create_cheat_ui(flow, cur_player, {'player',n}, t, player_is_god, player_is_editor)
         end
     end
-    -- pane.add{type='line', name='im_cheats_player_toggles_line', direction='horizontal'}.style.horizontally_stretchable = true
     -- bonuses
     pane.add{type='label', name='im_cheats_player_bonuses_label', style='caption_label', caption={'gui-cheats-player.group-bonuses-caption'}}.style.top_margin = 2
-    for i,n in pairs(elems_def.player.bonuses) do
-        create_cheat_ui(pane, player, {'player',n}, player_is_god, player_is_editor)
+    for n,t in pairs(elems_def.player.bonuses) do
+        create_cheat_ui(pane, player, {'player',n}, t, player_is_god, player_is_editor)
     end
 
     -- FORCE
@@ -105,8 +107,8 @@ local function create_tabbed_pane(player, window_frame)
     local toggles_flow = upper_flow.add{type='flow', name='im_cheats_force_toggles_flow', direction='vertical'}
     toggles_flow.style.horizontally_stretchable = true
     -- toggles
-    for i,n in pairs(elems_def.force.toggles) do
-        create_cheat_ui(toggles_flow, cur_force, {'force',n})
+    for n,t in pairs(elems_def.force.toggles) do
+        create_cheat_ui(toggles_flow, cur_force, {'force',n}, t)
     end
 
     -- SURFACE
@@ -126,8 +128,8 @@ local function create_tabbed_pane(player, window_frame)
     local toggles_flow = upper_flow.add{type='flow', name='im_cheats_surface_toggles_flow', direction='vertical'}
     toggles_flow.style.horizontally_stretchable = true
     -- toggles
-    for i,n in pairs(elems_def.surface.toggles) do
-        create_cheat_ui(toggles_flow, cur_surface, {'surface',n})
+    for n,t in pairs(elems_def.surface.toggles) do
+        create_cheat_ui(toggles_flow, cur_surface, {'surface',n}, t)
     end
 
 end

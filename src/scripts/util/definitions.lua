@@ -373,47 +373,47 @@ defs.cheats_gui_elems = {
     player = {
         toggles = {
             interaction = {
-                'god_mode',
-                'invincible_character',
-                'instant_blueprint',
-                'instant_upgrade',
-                'instant_deconstruction'
+                god_mode = {},
+                invincible_character = {},
+                instant_blueprint = {},
+                instant_upgrade = {},
+                instant_deconstruction = {}
             },
             inventory = {
-                'cheat_mode',
-                'keep_last_item',
-                'repair_damaged_item',
-                'instant_request',
-                'instant_trash'
+                cheat_mode = {},
+                keep_last_item = {},
+                repair_damaged_item = {},
+                instant_request = {},
+                instant_trash = {}
             }
         },
         bonuses = {
-            'character_reach_distance_bonus',
-            'character_build_distance_bonus',
-            'character_resource_reach_distance_bonus',
-            'character_item_drop_distance_bonus',
-            'character_item_pickup_distance_bonus',
-            'character_loot_pickup_distance_bonus',
-            'character_mining_speed_modifier',
-            'character_running_speed_modifier',
-            'character_crafting_speed_modifier',
-            'character_inventory_slots_bonus',
-            'character_health_bonus'
+            character_reach_distance_bonus = {},
+            character_build_distance_bonus = {},
+            character_resource_reach_distance_bonus = {},
+            character_item_drop_distance_bonus = {},
+            character_item_pickup_distance_bonus = {},
+            character_loot_pickup_distance_bonus = {},
+            character_mining_speed_modifier = {},
+            character_running_speed_modifier = {},
+            character_crafting_speed_modifier = {},
+            character_inventory_slots_bonus = {},
+            character_health_bonus = {}
         }
     },
     force = {
         toggles = {
-            'instant_research',
-            'research_all_technologies',
-            'infinity_tools_recipes',
-            'free_resource_recipes',
-            'vanilla_loaders_recipes',
-            'misc_vanilla_recipes'
+            instant_research = {},
+            research_all_technologies = {tooltip=true},
+            infinity_tools_recipes = {},
+            free_resource_recipes = {tooltip=true},
+            vanilla_loaders_recipes = {},
+            misc_vanilla_recipes = {tooltip=true}
         }
     },
     surface = {
         toggles = {
-            'freeze_time'
+            freeze_time = {}
         }
     },
     game = {
