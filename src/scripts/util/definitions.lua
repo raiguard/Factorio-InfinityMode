@@ -48,6 +48,12 @@ local ores_recipes = {
     'uranium-ore'
 }
 
+local vanilla_loaders_recipes = {
+    'loader',
+    'fast-loader',
+    'express-loader'
+}
+
 -- cheat data and functions
 defs.cheats = {
     player = {
@@ -316,6 +322,16 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
+        vanilla_loaders_recipes = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                for _,n in pairs(vanilla_loaders_recipes) do
+                    if force.recipes[n] then force.recipes[n].enabled = new_value end
+                end
+            end,
+            get_value = function(force, cheat_global)
+                return cheat_global.cur_value
+            end
+        }},
         ores_recipes = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 for _,n in pairs(ores_recipes) do
@@ -380,6 +396,7 @@ defs.cheats_gui_elems = {
             'instant_research',
             'research_all_technologies',
             'infinity_tools_recipes',
+            'vanilla_loaders_recipes',
             'ores_recipes'
         }
     },

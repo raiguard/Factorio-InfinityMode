@@ -93,6 +93,7 @@ local function create_tabbed_pane(player, window_frame)
     local cur_force = player_table.cheats_gui.cur_force
     local upper_flow = pane.add{type='flow', name='im_cheats_force_upper_flow', direction='horizontal'}
     upper_flow.style.horizontal_spacing = 10
+    upper_flow.style.horizontally_stretchable = true
     -- force selector
     local forces = {}
     for i,force in pairs(game.forces) do
@@ -112,6 +113,8 @@ local function create_tabbed_pane(player, window_frame)
     pane = tabs[3].content
     local cur_surface = player_table.cheats_gui.cur_surface
     local upper_flow = pane.add{type='flow', name='im_cheats_surface_upper_flow', direction='horizontal'}
+    upper_flow.style.horizontal_spacing = 10
+    upper_flow.style.horizontally_stretchable = true
     -- surface selector
     local surfaces = {}
     for i,surface in pairs(game.surfaces) do
