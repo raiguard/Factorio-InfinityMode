@@ -33,7 +33,7 @@ end
 
 -- update a cheat to the new value
 function cheats.update(obj, cheat, value)
-    LOG(obj.name .. ' :: ' .. cheat[1] .. '.' .. cheat[2] .. ' = ' .. tostring(value))
+    log(obj.name .. ' :: ' .. cheat[1] .. '.' .. cheat[2] .. ' = ' .. tostring(value))
     local cheat_def = defs.cheats[cheat[1]][cheat[2]]
     local cheat_global = util.cheat_table(cheat[1], cheat[2], obj.index)
     cheat_global.cur_value = value

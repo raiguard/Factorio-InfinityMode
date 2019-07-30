@@ -33,7 +33,6 @@ on_event(defines.events.on_gui_closed, function(e)
         end
         player_table.open_gui = nil
     end
-    log(serpent.block(global))
 end)
 
 -- handle open_gui close buttons
