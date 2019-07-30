@@ -36,27 +36,27 @@ function page.create(content_frame, data)
     local mode = get_ia_options(entity).mode
     local priority = get_ia_options(entity).priority
 
-    local page_frame = content_frame.add{type='frame', name='im_entity_dialog_ia_page_frame', style='entity_dialog_page_frame', direction='vertical'}
+    local page_frame = content_frame.add{type='frame', name='im_ia_page_frame', style='entity_dialog_page_frame', direction='vertical'}
 
     -- SETTINGS
     
-    elems.mode_dropdown = create_dropdown(page_frame, 'im_entity_dialog_ia_mode',
+    elems.mode_dropdown = create_dropdown(page_frame, 'im_ia_mode',
         {'gui-entity-dialog.infinity-accumulator-mode-caption'}, {{'gui-entity-dialog.infinity-accumulator-mode-input'}, {'gui-entity-dialog.infinity-accumulator-mode-output'}, {'gui-entity-dialog.infinity-accumulator-mode-buffer'}}, mode)
 
-    elems.priority_dropdown = create_dropdown(page_frame, 'im_entity_dialog_ia_priority',
+    elems.priority_dropdown = create_dropdown(page_frame, 'im_ia_priority',
         {'gui-entity-dialog.infinity-accumulator-priority-caption'}, {{'gui-entity-dialog.infinity-accumulator-priority-primary'}, {'gui-entity-dialog.infinity-accumulator-priority-secondary'}, {'gui-entity-dialog.infinity-accumulator-priority-tertiary'}}, priority)
 
-    page_frame.im_entity_dialog_ia_priority_flow.style.vertically_stretchable = true
+    page_frame.im_ia_priority_flow.style.vertically_stretchable = true
 
     if mode == 3 then
         elems.priority_dropdown.visible = false
-        local disabled = page_frame.im_entity_dialog_ia_priority_flow.add{type='button', name='im_entity_dialog_ia_priority_disabled_button', caption={'gui-entity-dialog.infinity-accumulator-priority-tertiary'}}
+        local disabled = page_frame.im_ia_priority_flow.add{type='button', name='im_ia_priority_disabled_button', caption={'gui-entity-dialog.infinity-accumulator-priority-tertiary'}}
         disabled.enabled = false
         disabled.style.horizontal_align = 'left'
         disabled.style.minimal_width = 116
     end
 
-    local slider_flow = page_frame.add{type='flow', name='im_entity_dialog_ia_slider_flow', direction='horizontal'}
+    local slider_flow = page_frame.add{type='flow', name='im_ia_slider_flow', direction='horizontal'}
 
     slider_flow.style.vertical_align = 'center'
 
@@ -65,11 +65,11 @@ function page.create(content_frame, data)
     local exponent = math.max(len - (len % 3 == 0 and 3 or len % 3),3)
     value = math.floor(value / 10^exponent)
 
-    elems.slider = slider_flow.add{type='slider', name='im_entity_dialog_ia_slider', minimum_value=0, maximum_value=999, value=value}
+    elems.slider = slider_flow.add{type='slider', name='im_ia_slider', minimum_value=0, maximum_value=999, value=value}
 
     elems.slider.style.horizontally_stretchable = true
 
-    elems.slider_textfield = slider_flow.add{type='textfield', name='im_entity_dialog_ia_slider_textfield', text=value, numeric=true, lose_focus_on_confirm=true}
+    elems.slider_textfield = slider_flow.add{type='textfield', name='im_ia_slider_textfield', text=value, numeric=true, lose_focus_on_confirm=true}
     elems.slider_textfield.style.width = 48
     elems.prev_textfield_value = value
 
@@ -78,9 +78,11 @@ function page.create(content_frame, data)
         items[i] = {'', {'si-prefix-symbol-' .. v}, {'si-unit-symbol-' .. power_suffixes_by_mode[mode]}}
     end
 
-    elems.slider_dropdown = slider_flow.add{type='drop-down', name='im_entity_dialog_ia_slider_dropdown', items=items, selected_index=(exponent/3)}
+    elems.slider_dropdown = slider_flow.add{type='drop-down', name='im_ia_slider_dropdown', items=items, selected_index=(exponent/3)}
 
     elems.slider_dropdown.style.width = 65
+
+    elems.entity = entity
 
     return elems
 end

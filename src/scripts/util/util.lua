@@ -21,46 +21,39 @@ end
 -- ----------------------------------------------------------------------------------------------------
 -- GUI
 
--- close center GUI on escape
+-- close open_gui on escape
 on_event(defines.events.on_gui_closed, function(e)
     local player = util.get_player(e)
-    local center_gui = util.get_center_gui(player)
-    if center_gui and center_gui.element == e.element then
-        util.close_center_gui(player)
+    local player_table = util.player_table(player)
+    local open_gui = player_table.open_gui
+    if open_gui and open_gui.element == e.element then
+        open_gui.element.destroy()
+        if player_table[open_gui.data_to_destroy] then
+            player_table[open_gui.data_to_destroy] = nil
+        end
+        player_table.open_gui = nil
     end
+    log(serpent.block(global))
 end)
 
--- handle window close buttons
+-- handle open_gui close buttons
 on_event(defines.events.on_gui_click, function(e)
     local player = util.get_player(e)
-    local element = e.element
-    local center_gui = util.get_center_gui(player)
-    if center_gui and center_gui.close_button == element then
-        util.close_center_gui(player)
+    local open_gui = util.player_table(player).open_gui
+    if open_gui and open_gui.close_button and open_gui.close_button == e.element then
+        open_gui.element.destroy()
+        open_gui = nil
     end
 end)
 
-function util.set_center_gui(player, data, keep_previous)
-    -- data table must contain ELEMENT, which is the root element of the open GUI (the frame, most of the time)
-    -- other data is specific to each gui
-    local global_data = util.get_center_gui(player)
-    -- if another gui is currently open, destroy it
-    if global_data and not keep_previous then
-        global_data.element.destroy()
-    end
-    util.player_table(player).center_gui = data
-    player.opened = data.element
-end
-
-function util.get_center_gui(player)
-    return util.player_table(player).center_gui
-end
-
-function util.close_center_gui(player)
-    local player_table = util.player_table(player)
-    player_table.center_gui.element.destroy()
-    player_table.center_gui = nil
-    player.opened = nil
+function util.set_open_gui(player, element, close_button, data_to_destroy)
+    util.player_table(player).open_gui = {
+        element = element,
+        location = element.location,
+        close_button = close_button or nil,
+        data_to_destroy = data_to_destroy or nil
+    }
+    player.opened = element
 end
 
 -- ----------------------------------------------------------------------------------------------------
@@ -89,7 +82,6 @@ end
 
 function util.cheat_enabled(category, name, index, exclude_idx)
     local cheat_table = table.deepcopy(util.cheat_table(category, name))
-    -- LOG{category .. '.' .. name, cheat_table}
     if exclude_idx then cheat_table[exclude_idx] = nil end
     if index then
         return cheat_table[index].cur_value

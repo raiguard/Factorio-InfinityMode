@@ -14,6 +14,23 @@ Each cheat has a `functions` parameter that contains a table of functions:
 - `value_changed(new_value)` - When the player changes the cheat setting through the GUI. The cheat's `value` parameter is set to the return value of this function.
 - `setup_global(player, default_value)` (optional) - Return value is set as that cheat's data table in GLOBAL.
 
-## Global structure
-- Foo
--- Bar
+## Player table structure
+- player_index
+    - open_gui
+        - element (LuaGuiElement)
+        - location (concepts.position)
+        - close_button (LuaGuiElement or nil)
+        - data_to_destroy (string or nil)
+    - cheats_gui
+        - cur_player (LuaPlayer)
+        - cur_force (LuaForce)
+        - cur_surface (LuaSurface)
+        - cur_tab (int)
+    - ia_gui
+        - entity (LuaEntity)
+        - mode_dropdown (LuaGuiElement)
+        - priority_dropdown (LuaGuiElement)
+        - slider (LuaGuiElement)
+        - slider_textfield (LuaGuiElement)
+        - slider_dropdown (LuaGuiElement)
+        - prev_textfield_value (int)

@@ -38,7 +38,7 @@ end
 -- gui management
 on_event(defines.events.on_gui_opened, function(e)
     if check_is_accumulator(e.entity) then
-        create_entity_dialog(util.get_player(e), e.entity, ia_page)
+        create_entity_dialog(util.get_player(e), e.entity, ia_page).force_auto_center()
     end
 end)
 
@@ -65,12 +65,11 @@ local function set_ia_params(entity, mode, value, exponent)
 end
 
 local function change_ia_mode_or_priority(e)
-    local data = util.get_center_gui(util.get_player(e))
+    local data = util.player_table(e.player_index).ia_gui
     local entity = data.entity
-    local elems = data.page_elems
 
-    local priority = ia_states.priority[elems.priority_dropdown.selected_index]
-    local mode = ia_states.mode[elems.mode_dropdown.selected_index]
+    local priority = ia_states.priority[data.priority_dropdown.selected_index]
+    local mode = ia_states.mode[data.mode_dropdown.selected_index]
 
     if priority == 'tertiary' and mode ~= 'buffer' then priority = 'primary' end
     if mode == 'buffer' then priority = 'tertiary' end
@@ -81,43 +80,37 @@ local function change_ia_mode_or_priority(e)
         force = entity.force
     }
     entity.destroy()
-    set_ia_params(new_entity, mode, elems.slider.slider_value, elems.slider_dropdown.selected_index * 3)
-
-    refresh_entity_dialog(util.get_player(e), new_entity, ia_page)
+    set_ia_params(new_entity, mode, data.slider.slider_value, data.slider_dropdown.selected_index * 3)
+    refresh_entity_dialog(util.get_player(e), new_entity)
 end
 
-gui.on_selection_state_changed('im_entity_dialog_ia_mode_dropdown', function(e)
+gui.on_selection_state_changed('im_ia_mode_dropdown', function(e)
     change_ia_mode_or_priority(e)
 end)
 
-gui.on_selection_state_changed('im_entity_dialog_ia_priority_dropdown', function(e)
+gui.on_selection_state_changed('im_ia_priority_dropdown', function(e)
     change_ia_mode_or_priority(e)
 end)
 
-gui.on_value_changed('im_entity_dialog_ia_slider', function(e)
-    local data = util.get_center_gui(util.get_player(e))
+gui.on_value_changed('im_ia_slider', function(e)
+    local data = util.player_table(e.player_index).ia_gui
     local entity = data.entity
-    local elems = data.page_elems
-    local mode = ia_states.mode[elems.mode_dropdown.selected_index]
+    local mode = ia_states.mode[data.mode_dropdown.selected_index]
 
-    local exponent = elems.slider_dropdown.selected_index * 3
+    local exponent = data.slider_dropdown.selected_index * 3
     
-    elems.slider_textfield.text = tostring(math.floor(e.element.slider_value))
+    data.slider_textfield.text = tostring(math.floor(e.element.slider_value))
     
     set_ia_params(entity, mode, e.element.slider_value, exponent)
 end)
 
-gui.on_text_changed('im_entity_dialog_ia_slider_textfield', function(e)
-    local data = util.get_center_gui(util.get_player(e))
+gui.on_text_changed('im_ia_slider_textfield', function(e)
+    local data = util.player_table(e.player_index).ia_gui
     local entity = data.entity
-    local elems = data.page_elems
-    local mode = ia_states.mode[elems.mode_dropdown.selected_index]
+    local mode = ia_states.mode[data.mode_dropdown.selected_index]
 
-    local exponent = elems.slider_dropdown.selected_index * 3
-
-    -- sanitize text
-    local text = e.element.text:gsub('%D','')
-    e.element.text = text
+    local exponent = data.slider_dropdown.selected_index * 3
+    local text = data.slider_textfield.text
 
     if text == '' or tonumber(text) < 0 or tonumber(text) > 999 then
         e.element.tooltip = 'Must be an integer from 0-999'
@@ -126,59 +119,59 @@ gui.on_text_changed('im_entity_dialog_ia_slider_textfield', function(e)
         e.element.tooltip = ''
     end
 
-    elems.prev_textfield_value = text
-    elems.slider.slider_value = tonumber(text)
+    data.prev_textfield_value = text
+    data.slider.slider_value = tonumber(text)
     set_ia_params(entity, mode, tonumber(text), exponent)
 end)
 
 on_event(defines.events.on_gui_confirmed, function(e)
-    local center_gui = util.get_center_gui(util.get_player(e))
-    if center_gui and center_gui.element.name == 'im_entity_dialog_frame' then
-        local elems = center_gui.page_elems
-        local entity = center_gui.entity
-        local mode = ia_states.mode[elems.mode_dropdown.selected_index]
-        local exponent = elems.slider_dropdown.selected_index * 3
-        if elems.prev_textfield_value ~= elems.slider_textfield.text then
-            elems.slider_textfield.text = elems.prev_textfield_value
-            elems.slider_textfield.tooltip = ''
-            elems.slider.slider_value = tonumber(elems.prev_textfield_value)
-            set_ia_params(entity, mode, tonumber(elems.prev_textfield_value), exponent)
+    local player_table = util.player_table(e.player_index)
+    local open_gui = player_table.open_gui
+    if open_gui and open_gui.element.name == 'im_ia_window' then
+        local data = player_table.ia_gui
+        local entity = data.entity
+        local mode = ia_states.mode[data.mode_dropdown.selected_index]
+        local exponent = data.slider_dropdown.selected_index * 3
+        if data.prev_textfield_value ~= data.slider_textfield.text then
+            data.slider_textfield.text = data.prev_textfield_value
+            data.slider_textfield.tooltip = ''
+            data.slider.slider_value = tonumber(data.prev_textfield_value)
+            set_ia_params(entity, mode, tonumber(data.prev_textfield_value), exponent)
         end
     end
 end)
 
-gui.on_selection_state_changed('im_entity_dialog_ia_slider_dropdown', function(e)
-    local data = util.get_center_gui(util.get_player(e))
+gui.on_selection_state_changed('im_ia_slider_dropdown', function(e)
+    local data = util.player_table(e.player_index).ia_gui
     local entity = data.entity
-    local elems = data.page_elems
-    local mode = ia_states.mode[elems.mode_dropdown.selected_index]
+    local mode = ia_states.mode[data.mode_dropdown.selected_index]
 
     local exponent = e.element.selected_index * 3
 
-    set_ia_params(entity, mode, elems.slider.slider_value, exponent)
+    set_ia_params(entity, mode, data.slider.slider_value, exponent)
 end)
 
 -- Destroy and recreate the dialog with the new parameters
-function refresh_entity_dialog(player, entity, page)
-    local entity_frame = player.gui.center.im_entity_dialog_frame
-
+function refresh_entity_dialog(player, entity)
+    local entity_frame = player.gui.screen.im_ia_window
     if entity_frame then
-        entity_frame.destroy()
-        create_entity_dialog(player, entity, page)
+        entity_frame.im_ia_content_flow.im_ia_page_frame.destroy()
+        util.player_table(player).ia_gui = ia_page.create(entity_frame.im_ia_content_flow, {entity=entity})
     end
 end
 
 -- Creates the main dialog frame
-function create_entity_dialog(player, entity, page)
-    local main_frame = player.gui.center.add {
+function create_entity_dialog(player, entity)
+    local main_frame = player.gui.screen.add {
         type = 'frame',
-        name = 'im_entity_dialog_frame',
+        name = 'im_ia_window',
         style = 'dialog_frame',
         direction = 'vertical'
     }
 
-    local titlebar = titlebar.create(main_frame, 'im_entity_dialog_titlebar', {
+    local titlebar = titlebar.create(main_frame, 'im_ia_titlebar', {
         label = {'gui-entity-dialog.titlebar-label-' .. entity.name},
+        draggable = true,
         buttons = {
             {
                 name = 'close',
@@ -191,20 +184,16 @@ function create_entity_dialog(player, entity, page)
 
     local content_flow = main_frame.add {
         type = 'flow',
-        name = 'im_entity_dialog_content_flow',
+        name = 'im_ia_content_flow',
         direction = 'horizontal'
     }
 
     content_flow.style.horizontal_spacing = 10
 
-    local camera = entity_camera.create(content_flow, 'im_entity_dialog_camera', 110, {player=player, entity=entity, camera_zoom=1, camera_offset={0,-0.5}})
-
-    local gui_data = {}
-    gui_data.element = main_frame
-    gui_data.entity = entity
-    gui_data.close_button = titlebar.children[3]
-    gui_data.page_elems = page.create(content_flow, {entity=entity})
-    util.set_center_gui(player, gui_data)
+    local camera = entity_camera.create(content_flow, 'im_camera', 110, {player=player, entity=entity, camera_zoom=1, camera_offset={0,-0.5}})
+    util.set_open_gui(player, main_frame, titlebar.children[3], 'ia_gui')
+    util.player_table(player).ia_gui = ia_page.create(content_flow, {entity=entity})
+    return main_frame
 end
 
 -- ----------------------------------------------------------------------------------------------------
