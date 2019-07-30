@@ -9,6 +9,45 @@ local util = require('scripts/util/util')
 
 local defs = {}
 
+local infinity_tools_recipes = {
+    'infinity-chest',
+    'infinity-chest-active-provider',
+    'infinity-chest-passive-provider',
+    'infinity-chest-storage',
+    'infinity-chest-buffer',
+    'infinity-chest-requester',
+    'infinity-pipe',
+    'heat-interface',
+    'infinity-radar',
+    'infinity-lab',
+    'infinity-accumulator',
+    'infinity-electric-pole',
+    'infinity-substation',
+    'infinity-locomotive',
+    'infinity-cargo-wagon',
+    'infinity-fluid-wagon',
+    'infinity-roboport',
+    'infinity-construction-robot',
+    'infinity-logistic-robot',
+    'infinity-beacon',
+    'super-speed-module',
+    'super-effectivity-module',
+    'super-productivity-module',
+    'super-slow-module',
+    'super-ineffectivity-module',
+    'infinity-fusion-reactor-equipment',
+    'infinity-personal-roboport-equipment'
+}
+
+local ores_recipes = {
+    'wood',
+    'coal',
+    'stone',
+    'iron-ore',
+    'copper-ore',
+    'uranium-ore'
+}
+
 -- cheat data and functions
 defs.cheats = {
     player = {
@@ -251,7 +290,7 @@ defs.cheats = {
                     conditional_event.cheat_deregister(force, cheat, 'cheats.force.instant_research.on_research_started')
                 end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(force, cheat_global)
                 return cheat_global.cur_value
             end
         }},
@@ -263,7 +302,27 @@ defs.cheats = {
                     force.reset_technologies()
                 end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(force, cheat_global)
+                return cheat_global.cur_value
+            end
+        }},
+        infinity_tools_recipes = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                for _,n in pairs(infinity_tools_recipes) do
+                    if force.recipes[n] then force.recipes[n].enabled = new_value end
+                end
+            end,
+            get_value = function(force, cheat_global)
+                return cheat_global.cur_value
+            end
+        }},
+        ores_recipes = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                for _,n in pairs(ores_recipes) do
+                    if force.recipes[n] then force.recipes[n].enabled = new_value end
+                end
+            end,
+            get_value = function(force, cheat_global)
                 return cheat_global.cur_value
             end
         }}
@@ -318,7 +377,10 @@ defs.cheats_gui_elems = {
     },
     force = {
         toggles = {
-            'instant_research'
+            'instant_research',
+            'research_all_technologies',
+            'infinity_tools_recipes',
+            'ores_recipes'
         }
     },
     surface = {

@@ -92,6 +92,7 @@ local function create_tabbed_pane(player, window_frame)
     pane = tabs[2].content
     local cur_force = player_table.cheats_gui.cur_force
     local upper_flow = pane.add{type='flow', name='im_cheats_force_upper_flow', direction='horizontal'}
+    upper_flow.style.horizontal_spacing = 10
     -- force selector
     local forces = {}
     for i,force in pairs(game.forces) do
@@ -107,23 +108,43 @@ local function create_tabbed_pane(player, window_frame)
         create_cheat_ui(toggles_flow, cur_force, {'force',n})
     end
 
+    -- SURFACE
+    pane = tabs[3].content
+    local cur_surface = player_table.cheats_gui.cur_surface
+    local upper_flow = pane.add{type='flow', name='im_cheats_surface_upper_flow', direction='horizontal'}
+    -- surface selector
+    local surfaces = {}
+    for i,surface in pairs(game.surfaces) do
+        surfaces[i] = surface.name
+    end
+    local surfaces_list = upper_flow.add{type='list-box', name='im_cheats_surface_listbox', style='list_box_in_tabbed_pane', items=surfaces, selected_index=cur_surface.index}
+    surfaces_list.style.width = 140
+    surfaces_list.style.height = 140
+    local toggles_flow = upper_flow.add{type='flow', name='im_cheats_surface_toggles_flow', direction='vertical'}
+    toggles_flow.style.horizontally_stretchable = true
+    -- instant research
+    for i,n in pairs(elems_def.surface.toggles) do
+        create_cheat_ui(toggles_flow, cur_surface, {'surface',n})
+    end
+
 end
 
 function cheats_gui.create(player, parent)
     local window_frame = parent.add{type='frame', name='im_cheats_window', style='dialog_frame', direction='vertical'}
-        local titlebar = titlebar.create(window_frame, 'im_cheats_titlebar', {
-            label = {'gui-cheats.window-caption'},
-            -- buttons = {
-            --     {
-            --         name = 'pin',
-            --         sprite = 'im-pin-white',
-            --         hovered_sprite = 'im-pin-black',
-            --         clicked_sprite = 'im-pin-black'
-            --     }
-            -- },
-            draggable = true
-        })
-        create_tabbed_pane(player, window_frame)
+    window_frame.location = {0,(44*player.display_scale)}
+    local titlebar = titlebar.create(window_frame, 'im_cheats_titlebar', {
+        label = {'gui-cheats.window-caption'},
+        draggable = true,
+        buttons = {
+            {
+                name = 'close',
+                sprite = 'utility/close_white',
+                hovered_sprite = 'utility/close_black',
+                clicked_sprite = 'utility/close_black'
+            }
+        }
+    })
+    create_tabbed_pane(player, window_frame)
 end
 
 function cheats_gui.refresh(player, parent)
