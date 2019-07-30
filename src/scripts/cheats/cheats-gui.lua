@@ -85,7 +85,7 @@ local function create_tabbed_pane(player, window_frame)
     -- bonuses
     pane.add{type='label', name='im_cheats_player_bonuses_label', style='caption_label', caption={'gui-cheats-player.group-bonuses-caption'}}.style.top_margin = 2
     for i,n in pairs(elems_def.player.bonuses) do
-        create_cheat_ui(pane, player, {'player',n})
+        create_cheat_ui(pane, player, {'player',n}, player_is_god, player_is_editor)
     end
 
     -- FORCE
