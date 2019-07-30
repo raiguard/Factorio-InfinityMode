@@ -17,10 +17,15 @@ local cheats_gui = require('cheats-gui')
 
 event.on_init(function()
     cheats.create()
-    cheats.apply_defaults('force', game.forces['player'])
-    cheats.apply_defaults('force', game.forces['enemy'])
-    cheats.apply_defaults('force', game.forces['neutral'])
-    cheats.apply_defaults('surface', game.surfaces['nauvis'])
+    for i,p in pairs(game.players) do
+        cheats.apply_defaults('player', p)
+    end
+    for i,f in pairs(game.forces) do
+        cheats.apply_defaults('force', f)
+    end
+    for i,s in pairs(game.surfaces) do
+        cheats.apply_defaults('surface', s)
+    end
 end)
 
 on_event(defines.events.on_player_created, function(e)
@@ -37,7 +42,6 @@ on_event(defines.events.on_player_created, function(e)
         cur_surface = player.surface,
         cur_tab = 1
     }
-    LOG(global)
 end)
 
 gui.on_click('im_button', function(e)
@@ -85,6 +89,12 @@ end)
 gui.on_selection_state_changed('im_cheats_force_listbox', function(e)
     local player = util.get_player(e)
     util.player_table(player).cheats_gui.cur_force = game.forces[e.element.selected_index]
+    cheats_gui.refresh(player, player.gui.screen)
+end)
+
+gui.on_selection_state_changed('im_cheats_surface_listbox', function(e)
+    local player = util.get_player(e)
+    util.player_table(player).cheats_gui.cur_surface = game.surfaces[e.element.selected_index]
     cheats_gui.refresh(player, player.gui.screen)
 end)
 
