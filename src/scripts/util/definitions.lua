@@ -351,6 +351,94 @@ defs.cheats = {
             get_value = function(force, cheat_global)
                 return cheat_global.cur_value
             end
+        }},
+        character_reach_distance_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.character_reach_distance_bonus = new_value
+            end,
+            get_value = function(force, cheat_global)
+                return force.character_reach_distance_bonus
+            end
+        }},
+        character_build_distance_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.character_build_distance_bonus = new_value
+            end,
+            get_value = function(force, cheat_global)
+                return force.character_build_distance_bonus
+            end
+        }},
+        character_resource_reach_distance_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.character_resource_reach_distance_bonus = new_value
+            end,
+            get_value = function(force, cheat_global)
+                return force.character_resource_reach_distance_bonus
+            end
+        }},
+        character_item_drop_distance_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.character_item_drop_distance_bonus = new_value
+            end,
+            get_value = function(force, cheat_global)
+                return force.character_item_drop_distance_bonus
+            end
+        }},
+        character_item_pickup_distance_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.character_item_pickup_distance_bonus = new_value
+            end,
+            get_value = function(force, cheat_global)
+                return force.character_item_pickup_distance_bonus
+            end
+        }},
+        character_loot_pickup_distance_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.character_loot_pickup_distance_bonus = new_value
+            end,
+            get_value = function(force, cheat_global)
+                return force.character_loot_pickup_distance_bonus
+            end
+        }},
+        -- character_mining_speed_modifier = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+        --     value_changed = function(force, cheat, cheat_global, new_value)
+        --         force.character_mining_speed_modifier = new_value
+        --     end,
+        --     get_value = function(force, cheat_global)
+        --         return force.character_mining_speed_modifier
+        --     end
+        -- }},
+        character_running_speed_modifier = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.character_running_speed_modifier = new_value
+            end,
+            get_value = function(force, cheat_global)
+                return force.character_running_speed_modifier
+            end
+        }},
+        -- character_crafting_speed_modifier = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+        --     value_changed = function(force, cheat, cheat_global, new_value)
+        --         force.character_crafting_speed_modifier = new_value
+        --     end,
+        --     get_value = function(force, cheat_global)
+        --         return force.character_crafting_speed_modifier
+        --     end
+        -- }},
+        character_inventory_slots_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.character_inventory_slots_bonus = new_value
+            end,
+            get_value = function(force, cheat_global)
+                return force.character_inventory_slots_bonus
+            end
+        }},
+        character_health_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.character_health_bonus = new_value
+            end,
+            get_value = function(force, cheat_global)
+                return force.character_health_bonus
+            end
         }}
     },
     surface = {
@@ -409,6 +497,19 @@ defs.cheats_gui_elems = {
             free_resource_recipes = {tooltip=true},
             vanilla_loaders_recipes = {},
             misc_vanilla_recipes = {tooltip=true}
+        },
+        bonuses = {
+            character_reach_distance_bonus = {},
+            character_build_distance_bonus = {},
+            character_resource_reach_distance_bonus = {},
+            character_item_drop_distance_bonus = {},
+            character_item_pickup_distance_bonus = {},
+            character_loot_pickup_distance_bonus = {},
+            -- character_mining_speed_modifier = {},
+            character_running_speed_modifier = {},
+            -- character_crafting_speed_modifier = {},
+            character_inventory_slots_bonus = {},
+            character_health_bonus = {}
         }
     },
     surface = {

@@ -87,7 +87,7 @@ local function create_tabbed_pane(player, window_frame)
     -- bonuses
     pane.add{type='label', name='im_cheats_player_bonuses_label', style='caption_label', caption={'gui-cheats-player.group-bonuses-caption'}}.style.top_margin = 2
     for n,t in pairs(elems_def.player.bonuses) do
-        create_cheat_ui(pane, player, {'player',n}, t, player_is_god, player_is_editor)
+        create_cheat_ui(pane, cur_player, {'player',n}, t, player_is_god, player_is_editor)
     end
 
     -- FORCE
@@ -109,6 +109,11 @@ local function create_tabbed_pane(player, window_frame)
     -- toggles
     for n,t in pairs(elems_def.force.toggles) do
         create_cheat_ui(toggles_flow, cur_force, {'force',n}, t)
+    end
+    -- bonuses
+    pane.add{type='label', name='im_cheats_force_bonuses_label', style='caption_label', caption={'gui-cheats-force.group-bonuses-caption'}}.style.top_margin = 2
+    for n,t in pairs(elems_def.force.bonuses) do
+        create_cheat_ui(pane, cur_force, {'force',n}, t, player_is_god, player_is_editor)
     end
 
     -- SURFACE
