@@ -104,7 +104,7 @@ local function create_tabbed_pane(player, window_frame)
     forces_list.style.height = 140
     local toggles_flow = upper_flow.add{type='flow', name='im_cheats_force_toggles_flow', direction='vertical'}
     toggles_flow.style.horizontally_stretchable = true
-    -- instant research
+    -- toggles
     for i,n in pairs(elems_def.force.toggles) do
         create_cheat_ui(toggles_flow, cur_force, {'force',n})
     end
@@ -125,7 +125,7 @@ local function create_tabbed_pane(player, window_frame)
     surfaces_list.style.height = 140
     local toggles_flow = upper_flow.add{type='flow', name='im_cheats_surface_toggles_flow', direction='vertical'}
     toggles_flow.style.horizontally_stretchable = true
-    -- instant research
+    -- toggles
     for i,n in pairs(elems_def.surface.toggles) do
         create_cheat_ui(toggles_flow, cur_surface, {'surface',n})
     end
