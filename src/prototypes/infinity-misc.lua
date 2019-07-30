@@ -3,9 +3,6 @@ local table = require('__stdlib__/stdlib/utils/table')
 -- ------------------------------------------------------------------------------------------
 -- ITEMS
 
--- add crafting recipes for vanilla ores
-register_recipes{'wood', 'iron-ore', 'copper-ore', 'coal', 'stone', 'uranium-ore'}
-
 -- infinity pipe
 local ip_item = data.raw['item']['infinity-pipe']
 ip_item.icons = { apply_infinity_tint(ip_item.icons[1]) }
