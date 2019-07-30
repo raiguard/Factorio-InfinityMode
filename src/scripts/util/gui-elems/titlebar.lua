@@ -30,6 +30,7 @@ function titlebar.create(parent, name, data)
     end
 
     if data.buttons then
+        filler.style.right_margin = 7
         local buttons = data.buttons
         for i=1, #buttons do
             titlebar_flow.add {
@@ -41,9 +42,6 @@ function titlebar.create(parent, name, data)
                 clicked_sprite = buttons[i].clicked_sprite or nil
             }
         end
-    else
-        filler.style.right_padding = 0
-        filler.style.right_margin = 0
     end
 
     return titlebar_flow
