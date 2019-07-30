@@ -76,6 +76,18 @@ on_event(defines.events.on_player_toggled_map_editor, function(e)
     cheats_gui.refresh(player, player.gui.screen)
 end)
 
+gui.on_selection_state_changed('im_cheats_player_switcher_dropdown', function(e)
+    local player = util.get_player(e)
+    util.player_table(player).cheats_gui.cur_player = game.players[e.element.selected_index]
+    cheats_gui.refresh(player, player.gui.screen)
+end)
+
+gui.on_selection_state_changed('im_cheats_force_listbox', function(e)
+    local player = util.get_player(e)
+    util.player_table(player).cheats_gui.cur_force = game.forces[e.element.selected_index]
+    cheats_gui.refresh(player, player.gui.screen)
+end)
+
 -- ----------------------------------------------------------------------------------------------------
 -- CHEATS
 
