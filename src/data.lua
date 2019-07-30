@@ -6,12 +6,12 @@ function apply_infinity_tint(t)
     return t
 end
 
-function register_recipes(t)
+function register_recipes(t, free_resource)
     for _,k in pairs(t) do
         data:extend{
             {
                 type = 'recipe',
-                name = k,
+                name = free_resource and 'im_free_resource_'..k or 'im_tool_'..k,
                 ingredients = {},
                 enabled = true,
                 result = k

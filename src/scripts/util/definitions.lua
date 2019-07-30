@@ -314,8 +314,8 @@ defs.cheats = {
         }},
         infinity_tools_recipes = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
-                for _,n in pairs(infinity_tools_recipes) do
-                    if force.recipes[n] then force.recipes[n].enabled = new_value end
+                for n,r in pairs(game.recipe_prototypes) do
+                    if string.find(n, 'im_tool_') and force.recipes[n] then force.recipes[n].enabled = new_value end
                 end
             end,
             get_value = function(force, cheat_global)
@@ -332,10 +332,10 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        ores_recipes = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+        free_resource_recipes = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
-                for _,n in pairs(ores_recipes) do
-                    if force.recipes[n] then force.recipes[n].enabled = new_value end
+                for n,r in pairs(game.recipe_prototypes) do
+                    if string.find(n, 'im_free_resource_') and force.recipes[n] then force.recipes[n].enabled = new_value end
                 end
             end,
             get_value = function(force, cheat_global)
@@ -397,7 +397,7 @@ defs.cheats_gui_elems = {
             'research_all_technologies',
             'infinity_tools_recipes',
             'vanilla_loaders_recipes',
-            'ores_recipes'
+            'free_resource_recipes'
         }
     },
     surface = {
