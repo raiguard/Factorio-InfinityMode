@@ -305,7 +305,7 @@ defs.cheats = {
                 if new_value then
                     force.research_all_technologies()
                 else
-                    force.reset_technologies()
+                    force.reset()
                 end
             end,
             get_value = function(force, cheat_global)
@@ -322,6 +322,16 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
+        free_resource_recipes = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                for n,r in pairs(game.recipe_prototypes) do
+                    if string.find(n, 'im_free_resource_') and force.recipes[n] then force.recipes[n].enabled = new_value end
+                end
+            end,
+            get_value = function(force, cheat_global)
+                return cheat_global.cur_value
+            end
+        }},
         vanilla_loaders_recipes = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 for _,n in pairs(vanilla_loaders_recipes) do
@@ -332,11 +342,11 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        free_resource_recipes = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+        misc_vanilla_recipes = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
-                for n,r in pairs(game.recipe_prototypes) do
-                    if string.find(n, 'im_free_resource_') and force.recipes[n] then force.recipes[n].enabled = new_value end
-                end
+                force.recipes['player-port'].enabled = new_value
+                force.recipes['railgun'].enabled = new_value
+                force.recipes['railgun-dart'].enabled = new_value
             end,
             get_value = function(force, cheat_global)
                 return cheat_global.cur_value
@@ -396,8 +406,9 @@ defs.cheats_gui_elems = {
             'instant_research',
             'research_all_technologies',
             'infinity_tools_recipes',
+            'free_resource_recipes',
             'vanilla_loaders_recipes',
-            'free_resource_recipes'
+            'misc_vanilla_recipes'
         }
     },
     surface = {
