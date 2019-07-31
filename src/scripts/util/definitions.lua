@@ -440,6 +440,30 @@ defs.cheats = {
                 return force.character_health_bonus
             end
         }},
+        inserter_stack_size_bonus = {type='number', in_god_mode=true, in_editor=true, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.inserter_stack_size_bonus = new_value
+            end,
+            get_value = function(force, cheat_global)
+                return force.inserter_stack_size_bonus
+            end
+        }},
+        stack_inserter_capacity_bonus = {type='number', in_god_mode=true, in_editor=true, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.stack_inserter_capacity_bonus = new_value
+            end,
+            get_value = function(force, cheat_global)
+                return force.stack_inserter_capacity_bonus
+            end
+        }},
+        evolution_factor = {type='number', in_god_mode=true, in_editor=true, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.evolution_factor = new_value
+            end,
+            get_value = function(force, cheat_global)
+                return force.evolution_factor
+            end
+        }},
         chart_all = {type='action', default=true, in_god_mode=true, in_editor=true, functions={
             action = function(force, cheat, cheat_global)
                 force.chart_all()
@@ -523,11 +547,12 @@ defs.cheats_gui_elems = {
             character_item_drop_distance_bonus = {},
             character_item_pickup_distance_bonus = {},
             character_loot_pickup_distance_bonus = {},
-            -- character_mining_speed_modifier = {},
             character_running_speed_modifier = {},
-            -- character_crafting_speed_modifier = {},
             character_inventory_slots_bonus = {},
-            character_health_bonus = {}
+            character_health_bonus = {},
+            inserter_stack_size_bonus = {},
+            stack_inserter_capacity_bonus = {},
+            evolution_factor = {allow_decimal=true}
         },
         actions = {
             chart_all = {tooltip=true},

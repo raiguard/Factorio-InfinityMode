@@ -18,7 +18,7 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, player_is_god, pl
     local cheat_name = cheat[1]..'-'..cheat[2]
     local element
     if cheat_def.type == 'toggle' then
-        element = parent.add{type='checkbox', name='im_cheats-'..cheat_name..'-checkbox', state=util.cheat_table(cheat[1], cheat[2], obj.index).cur_value,
+        element = parent.add{type='checkbox', name='im_cheats-'..cheat_name..'-checkbox', state=cheat_def.functions.get_value(obj, cheat_table),
             caption={'', {'gui-cheats-'..cheat[1]..'.setting-'..cheat[2]..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
             tooltip=elem_table.tooltip and {'gui-cheats-'..cheat[1]..'.setting-'..cheat[2]..'-tooltip'} or nil}
     elseif cheat_def.type == 'number' then
@@ -28,7 +28,9 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, player_is_god, pl
             caption={'', {'gui-cheats-'..cheat[1]..'.setting-'..cheat[2]..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
             tooltip=elem_table.tooltip and {'gui-cheats-'..cheat[1]..'.setting-'..cheat[2]..'-tooltip'} or nil}
         setting_flow.add{type='empty-widget', name='im_cheats-'..cheat_name..'-filler', style='invisible_horizontal_filler'}
-        element = setting_flow.add{type='textfield', name='im_cheats-'..cheat_name..'-textfield', style='short_number_textfield', text=util.cheat_table(cheat[1], cheat[2], obj.index).cur_value, numeric=true, lose_focus_on_confirm=true}
+        element = setting_flow.add{type='textfield', name='im_cheats-'..cheat_name..'-textfield', style='short_number_textfield',
+            text=cheat_def.functions.get_value(obj, cheat_table), numeric=true, lose_focus_on_confirm=true,
+            allow_decimal=elem_table.allow_decimal or false}
     elseif cheat_def.type == 'action' then
         element = parent.add{type='button', name='im_cheats-'..cheat_name..'-button', style='stretchable_button',
             caption={'gui-cheats-'..cheat[1]..'.setting-'..cheat[2]..'-caption'},
@@ -67,18 +69,18 @@ local function create_tabbed_pane(player, window_frame)
     local cur_player = player_table.cheats_gui.cur_player
     local player_is_god = cur_player.controller_type == defines.controllers.god
     local player_is_editor = cur_player.controller_type == defines.controllers.editor
-    -- -- player switcher
-    -- local switcher_flow = pane.add{type='flow', name='im_cheats_player_switcher_flow', style='vertically_centered_flow', direction='horizontal'}
-    -- switcher_flow.style.horizontally_stretchable = true
-    -- switcher_flow.add{type='label', name='im_cheats_player_switcher_label', style='caption_label', caption={'gui-cheats-player.switcher-label-caption'}}
-    -- switcher_flow.add{type='empty-widget', name='im_cheats_player_switcher_filler', style='invisible_horizontal_filler'}
-    -- local players = {}
-    -- for i,player in pairs(game.players) do
-    --     players[i] = player.name
-    -- end
-    -- switcher_flow.add{type='drop-down', name='im_cheats_player_switcher_dropdown', items=players, selected_index=player_table.cheats_gui.cur_player.index}
-    -- switcher_flow.style.bottom_margin = 4
-    -- pane.add{type='line', name='im_cheats_player_switcher_line', direction='horizontal'}.style.horizontally_stretchable = true
+    -- player switcher
+    local switcher_flow = pane.add{type='flow', name='im_cheats_player_switcher_flow', style='vertically_centered_flow', direction='horizontal'}
+    switcher_flow.style.horizontally_stretchable = true
+    switcher_flow.add{type='label', name='im_cheats_player_switcher_label', style='caption_label', caption={'gui-cheats-player.switcher-label-caption'}}
+    switcher_flow.add{type='empty-widget', name='im_cheats_player_switcher_filler', style='invisible_horizontal_filler'}
+    local players = {}
+    for i,player in pairs(game.players) do
+        players[i] = player.name
+    end
+    switcher_flow.add{type='drop-down', name='im_cheats_player_switcher_dropdown', items=players, selected_index=player_table.cheats_gui.cur_player.index}
+    switcher_flow.style.bottom_margin = 4
+    pane.add{type='line', name='im_cheats_player_switcher_line', direction='horizontal'}.style.horizontally_stretchable = true
     -- toggles
     local toggles_flow_table = pane.add{type='table', name='im_cheats_player_toggles_table', column_count=2}
     toggles_flow_table.style.horizontally_stretchable = true
@@ -155,7 +157,8 @@ end
 
 function cheats_gui.create(player, parent)
     local window_frame = parent.add{type='frame', name='im_cheats_window', style='dialog_frame', direction='vertical'}
-    window_frame.location = {0,(44*player.display_scale)}
+    -- window_frame.location = {0,(44*player.display_scale)}
+    window_frame.location = {1998,363}
     local titlebar = titlebar.create(window_frame, 'im_cheats_titlebar', {
         label = {'gui-cheats.window-caption'},
         draggable = true,

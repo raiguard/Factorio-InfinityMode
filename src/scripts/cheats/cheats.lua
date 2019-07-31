@@ -30,8 +30,10 @@ function cheats.apply_defaults(category, obj)
             data[obj.index] = def.functions.setup_global and def.functions.setup_global(obj) or nil
             if def.default then cheats.trigger_action(obj, {category,name}) end
         else
-            data[obj.index] = def.functions.setup_global and def.functions.setup_global(obj, def.default) or {cur_value=def.default}
-            cheats.update(obj, {category,name}, def.default)
+            if def.default then
+                data[obj.index] = def.functions.setup_global and def.functions.setup_global(obj, def.default) or {cur_value=def.default}
+                cheats.update(obj, {category,name}, def.default)
+            end
         end
     end
 end
