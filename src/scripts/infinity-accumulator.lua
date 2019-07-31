@@ -35,10 +35,55 @@ end
 -- ----------------------------------------------------------------------------------------------------
 -- GUI
 
+-- Destroy and recreate the dialog with the new parameters
+local function refresh_ia_gui(player, entity)
+    local entity_frame = player.gui.screen.im_ia_window
+    if entity_frame then
+        entity_frame.im_ia_content_flow.im_ia_page_frame.destroy()
+        util.player_table(player).ia_gui = ia_page.create(entity_frame.im_ia_content_flow, {entity=entity})
+    end
+end
+
+-- Creates the main dialog frame
+local function create_ia_gui(player, entity)
+    local main_frame = player.gui.screen.add {
+        type = 'frame',
+        name = 'im_ia_window',
+        style = 'dialog_frame',
+        direction = 'vertical'
+    }
+
+    local titlebar = titlebar.create(main_frame, 'im_ia_titlebar', {
+        label = {'gui-infinity-accumulator.titlebar-label-caption'},
+        draggable = true,
+        buttons = {
+            {
+                name = 'close',
+                sprite = 'utility/close_white',
+                hovered_sprite = 'utility/close_black',
+                clicked_sprite = 'utility/close_black'
+            }
+        }
+    })
+
+    local content_flow = main_frame.add {
+        type = 'flow',
+        name = 'im_ia_content_flow',
+        direction = 'horizontal'
+    }
+
+    content_flow.style.horizontal_spacing = 10
+
+    local camera = entity_camera.create(content_flow, 'im_camera', 110, {player=player, entity=entity, camera_zoom=1, camera_offset={0,-0.5}})
+    util.set_open_gui(player, main_frame, titlebar.children[3], 'ia_gui')
+    util.player_table(player).ia_gui = ia_page.create(content_flow, {entity=entity})
+    return main_frame
+end
+
 -- gui management
 on_event(defines.events.on_gui_opened, function(e)
     if check_is_accumulator(e.entity) then
-        create_entity_dialog(util.get_player(e), e.entity, ia_page).force_auto_center()
+        create_ia_gui(util.get_player(e), e.entity, ia_page).force_auto_center()
     end
 end)
 
@@ -81,7 +126,7 @@ local function change_ia_mode_or_priority(e)
     }
     entity.destroy()
     set_ia_params(new_entity, mode, data.slider.slider_value, data.slider_dropdown.selected_index * 3)
-    refresh_entity_dialog(util.get_player(e), new_entity)
+    refresh_ia_gui(util.get_player(e), new_entity)
 end
 
 gui.on_selection_state_changed('im_ia_mode_dropdown', function(e)
@@ -150,50 +195,5 @@ gui.on_selection_state_changed('im_ia_slider_dropdown', function(e)
 
     set_ia_params(entity, mode, data.slider.slider_value, exponent)
 end)
-
--- Destroy and recreate the dialog with the new parameters
-function refresh_entity_dialog(player, entity)
-    local entity_frame = player.gui.screen.im_ia_window
-    if entity_frame then
-        entity_frame.im_ia_content_flow.im_ia_page_frame.destroy()
-        util.player_table(player).ia_gui = ia_page.create(entity_frame.im_ia_content_flow, {entity=entity})
-    end
-end
-
--- Creates the main dialog frame
-function create_entity_dialog(player, entity)
-    local main_frame = player.gui.screen.add {
-        type = 'frame',
-        name = 'im_ia_window',
-        style = 'dialog_frame',
-        direction = 'vertical'
-    }
-
-    local titlebar = titlebar.create(main_frame, 'im_ia_titlebar', {
-        label = {'gui-entity-dialog.titlebar-label-' .. entity.name},
-        draggable = true,
-        buttons = {
-            {
-                name = 'close',
-                sprite = 'utility/close_white',
-                hovered_sprite = 'utility/close_black',
-                clicked_sprite = 'utility/close_black'
-            }
-        }
-    })
-
-    local content_flow = main_frame.add {
-        type = 'flow',
-        name = 'im_ia_content_flow',
-        direction = 'horizontal'
-    }
-
-    content_flow.style.horizontal_spacing = 10
-
-    local camera = entity_camera.create(content_flow, 'im_camera', 110, {player=player, entity=entity, camera_zoom=1, camera_offset={0,-0.5}})
-    util.set_open_gui(player, main_frame, titlebar.children[3], 'ia_gui')
-    util.player_table(player).ia_gui = ia_page.create(content_flow, {entity=entity})
-    return main_frame
-end
 
 -- ----------------------------------------------------------------------------------------------------

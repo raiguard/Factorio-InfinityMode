@@ -17,9 +17,9 @@ local function get_ia_options(entity)
     return {mode=pti_ref[mode], priority=pti_ref[priority]}
 end
 
-local function create_dropdown(parent, name, caption, items, selected_index, button_disabled)
+local function create_dropdown(parent, name, caption, tooltip, items, selected_index, button_disabled)
     local flow = parent.add{type='flow', name=name..'_flow', style='vertically_centered_flow', direction='horizontal'}
-    flow.add{type='label', name=name..'_label', caption=caption}
+    flow.add{type='label', name=name..'_label', caption=caption, tooltip=tooltip}
     flow.add {type='empty-widget', name=name..'_filler', style='invisible_horizontal_filler'}
 
     return flow.add{type='drop-down', name=name..'_dropdown', items=items, selected_index=selected_index}
@@ -38,16 +38,16 @@ function page.create(content_frame, data)
     -- SETTINGS
     
     elems.mode_dropdown = create_dropdown(page_frame, 'im_ia_mode',
-        {'gui-entity-dialog.infinity-accumulator-mode-caption'}, {{'gui-entity-dialog.infinity-accumulator-mode-input'}, {'gui-entity-dialog.infinity-accumulator-mode-output'}, {'gui-entity-dialog.infinity-accumulator-mode-buffer'}}, mode)
+        {'', {'gui-infinity-accumulator.mode-label-caption'}, ' [img=info]'}, {'gui-infinity-accumulator.mode-label-tooltip'}, {{'gui-infinity-accumulator.mode-dropdown-input'}, {'gui-infinity-accumulator.mode-dropdown-output'}, {'gui-infinity-accumulator.mode-dropdown-buffer'}}, mode)
 
     elems.priority_dropdown = create_dropdown(page_frame, 'im_ia_priority',
-        {'gui-entity-dialog.infinity-accumulator-priority-caption'}, {{'gui-entity-dialog.infinity-accumulator-priority-primary'}, {'gui-entity-dialog.infinity-accumulator-priority-secondary'}, {'gui-entity-dialog.infinity-accumulator-priority-tertiary'}}, priority)
+        {'', {'gui-infinity-accumulator.priority-label-caption'}, ' [img=info]'}, {'gui-infinity-accumulator.priority-label-tooltip'}, {{'gui-infinity-accumulator.priority-dropdown-primary'}, {'gui-infinity-accumulator.priority-dropdown-secondary'}, {'gui-infinity-accumulator.priority-dropdown-tertiary'}}, priority)
 
     page_frame.im_ia_priority_flow.style.vertically_stretchable = true
 
     if mode == 3 then
         elems.priority_dropdown.visible = false
-        local disabled = page_frame.im_ia_priority_flow.add{type='button', name='im_ia_priority_disabled_button', caption={'gui-entity-dialog.infinity-accumulator-priority-tertiary'}}
+        local disabled = page_frame.im_ia_priority_flow.add{type='button', name='im_ia_priority_disabled_button', caption={'gui-infinity-accumulator.priority-dropdown-tertiary'}}
         disabled.enabled = false
         disabled.style.horizontal_align = 'left'
         disabled.style.minimal_width = 116
