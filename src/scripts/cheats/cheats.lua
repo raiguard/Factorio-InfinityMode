@@ -26,8 +26,13 @@ end
 function cheats.apply_defaults(category, obj)
     for name,data in pairs(global.cheats[category]) do
         local def = defs.cheats[category][name]
-        data[obj.index] = def.functions.setup_global and def.functions.setup_global(obj, def.default) or {cur_value=def.default}
-        cheats.update(obj, {category,name}, def.default)
+        if def.type == 'action' then
+            data[obj.index] = def.functions.setup_global and def.functions.setup_global(obj) or nil
+            if def.default then cheats.trigger_action(obj, {category,name}) end
+        else
+            data[obj.index] = def.functions.setup_global and def.functions.setup_global(obj, def.default) or {cur_value=def.default}
+            cheats.update(obj, {category,name}, def.default)
+        end
     end
 end
 
@@ -38,6 +43,15 @@ function cheats.update(obj, cheat, value)
     local cheat_global = util.cheat_table(cheat[1], cheat[2], obj.index)
     cheat_global.cur_value = value
     cheat_def.functions.value_changed(obj, cheat_def, cheat_global, value)
+end
+
+-- trigger an action cheat
+function cheats.trigger_action(obj, cheat)
+    log(obj.name .. ' :: ' .. cheat[1] .. '.' .. cheat[2] .. ' TRIGGERED')
+    local cheat_def = defs.cheats[cheat[1]][cheat[2]]
+    local cheat_global = util.cheat_table(cheat[1], cheat[2], obj.index)
+    cheat_global.cur_value = value
+    cheat_def.functions.action(obj, cheat_def, cheat_global)
 end
 
 function cheats.is_valid(category, name)

@@ -64,13 +64,17 @@ on_event(defines.events.on_gui_selected_tab_changed, function(e)
     end
 end)
 
-on_event({defines.events.on_gui_checked_state_changed, defines.events.on_gui_confirmed}, function(e)
+on_event({defines.events.on_gui_checked_state_changed, defines.events.on_gui_confirmed, defines.events.on_gui_click}, function(e)
     local params = string.split(e.element.name, '-')
     local player = util.get_player(e)
-    if params[1] == 'im_cheats' and (params[4] == 'checkbox' or params[4] == 'textfield') and cheats.is_valid(params[2], params[3]) then
+    if params[1] == 'im_cheats' and cheats.is_valid(params[2], params[3]) then
         local param = e.element.type == 'checkbox' and 'state' or 'text'
         local obj = util.player_table(player).cheats_gui['cur_'..params[2]]
-        cheats.update(obj, {params[2], params[3]}, e.element[param])
+        if params[4] == 'checkbox' or params[4] == 'textfield' then
+            cheats.update(obj, {params[2], params[3]}, e.element[param])
+        else
+            cheats.trigger_action(obj, {params[2], params[3]})
+        end
         cheats_gui.refresh(player, player.gui.screen)
     end
 end)

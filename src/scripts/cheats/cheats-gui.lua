@@ -29,6 +29,10 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, player_is_god, pl
             tooltip=elem_table.tooltip and {'gui-cheats-'..cheat[1]..'.setting-'..cheat[2]..'-tooltip'} or nil}
         setting_flow.add{type='empty-widget', name='im_cheats-'..cheat_name..'-filler', style='invisible_horizontal_filler'}
         element = setting_flow.add{type='textfield', name='im_cheats-'..cheat_name..'-textfield', style='short_number_textfield', text=util.cheat_table(cheat[1], cheat[2], obj.index).cur_value, numeric=true, lose_focus_on_confirm=true}
+    elseif cheat_def.type == 'action' then
+        element = parent.add{type='button', name='im_cheats-'..cheat_name..'-button', style='stretchable_button',
+            caption={'gui-cheats-'..cheat[1]..'.setting-'..cheat[2]..'-caption'},
+            tooltip=elem_table.tooltip and {'gui-cheats-'..cheat[1]..'.setting-'..cheat[2]..'-tooltip'} or nil}
     end
     if player_is_god and cheat_def.in_god_mode == false then
         element.enabled = false
@@ -117,6 +121,14 @@ local function create_tabbed_pane(player, window_frame)
     for n,t in pairs(elems_def.force.bonuses) do
         create_cheat_ui(pane, cur_force, {'force',n}, t, player_is_god, player_is_editor)
     end
+    -- actions
+    local force_actions_label = pane.add{type='label', name='im_cheats_force_actions_label', style='caption_label', caption={'gui-cheats-force.group-actions-caption'}}
+    force_actions_label.style.top_margin = 3
+    force_actions_label.style.bottom_margin = 6
+    local action_flow = pane.add{type='flow', name='im_cheats_force_actions_flow', direction='horizontal'}
+    for n,t in pairs(elems_def.force.actions) do
+        create_cheat_ui(action_flow, cur_force, {'force',n}, t)
+    end
 
     -- SURFACE
     pane = tabs[3].content
@@ -139,12 +151,6 @@ local function create_tabbed_pane(player, window_frame)
     create_cheat_ui(daytime_flow, cur_surface, {'surface', 'freeze_time'}, {tooltip=true})
     daytime_flow.add{type='empty-widget', name='im_cheats_surface_daytime_filler', style='invisible_horizontal_filler'}
     daytime_flow.add{type='textfield', name='im_cheats-surface-time_of_day-textfield', numeric=true, lose_focus_on_confirm=true, allow_decimal=true, text=cur_surface.daytime}.style.width = 57
-
-
-    -- for n,t in pairs(elems_def.surface.toggles) do
-    --     create_cheat_ui(toggles_flow, cur_surface, {'surface',n}, t)
-    -- end
-
 end
 
 function cheats_gui.create(player, parent)

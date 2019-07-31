@@ -439,6 +439,16 @@ defs.cheats = {
             get_value = function(force, cheat_global)
                 return force.character_health_bonus
             end
+        }},
+        chart_all = {type='action', default=true, in_god_mode=true, in_editor=true, functions={
+            action = function(force, cheat, cheat_global)
+                force.chart_all()
+            end
+        }},
+        kill_all_units = {type='action', default=false, in_god_mode=true, in_editor=true, functions={
+            action = function(force, cheat, cheat_global)
+                force.kill_all_units()
+            end
         }}
     },
     surface = {
@@ -518,6 +528,10 @@ defs.cheats_gui_elems = {
             -- character_crafting_speed_modifier = {},
             character_inventory_slots_bonus = {},
             character_health_bonus = {}
+        },
+        actions = {
+            chart_all = {tooltip=true},
+            kill_all_units = {tooltip=true}
         }
     },
     surface = {
