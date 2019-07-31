@@ -18,12 +18,9 @@ local function get_ia_options(entity)
 end
 
 local function create_dropdown(parent, name, caption, items, selected_index, button_disabled)
-    local flow = parent.add{type='flow', name=name..'_flow', direction='horizontal'}
-    flow.style.vertical_align = 'center'
-
+    local flow = parent.add{type='flow', name=name..'_flow', style='vertically_centered_flow', direction='horizontal'}
     flow.add{type='label', name=name..'_label', caption=caption, style='bold_label'}
-
-    flow.add {type='flow', name=name..'_filler', style='invisible_horizontal_filler'}
+    flow.add {type='empty-widget', name=name..'_filler', style='invisible_horizontal_filler'}
 
     return flow.add{type='drop-down', name=name..'_dropdown', items=items, selected_index=selected_index}
 end

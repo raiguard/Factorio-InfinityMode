@@ -449,6 +449,14 @@ defs.cheats = {
             get_value = function(surface, cheat_global)
                 return surface.freeze_daytime
             end 
+        }},
+        time_of_day = {type='number', default=0, in_god_mode=true, in_editor=true, functions={
+            value_changed = function(surface, cheat, cheat_global, new_value)
+                surface.daytime = new_value
+            end,
+            get_value = function(surface, cheat_global)
+                return surface.daytime
+            end
         }}
     },
     game = {
@@ -514,7 +522,7 @@ defs.cheats_gui_elems = {
     },
     surface = {
         toggles = {
-            freeze_time = {}
+            
         }
     },
     game = {

@@ -38,12 +38,12 @@ styles['titlebar_flow'] = {
 }
 
 styles['invisible_horizontal_filler'] = {
-    type = 'horizontal_flow_style',
+    type = 'empty_widget_style',
     horizontally_stretchable = 'on'
 }
 
 styles['invisible_vertical_filler'] = {
-    type = 'vertical_flow_style',
+    type = 'empty_widget_style',
     vertically_stretchable = 'on'
 }
 

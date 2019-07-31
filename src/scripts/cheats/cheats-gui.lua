@@ -27,7 +27,7 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, player_is_god, pl
         setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-label',
             caption={'', {'gui-cheats-'..cheat[1]..'.setting-'..cheat[2]..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
             tooltip=elem_table.tooltip and {'gui-cheats-'..cheat[1]..'.setting-'..cheat[2]..'-tooltip'} or nil}
-        setting_flow.add{type='flow', name='im_cheats-'..cheat_name..'-filler', style='invisible_horizontal_filler'}
+        setting_flow.add{type='empty-widget', name='im_cheats-'..cheat_name..'-filler', style='invisible_horizontal_filler'}
         element = setting_flow.add{type='textfield', name='im_cheats-'..cheat_name..'-textfield', style='short_number_textfield', text=util.cheat_table(cheat[1], cheat[2], obj.index).cur_value, numeric=true, lose_focus_on_confirm=true}
     end
     if player_is_god and cheat_def.in_god_mode == false then
@@ -47,7 +47,8 @@ local function create_tabbed_pane(player, window_frame)
     local tabbed_pane = content_frame.add{type='tabbed-pane', name='im_cheats_tabbed_pane'}
     for category,cheats in pairs(elems_def) do
         local tab = tabbed_pane.add{type='tab', name='im_cheats_'..category..'_tab', caption={'gui-cheats.tab-'..category..'-caption'}}
-        local pane = tabbed_pane.add{type='flow', name='im_cheats_'..category..'_pane', direction='vertical'}
+        local pane = tabbed_pane.add{type='scroll-pane', name='im_cheats_'..category..'_pane', style='scroll_pane_light', direction='vertical', horizontal_scroll_policy='never'}
+        -- pane.style.height = 500
         if category == 'game' then tab.enabled = false end
         pane.style.left_padding = 5
         pane.style.right_padding = 5
@@ -62,17 +63,18 @@ local function create_tabbed_pane(player, window_frame)
     local cur_player = player_table.cheats_gui.cur_player
     local player_is_god = cur_player.controller_type == defines.controllers.god
     local player_is_editor = cur_player.controller_type == defines.controllers.editor
-    -- player switcher
-    local switcher_flow = pane.add{type='flow', name='im_cheats_player_switcher_flow', style='vertically_centered_flow', direction='horizontal'}
-    switcher_flow.add{type='label', name='im_cheats_player_switcher_label', style='caption_label', caption={'gui-cheats-player.switcher-label-caption'}}
-    switcher_flow.add{type='flow', name='im_cheats_player_switcher_filler', style='invisible_horizontal_filler'}
-    local players = {}
-    for i,player in pairs(game.players) do
-        players[i] = player.name
-    end
-    switcher_flow.add{type='drop-down', name='im_cheats_player_switcher_dropdown', items=players, selected_index=player_table.cheats_gui.cur_player.index}
-    switcher_flow.style.bottom_margin = 4
-    pane.add{type='line', name='im_cheats_player_switcher_line', direction='horizontal'}.style.horizontally_stretchable = true
+    -- -- player switcher
+    -- local switcher_flow = pane.add{type='flow', name='im_cheats_player_switcher_flow', style='vertically_centered_flow', direction='horizontal'}
+    -- switcher_flow.style.horizontally_stretchable = true
+    -- switcher_flow.add{type='label', name='im_cheats_player_switcher_label', style='caption_label', caption={'gui-cheats-player.switcher-label-caption'}}
+    -- switcher_flow.add{type='empty-widget', name='im_cheats_player_switcher_filler', style='invisible_horizontal_filler'}
+    -- local players = {}
+    -- for i,player in pairs(game.players) do
+    --     players[i] = player.name
+    -- end
+    -- switcher_flow.add{type='drop-down', name='im_cheats_player_switcher_dropdown', items=players, selected_index=player_table.cheats_gui.cur_player.index}
+    -- switcher_flow.style.bottom_margin = 4
+    -- pane.add{type='line', name='im_cheats_player_switcher_line', direction='horizontal'}.style.horizontally_stretchable = true
     -- toggles
     local toggles_flow_table = pane.add{type='table', name='im_cheats_player_toggles_table', column_count=2}
     toggles_flow_table.style.horizontally_stretchable = true
@@ -130,12 +132,18 @@ local function create_tabbed_pane(player, window_frame)
     local surfaces_list = upper_flow.add{type='list-box', name='im_cheats_surface_listbox', style='list_box_in_tabbed_pane', items=surfaces, selected_index=cur_surface.index}
     surfaces_list.style.width = 140
     surfaces_list.style.height = 140
+    -- toggles
     local toggles_flow = upper_flow.add{type='flow', name='im_cheats_surface_toggles_flow', direction='vertical'}
     toggles_flow.style.horizontally_stretchable = true
-    -- toggles
-    for n,t in pairs(elems_def.surface.toggles) do
-        create_cheat_ui(toggles_flow, cur_surface, {'surface',n}, t)
-    end
+    local daytime_flow = toggles_flow.add{type='flow', name='im_cheats_surface_daytime_flow', style='vertically_centered_flow', direction='horizontal'}
+    create_cheat_ui(daytime_flow, cur_surface, {'surface', 'freeze_time'}, {tooltip=true})
+    daytime_flow.add{type='empty-widget', name='im_cheats_surface_daytime_filler', style='invisible_horizontal_filler'}
+    daytime_flow.add{type='textfield', name='im_cheats-surface-time_of_day-textfield', numeric=true, lose_focus_on_confirm=true, allow_decimal=true, text=cur_surface.daytime}.style.width = 57
+
+
+    -- for n,t in pairs(elems_def.surface.toggles) do
+    --     create_cheat_ui(toggles_flow, cur_surface, {'surface',n}, t)
+    -- end
 
 end
 
