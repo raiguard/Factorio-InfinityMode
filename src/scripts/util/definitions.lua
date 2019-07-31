@@ -5,6 +5,7 @@
 local abs = math.abs
 local conditional_event = require('scripts/util/conditional-event')
 local event = require('__stdlib__/stdlib/event/event')
+local table = require('__stdlib__/stdlib/utils/table')
 local util = require('scripts/util/util')
 
 local defs = {}
@@ -437,7 +438,7 @@ defs.cheats = {
         }}
     },
     surface = {
-        peaceful_mode = {type='toggle', default=false, in_god_mode=true, in_editor=true, functions={
+        peaceful_mode = {type='toggle', in_god_mode=true, in_editor=true, functions={
             value_changed = function(surface, cheat, cheat_global, new_value)
                 surface.peaceful_mode = new_value
             end,
@@ -449,11 +450,14 @@ defs.cheats = {
             value_changed = function(surface, cheat, cheat_global, new_value)
                 if not surface.map_gen_settings.autoplace_controls then return end
                 if new_value then
-                    surface.map_gen_settings.autoplace_controls['enemy-base'].size = 0
-                    game.print(surface.map_gen_settings.autoplace_controls['enemy-base'].size)
+                    local map_gen_settings = table.deepcopy(surface.map_gen_settings)
+                    cheat_global.settings_copy = table.deepcopy(map_gen_settings)
+                    map_gen_settings.autoplace_controls['enemy-base'].size = 0
+                    surface.map_gen_settings = map_gen_settings
                 else
-                    if cheat_global.enabled_size == nil then return end
-                    surface.map_gen_settings.autoplace_controls['enemy-base'].size = 6
+                    if cheat_global.settings_copy == nil then return end
+                    surface.map_gen_settings = cheat_global.settings_copy
+                    cheat_global.settings_copy = nil
                 end
             end,
             get_value = function(surface, cheat_global)
