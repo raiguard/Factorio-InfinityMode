@@ -9,45 +9,6 @@ local util = require('scripts/util/util')
 
 local defs = {}
 
-local infinity_tools_recipes = {
-    'infinity-chest',
-    'infinity-chest-active-provider',
-    'infinity-chest-passive-provider',
-    'infinity-chest-storage',
-    'infinity-chest-buffer',
-    'infinity-chest-requester',
-    'infinity-pipe',
-    'heat-interface',
-    'infinity-radar',
-    'infinity-lab',
-    'infinity-accumulator',
-    'infinity-electric-pole',
-    'infinity-substation',
-    'infinity-locomotive',
-    'infinity-cargo-wagon',
-    'infinity-fluid-wagon',
-    'infinity-roboport',
-    'infinity-construction-robot',
-    'infinity-logistic-robot',
-    'infinity-beacon',
-    'super-speed-module',
-    'super-effectivity-module',
-    'super-productivity-module',
-    'super-slow-module',
-    'super-ineffectivity-module',
-    'infinity-fusion-reactor-equipment',
-    'infinity-personal-roboport-equipment'
-}
-
-local ores_recipes = {
-    'wood',
-    'coal',
-    'stone',
-    'iron-ore',
-    'copper-ore',
-    'uranium-ore'
-}
-
 local vanilla_loaders_recipes = {
     'loader',
     'fast-loader',
@@ -101,7 +62,7 @@ defs.cheats = {
                 end
             end,
             get_value = function(player, cheat_global)
-                return player.character and not player.character.destructible
+                return player.character and not player.character.destructible or false
             end
         }},
         instant_blueprint = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
@@ -476,6 +437,29 @@ defs.cheats = {
         }}
     },
     surface = {
+        peaceful_mode = {type='toggle', default=false, in_god_mode=true, in_editor=true, functions={
+            value_changed = function(surface, cheat, cheat_global, new_value)
+                surface.peaceful_mode = new_value
+            end,
+            get_value = function(surface, cheat_global)
+                return surface.peaceful_mode
+            end
+        }},
+        dont_generate_biters = {type='toggle', default=false, in_god_mode=true, in_editor=true, functions={
+            value_changed = function(surface, cheat, cheat_global, new_value)
+                if not surface.map_gen_settings.autoplace_controls then return end
+                if new_value then
+                    surface.map_gen_settings.autoplace_controls['enemy-base'].size = 0
+                    game.print(surface.map_gen_settings.autoplace_controls['enemy-base'].size)
+                else
+                    if cheat_global.enabled_size == nil then return end
+                    surface.map_gen_settings.autoplace_controls['enemy-base'].size = 6
+                end
+            end,
+            get_value = function(surface, cheat_global)
+                return cheat_global.cur_value
+            end
+        }},
         freeze_time = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
             value_changed = function(surface, cheat, cheat_global, new_value)
                 surface.freeze_daytime = new_value
@@ -561,7 +545,8 @@ defs.cheats_gui_elems = {
     },
     surface = {
         toggles = {
-            
+            peaceful_mode = {},
+            dont_generate_biters = {tooltip=true}
         }
     },
     game = {

@@ -149,10 +149,9 @@ local function create_tabbed_pane(player, window_frame)
     -- toggles
     local toggles_flow = upper_flow.add{type='flow', name='im_cheats_surface_toggles_flow', direction='vertical'}
     toggles_flow.style.horizontally_stretchable = true
-    local daytime_flow = toggles_flow.add{type='flow', name='im_cheats_surface_daytime_flow', style='vertically_centered_flow', direction='horizontal'}
-    create_cheat_ui(daytime_flow, cur_surface, {'surface', 'freeze_time'}, {tooltip=true})
-    daytime_flow.add{type='empty-widget', name='im_cheats_surface_daytime_filler', style='invisible_horizontal_filler'}
-    daytime_flow.add{type='textfield', name='im_cheats-surface-time_of_day-textfield', numeric=true, lose_focus_on_confirm=true, allow_decimal=true, text=cur_surface.daytime}.style.width = 57
+    for n,t in pairs(elems_def.surface.toggles) do
+        create_cheat_ui(toggles_flow, cur_surface, {'surface',n}, t)
+    end
 end
 
 function cheats_gui.create(player, parent)

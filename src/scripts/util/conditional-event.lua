@@ -120,6 +120,18 @@ local events_def = {
                     force.research_progress = 1
                 end}
             }
+        },
+        surface = {
+            dont_generate_biters = {
+                on_chunk_generated = {{defines.events.on_chunk_generated}, function(e)
+                    local area = e.area
+                    local surface = e.surface
+                    local entities = surface.find_entities_filtered{area=area, type={'unit','unit-spawner','turret'}}
+                    for _,e in pairs(entities) do
+                        e.destroy{raise_destroy=true}
+                    end
+                end}
+            }
         }
     },
     infinity_wagon = {
@@ -192,6 +204,7 @@ function conditional_event.deregister(def)
     local events = global.events
     local object = get_object(def)
     for i,e in pairs(object[1]) do
+        if events[e] == nil then return end
         events[e][def] = nil
         if table_size(events[e]) == 0 then events[e] = nil end
         event.remove(e, object[2])

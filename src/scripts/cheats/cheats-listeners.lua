@@ -16,6 +16,8 @@ local cheats_gui = require('cheats-gui')
 -- MOD GUI
 
 event.on_init(function()
+    game.surfaces['nauvis'].map_gen_settings.autoplace_controls['enemy-base'].size = 0
+    log(game.surfaces['nauvis'].map_gen_settings.autoplace_controls['enemy-base'].size)
     cheats.create()
     for i,p in pairs(game.players) do
         cheats.apply_defaults('player', p)
