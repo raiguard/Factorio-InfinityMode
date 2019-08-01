@@ -78,7 +78,7 @@ local function create_tabbed_pane(player, window_frame)
     local tabbed_pane = content_frame.add{type='tabbed-pane', name='im_cheats_tabbed_pane'}
     for category,cheats in pairs(elems_def) do
         local tab = tabbed_pane.add{type='tab', name='im_cheats_'..category..'_tab', caption={'gui-cheats.tab-'..category..'-caption'}}
-        local pane = tabbed_pane.add{type='scroll-pane', name='im_cheats_'..category..'_pane', style='scroll_pane_light', direction='vertical', horizontal_scroll_policy='never'}
+        local pane = tabbed_pane.add{type='scroll-pane', name='im_cheats_'..category..'_pane', style='tab_scroll_pane', direction='vertical', horizontal_scroll_policy='never'}
         pane.style.left_padding = 5
         pane.style.right_padding = 5
         tabbed_pane.add_tab(tab,pane)
@@ -187,6 +187,7 @@ end
 
 function cheats_gui.create(player, parent)
     local window_frame = parent.add{type='frame', name='im_cheats_window', style='dialog_frame', direction='vertical'}
+    -- window_frame.style.height=530
     -- window_frame.location = {0,(44*player.display_scale)}
     window_frame.location = {1998,363}
     local titlebar = titlebar.create(window_frame, 'im_cheats_titlebar', {

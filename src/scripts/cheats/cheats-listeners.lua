@@ -44,7 +44,6 @@ on_event(defines.events.on_player_created, function(e)
         cur_surface = player.surface,
         cur_tab = 1
     }
-    log(serpent.block(global))
 end)
 
 gui.on_click('im_button', function(e)
