@@ -506,7 +506,7 @@ defs.cheats = {
                 return table.invert(cheat.items)[table.invert(defines.difficulty_settings.recipe_difficulty)[game.difficulty_settings.recipe_difficulty]]
             end
         }},
-        game_speed = {type='number', functions={
+        game_speed = {type='number', min_value=0.01, max_value=1000, functions={
             value_changed = function(game, cheat, cheat_global, new_value)
                 game.speed = new_value
             end,
@@ -571,7 +571,7 @@ defs.cheats_gui_elems = {
             character_health_bonus = {},
             inserter_stack_size_bonus = {},
             stack_inserter_capacity_bonus = {},
-            evolution_factor = {allow_decimal=true}
+            evolution_factor = {textfield={allow_decimal=true}}
         },
         actions = {
             chart_all = {tooltip=true},
@@ -583,7 +583,7 @@ defs.cheats_gui_elems = {
             peaceful_mode = {},
             dont_generate_biters = {tooltip=true},
             freeze_time = {},
-            time_of_day = {allow_decimal=true}
+            time_of_day = {textfield={allow_decimal=true}}
         }
     },
     game = {
@@ -593,7 +593,10 @@ defs.cheats_gui_elems = {
             biter_expansion = {},
             research_queue = {tooltip=true},
             recipe_difficulty = {},
-            game_speed = {}
+            game_speed = {
+                slider = {min_value=1, max_value=10, value_step=1},
+                textfield = {allow_decimal=true, width=50}
+            }
         }
     }
 }

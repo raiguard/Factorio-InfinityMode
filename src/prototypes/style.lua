@@ -98,6 +98,23 @@ styles['vertically_centered_flow'] = {
     vertical_align = 'center'
 }
 
+styles['invalid_short_number_textfield'] = {
+    type = 'textbox_style',
+    parent = 'short_number_textfield',
+    default_background = {
+        base = {position = {248,0}, corner_size=8, tint=warning_red_color},
+        shadow = textbox_dirt
+    },
+    active_background = {
+        base = {position={265,0}, corner_size=8, tint=warning_red_color},
+        shadow = textbox_dirt
+    },
+    disabled_background = {
+        base = {position = {282,0}, corner_size=8, tint=warning_red_color},
+        shadow = textbox_dirt
+    }
+}
+
 -- ----------------------------------------------------------------------------------------------------
 -- SPRITES
 

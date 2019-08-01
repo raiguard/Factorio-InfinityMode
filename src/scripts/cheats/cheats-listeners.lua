@@ -6,11 +6,12 @@ local event = require('__stdlib__/stdlib/event/event')
 local on_event = event.register
 local gui = require('__stdlib__/stdlib/event/gui')
 local string = require('__stdlib__/stdlib/utils/string')
-local util = require('scripts/util/util')
 local mod_gui = require('mod-gui')
 
 local cheats = require('cheats')
 local cheats_gui = require('cheats-gui')
+local defs = require('scripts/util/definitions')
+local util = require('scripts/util/util')
 
 -- ----------------------------------------------------------------------------------------------------
 -- MOD GUI
@@ -48,7 +49,6 @@ end)
 
 gui.on_click('im_button', function(e)
     local player = util.get_player(e)
-    -- local frame_flow = mod_gui.get_frame_flow(player)
     local frame_flow = player.gui.screen
     if not frame_flow.im_cheats_window then
         cheats_gui.create(player, frame_flow)
@@ -66,14 +66,64 @@ on_event(defines.events.on_gui_selected_tab_changed, function(e)
     end
 end)
 
-on_event({defines.events.on_gui_checked_state_changed, defines.events.on_gui_confirmed}, function(e)
+on_event(defines.events.on_gui_checked_state_changed, function(e)
     local params = string.split(e.element.name, '-')
     local player = util.get_player(e)
-    if params[1] == 'im_cheats' and (params[4] == 'checkbox' or params[4] == 'textfield') and cheats.is_valid(params[2], params[3]) then
-        local param = e.element.type == 'checkbox' and 'state' or 'text'
+    if params[1] == 'im_cheats' and params[4] == 'checkbox' and cheats.is_valid(params[2], params[3]) then
         local obj = util.player_table(player).cheats_gui['cur_'..params[2]] or game
-        cheats.update(obj, {params[2], params[3]}, e.element[param])
+        cheats.update(obj, {params[2], params[3]}, e.element.state)
         cheats_gui.refresh(player, player.gui.screen)
+    end
+end)
+
+on_event(defines.events.on_gui_confirmed, function(e)
+    local params = string.split(e.element.name, '-')
+    local player = util.get_player(e)
+    if params[1] == 'im_cheats' and params[4] == 'textfield' and cheats.is_valid(params[2], params[3]) then
+        local text = e.element.text
+        local prev_text = util.player_table(player).cheats_gui.prev_value
+        if text ~= prev_text then
+            e.element.text = prev_text
+            e.element.style = 'short_number_textfield'
+        end
+        local obj = util.player_table(player).cheats_gui['cur_'..params[2]] or game
+        cheats.update(obj, {params[2], params[3]}, e.element.text)
+        cheats_gui.refresh(player, player.gui.screen)
+    end
+end)
+
+on_event(defines.events.on_gui_text_changed, function(e)
+    local params = string.split(e.element.name, '-')
+    local player = util.get_player(e)
+    if params[1] == 'im_cheats' and params[4] == 'textfield' and cheats.is_valid(params[2], params[3]) then
+        local cheat_def = defs.cheats[params[2]][params[3]]
+        local text = e.element.text
+        if text == '' or (cheat_def.min_value and tonumber(text) < cheat_def.min_value) or (cheat_def.max_value and tonumber(text) > cheat_def.max_value) then
+            e.element.style = 'invalid_short_number_textfield'
+            return nil
+        else
+            e.element.style = 'short_number_textfield'
+        end
+        util.player_table(player).cheats_gui.prev_value = text
+        local slider = e.element.parent[string.gsub(e.element.name, 'textfield', 'slider')]
+        if slider then slider.slider_value = text end
+    end
+end)
+
+on_event(defines.events.on_gui_value_changed, function(e)
+    local params = string.split(e.element.name, '-')
+    local player = util.get_player(e)
+    local player_table = util.player_table(player)
+    if params[1] == 'im_cheats' and params[4] == 'slider' and cheats.is_valid(params[2], params[3]) then
+        local textfield = e.element.parent[string.gsub(e.element.name, 'slider', 'textfield')]
+        if textfield then
+            textfield.text = tostring(e.element.slider_value)
+        end
+        if player_table.cheats_gui.prev_value ~= e.element.slider_value then
+            local obj = player_table.cheats_gui['cur_'..params[2]] or game
+            cheats.update(obj, {params[2], params[3]}, e.element.slider_value)
+        end
+        player_table.cheats_gui.prev_value = e.element.slider_value
     end
 end)
 
