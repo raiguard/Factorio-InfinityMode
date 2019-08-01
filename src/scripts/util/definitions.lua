@@ -4,6 +4,7 @@
 
 local abs = math.abs
 local conditional_event = require('scripts/util/conditional-event')
+local chunk = require('__stdlib__/stdlib/area/chunk')
 local event = require('__stdlib__/stdlib/event/event')
 local table = require('__stdlib__/stdlib/utils/table')
 local util = require('scripts/util/util')
@@ -468,6 +469,15 @@ defs.cheats = {
             action = function(surface, cheat, cheat_global)
                 surface.clear_pollution()
             end
+        }},
+        clear_all_entities = {type='action', functions={
+            action = function(surface, cheat, cheat_global)
+                for pos in surface.get_chunks() do
+                    for _,entity in pairs(surface.find_entities_filtered{area=chunk.to_area(pos), type='character', invert=true}) do
+                        entity.destroy()
+                    end
+                end
+            end
         }}
     },
     game = {
@@ -588,7 +598,8 @@ defs.cheats_gui_elems = {
             peaceful_mode = {},
             dont_generate_biters = {tooltip=true},
             freeze_time = {},
-            clear_pollution = {tooltip=true}
+            clear_pollution = {tooltip=true},
+            clear_all_entities = {tooltip=true}
         },
         numbers = {
             time_of_day = {
