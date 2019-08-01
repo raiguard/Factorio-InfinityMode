@@ -583,7 +583,12 @@ defs.cheats_gui_elems = {
             peaceful_mode = {},
             dont_generate_biters = {tooltip=true},
             freeze_time = {},
-            time_of_day = {textfield={allow_decimal=true}}
+        },
+        numbers = {
+            time_of_day = {
+                slider = {min_value=0, max_value=1, value_step=0.1},
+                textfield = {allow_decimal=true, width=50}
+            }
         }
     },
     game = {

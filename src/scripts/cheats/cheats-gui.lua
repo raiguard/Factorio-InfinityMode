@@ -175,6 +175,7 @@ local function create_tabbed_pane(player, window_frame)
     for n,t in pairs(elems_def.surface.toggles) do
         create_cheat_ui(toggles_flow, cur_surface, {'surface',n}, t)
     end
+    create_cheat_ui(pane, cur_surface, {'surface','time_of_day'}, elems_def.surface.numbers.time_of_day)
 
     -- GAME
     pane = tabs[4].content
