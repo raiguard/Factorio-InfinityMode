@@ -463,6 +463,11 @@ defs.cheats = {
             get_value = function(surface, cheat, cheat_global)
                 return surface.daytime
             end
+        }},
+        clear_pollution = {type='action', functions={
+            action = function(surface, cheat, cheat_global)
+                surface.clear_pollution()
+            end
         }}
     },
     game = {
@@ -583,6 +588,7 @@ defs.cheats_gui_elems = {
             peaceful_mode = {},
             dont_generate_biters = {tooltip=true},
             freeze_time = {},
+            clear_pollution = {tooltip=true}
         },
         numbers = {
             time_of_day = {
