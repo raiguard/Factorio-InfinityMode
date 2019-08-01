@@ -13,6 +13,8 @@ data:extend{
     }
 }
 
+register_recipes{'infinity-accumulator'}
+
 -- ------------------------------------------------------------------------------------------
 -- ENTITIES
 
@@ -32,20 +34,3 @@ for _,t in pairs(ia_types) do
     ia.placeable_by = {item='infinity-accumulator', count=1}
     data:extend{ia}
 end
-
--- ------------------------------------------------------------------------------------------
--- RECIPES
-
-register_recipes{'infinity-accumulator'}
-
--- ------------------------------------------------------------------------------------------
--- CUSTOM INPUTS
-
-data:extend{
-    {
-        type = 'custom-input',
-        name = 'im-smart-pipette',
-        key_sequence = '',
-        linked_game_control = 'smart-pipette'
-    }
-}
