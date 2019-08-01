@@ -86,6 +86,7 @@ on_event(defines.events.on_gui_confirmed, function(e)
             e.element.text = prev_text
             e.element.style = 'short_number_textfield'
         end
+        util.player_table(player).cheats_gui.prev_value = nil
         local obj = util.player_table(player).cheats_gui['cur_'..params[2]] or game
         cheats.update(obj, {params[2], params[3]}, e.element.text)
         cheats_gui.refresh(player, player.gui.screen)
@@ -95,16 +96,18 @@ end)
 on_event(defines.events.on_gui_text_changed, function(e)
     local params = string.split(e.element.name, '-')
     local player = util.get_player(e)
+    local player_table = util.player_table(player)
     if params[1] == 'im_cheats' and params[4] == 'textfield' and cheats.is_valid(params[2], params[3]) then
         local cheat_def = defs.cheats[params[2]][params[3]]
         local text = e.element.text
         if text == '' or (cheat_def.min_value and tonumber(text) < cheat_def.min_value) or (cheat_def.max_value and tonumber(text) > cheat_def.max_value) then
             e.element.style = 'invalid_short_number_textfield'
+            if player_table.cheats_gui.prev_value == nil then player_table.cheats_gui.prev_value = 0 end
             return nil
         else
             e.element.style = 'short_number_textfield'
         end
-        util.player_table(player).cheats_gui.prev_value = text
+        player_table.cheats_gui.prev_value = text
         local slider = e.element.parent[string.gsub(e.element.name, 'textfield', 'slider')]
         if slider then slider.slider_value = text end
     end

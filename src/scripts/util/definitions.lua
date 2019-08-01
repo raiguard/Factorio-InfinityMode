@@ -402,7 +402,7 @@ defs.cheats = {
                 return force.stack_inserter_capacity_bonus
             end
         }},
-        evolution_factor = {type='number', functions={
+        evolution_factor = {type='number', max_value=1, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.evolution_factor = new_value
             end,
@@ -456,7 +456,7 @@ defs.cheats = {
                 return surface.freeze_daytime
             end 
         }},
-        time_of_day = {type='number', default=0, functions={
+        time_of_day = {type='number', max_value=1, functions={
             value_changed = function(surface, cheat, cheat_global, new_value)
                 surface.daytime = new_value
             end,
