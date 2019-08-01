@@ -42,7 +42,7 @@ local events_def = {
                 on_deconstruction = {{defines.events.on_marked_for_deconstruction}, function(e)
                     if not e.player_index then return end
                     if not util.cheat_enabled('player', 'instant_deconstruction', e.player_index) then return end
-                    e.entity.destroy{raise_destroy=true}
+                    e.entity.destroy{do_cliff_correction=true, raise_destroy=true}
                 end}
             },
             keep_last_item = {
