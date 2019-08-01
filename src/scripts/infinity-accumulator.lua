@@ -159,9 +159,11 @@ gui.on_text_changed('im_ia_slider_textfield', function(e)
 
     if text == '' or tonumber(text) < 0 or tonumber(text) > 999 then
         e.element.tooltip = 'Must be an integer from 0-999'
+        e.element.style = 'invalid_short_number_textfield'
         return nil
     else
         e.element.tooltip = ''
+        e.element.style = 'short_number_textfield'
     end
 
     data.prev_textfield_value = text
@@ -179,7 +181,8 @@ on_event(defines.events.on_gui_confirmed, function(e)
         local exponent = data.slider_dropdown.selected_index * 3
         if data.prev_textfield_value ~= data.slider_textfield.text then
             data.slider_textfield.text = data.prev_textfield_value
-            data.slider_textfield.tooltip = ''
+            e.element.tooltip = ''
+            e.element.style = 'short_number_textfield'
             data.slider.slider_value = tonumber(data.prev_textfield_value)
             set_ia_params(entity, mode, tonumber(data.prev_textfield_value), exponent)
         end
