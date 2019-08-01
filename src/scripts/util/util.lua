@@ -75,8 +75,9 @@ function util.player_table(player)
     return global.players[player.index]
 end
 
-function util.cheat_table(category, name, index)
-    return index and global.cheats[category][name][index] or global.cheats[category][name]
+function util.cheat_table(category, name, obj)
+    if category == 'game' then return global.cheats[category][name] end
+    return obj and global.cheats[category][name][obj.index] or global.cheats[category][name]
 end
 
 function util.cheat_enabled(category, name, index, exclude_idx)

@@ -40,18 +40,18 @@ end
 
 -- update a cheat to the new value
 function cheats.update(obj, cheat, value)
-    log(obj.name .. ' :: ' .. cheat[1] .. '.' .. cheat[2] .. ' = ' .. tostring(value))
+    log((cheat[1] == 'game' and 'game' or obj.name) .. ' :: ' .. cheat[1] .. '.' .. cheat[2] .. ' = ' .. tostring(value))
     local cheat_def = defs.cheats[cheat[1]][cheat[2]]
-    local cheat_global = util.cheat_table(cheat[1], cheat[2], obj.index)
+    local cheat_global = util.cheat_table(cheat[1], cheat[2], obj)
     cheat_global.cur_value = value
     cheat_def.functions.value_changed(obj, cheat_def, cheat_global, value)
 end
 
 -- trigger an action cheat
 function cheats.trigger_action(obj, cheat)
-    log(obj.name .. ' :: ' .. cheat[1] .. '.' .. cheat[2] .. ' TRIGGERED')
+    log((cheat[1] == 'game' and 'game' or obj.name) .. ' :: ' .. cheat[1] .. '.' .. cheat[2] .. ' TRIGGERED')
     local cheat_def = defs.cheats[cheat[1]][cheat[2]]
-    local cheat_global = util.cheat_table(cheat[1], cheat[2], obj.index)
+    local cheat_global = util.cheat_table(cheat[1], cheat[2], obj)
     cheat_global.cur_value = value
     cheat_def.functions.action(obj, cheat_def, cheat_global)
 end

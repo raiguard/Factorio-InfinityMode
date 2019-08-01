@@ -26,6 +26,7 @@ event.on_init(function()
     for i,s in pairs(game.surfaces) do
         cheats.apply_defaults('surface', s)
     end
+    cheats.apply_defaults('game', game)
 end)
 
 on_event(defines.events.on_player_created, function(e)
@@ -42,6 +43,7 @@ on_event(defines.events.on_player_created, function(e)
         cur_surface = player.surface,
         cur_tab = 1
     }
+    log(serpent.block(global))
 end)
 
 gui.on_click('im_button', function(e)
@@ -69,7 +71,7 @@ on_event({defines.events.on_gui_checked_state_changed, defines.events.on_gui_con
     local player = util.get_player(e)
     if params[1] == 'im_cheats' and (params[4] == 'checkbox' or params[4] == 'textfield') and cheats.is_valid(params[2], params[3]) then
         local param = e.element.type == 'checkbox' and 'state' or 'text'
-        local obj = util.player_table(player).cheats_gui['cur_'..params[2]]
+        local obj = util.player_table(player).cheats_gui['cur_'..params[2]] or game
         cheats.update(obj, {params[2], params[3]}, e.element[param])
         cheats_gui.refresh(player, player.gui.screen)
     end
@@ -79,8 +81,18 @@ on_event(defines.events.on_gui_click, function(e)
     local params = string.split(e.element.name, '-')
     local player = util.get_player(e)
     if params[1] == 'im_cheats' and params[4] == 'button' and cheats.is_valid(params[2], params[3]) then
-        local obj = util.player_table(player).cheats_gui['cur_'..params[2]]
+        local obj = util.player_table(player).cheats_gui['cur_'..params[2]] or game
         cheats.trigger_action(obj, {params[2], params[3]})
+    end
+end)
+
+on_event(defines.events.on_gui_selection_state_changed, function(e)
+    local params = string.split(e.element.name, '-')
+    local player = util.get_player(e)
+    if params[1] == 'im_cheats' and params[4] == 'dropdown' and cheats.is_valid(params[2], params[3]) then
+        local obj = util.player_table(player).cheats_gui['cur_'..params[2]] or game
+        cheats.update(obj, {params[2], params[3]}, e.element.selected_index)
+        cheats_gui.refresh(player, player.gui.screen)
     end
 end)
 

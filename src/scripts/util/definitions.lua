@@ -52,7 +52,7 @@ defs.cheats = {
                     end
                 end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return player.controller_type == defines.controllers.god
             end
         }},
@@ -62,11 +62,11 @@ defs.cheats = {
                     player.character.destructible = not new_value
                 end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return player.character and not player.character.destructible or false
             end
         }},
-        instant_blueprint = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+        instant_blueprint = {type='toggle', default=true, in_god_mode=true, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.instant_blueprint.on_built_entity')
@@ -74,11 +74,11 @@ defs.cheats = {
                     conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_blueprint.on_built_entity')
                 end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return cheat_global.cur_value
             end
         }},
-        instant_upgrade = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+        instant_upgrade = {type='toggle', default=true, in_god_mode=true, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.instant_upgrade.on_marked_for_upgrade')
@@ -86,11 +86,11 @@ defs.cheats = {
                     conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_upgrade.on_marked_for_upgrade')
                 end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return cheat_global.cur_value
             end
         }},
-        instant_deconstruction = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+        instant_deconstruction = {type='toggle', default=true, in_god_mode=true, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.instant_deconstruction.on_deconstruction')
@@ -98,7 +98,7 @@ defs.cheats = {
                     conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_deconstruction.on_deconstruction')
                 end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return cheat_global.cur_value
             end
         }},
@@ -106,7 +106,7 @@ defs.cheats = {
             value_changed = function(player, cheat, cheat_global, new_value)
                 player.cheat_mode = new_value
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return player.cheat_mode
             end
         }},
@@ -118,7 +118,7 @@ defs.cheats = {
                     conditional_event.cheat_deregister(player, cheat, 'cheats.player.keep_last_item.on_put_item')
                 end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return cheat_global.cur_value
             end
         }},
@@ -130,7 +130,7 @@ defs.cheats = {
                     conditional_event.cheat_deregister(player, cheat, 'cheats.player.repair_damaged_item.on_main_inv_changed')
                 end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return cheat_global.cur_value
             end
         }},
@@ -143,7 +143,7 @@ defs.cheats = {
                     conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_request.on_main_inventory_changed')
                 end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return cheat_global.cur_value
             end
         }},
@@ -156,7 +156,7 @@ defs.cheats = {
                     conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_trash.on_trash_inventory_changed')
                 end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return cheat_global.cur_value
             end
         }},
@@ -164,7 +164,7 @@ defs.cheats = {
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_reach_distance_bonus = new_value end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_reach_distance_bonus
             end
         }},
@@ -172,7 +172,7 @@ defs.cheats = {
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_build_distance_bonus = new_value end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_build_distance_bonus
             end
         }},
@@ -180,7 +180,7 @@ defs.cheats = {
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_resource_reach_distance_bonus = new_value end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_resource_reach_distance_bonus
             end
         }},
@@ -188,7 +188,7 @@ defs.cheats = {
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_item_drop_distance_bonus = new_value end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_item_drop_distance_bonus
             end
         }},
@@ -196,7 +196,7 @@ defs.cheats = {
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_item_pickup_distance_bonus = new_value end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_item_pickup_distance_bonus
             end
         }},
@@ -204,7 +204,7 @@ defs.cheats = {
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_loot_pickup_distance_bonus = new_value end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_loot_pickup_distance_bonus
             end
         }},
@@ -212,7 +212,7 @@ defs.cheats = {
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_mining_speed_modifier = new_value end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_mining_speed_modifier
             end
         }},
@@ -220,7 +220,7 @@ defs.cheats = {
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_running_speed_modifier = new_value end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_running_speed_modifier
             end
         }},
@@ -228,7 +228,7 @@ defs.cheats = {
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_crafting_speed_modifier = new_value end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_crafting_speed_modifier
             end
         }},
@@ -236,7 +236,7 @@ defs.cheats = {
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_inventory_slots_bonus = new_value end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_inventory_slots_bonus
             end
         }},
@@ -244,13 +244,13 @@ defs.cheats = {
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_health_bonus = new_value end
             end,
-            get_value = function(player, cheat_global)
+            get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_health_bonus
             end
         }}
     },
     force = {
-        instant_research = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+        instant_research = {type='toggle', default=true, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(force, cheat, 'cheats.force.instant_research.on_research_started')
@@ -258,11 +258,11 @@ defs.cheats = {
                     conditional_event.cheat_deregister(force, cheat, 'cheats.force.instant_research.on_research_started')
                 end
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return cheat_global.cur_value
             end
         }},
-        research_all_technologies = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+        research_all_technologies = {type='toggle', default=true, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 if new_value then
                     force.research_all_technologies()
@@ -270,183 +270,167 @@ defs.cheats = {
                     force.reset()
                 end
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return cheat_global.cur_value
             end
         }},
-        infinity_tools_recipes = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+        infinity_tools_recipes = {type='toggle', default=true, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 for n,r in pairs(game.recipe_prototypes) do
                     if string.find(n, 'im_tool_') and force.recipes[n] then force.recipes[n].enabled = new_value end
                 end
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return cheat_global.cur_value
             end
         }},
-        free_resource_recipes = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+        free_resource_recipes = {type='toggle', default=true, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 for n,r in pairs(game.recipe_prototypes) do
                     if string.find(n, 'im_free_resource_') and force.recipes[n] then force.recipes[n].enabled = new_value end
                 end
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return cheat_global.cur_value
             end
         }},
-        vanilla_loaders_recipes = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+        vanilla_loaders_recipes = {type='toggle', default=true, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 for _,n in pairs(vanilla_loaders_recipes) do
                     if force.recipes[n] then force.recipes[n].enabled = new_value end
                 end
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return cheat_global.cur_value
             end
         }},
-        misc_vanilla_recipes = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+        misc_vanilla_recipes = {type='toggle', default=true, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.recipes['player-port'].enabled = new_value
                 force.recipes['railgun'].enabled = new_value
                 force.recipes['railgun-dart'].enabled = new_value
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return cheat_global.cur_value
             end
         }},
-        character_reach_distance_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+        character_reach_distance_bonus = {type='number', default=0, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_reach_distance_bonus = new_value
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return force.character_reach_distance_bonus
             end
         }},
-        character_build_distance_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+        character_build_distance_bonus = {type='number', default=0, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_build_distance_bonus = new_value
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return force.character_build_distance_bonus
             end
         }},
-        character_resource_reach_distance_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+        character_resource_reach_distance_bonus = {type='number', default=0, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_resource_reach_distance_bonus = new_value
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return force.character_resource_reach_distance_bonus
             end
         }},
-        character_item_drop_distance_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+        character_item_drop_distance_bonus = {type='number', default=0, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_item_drop_distance_bonus = new_value
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return force.character_item_drop_distance_bonus
             end
         }},
-        character_item_pickup_distance_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+        character_item_pickup_distance_bonus = {type='number', default=0, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_item_pickup_distance_bonus = new_value
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return force.character_item_pickup_distance_bonus
             end
         }},
-        character_loot_pickup_distance_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+        character_loot_pickup_distance_bonus = {type='number', default=0, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_loot_pickup_distance_bonus = new_value
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return force.character_loot_pickup_distance_bonus
             end
         }},
-        -- character_mining_speed_modifier = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
-        --     value_changed = function(force, cheat, cheat_global, new_value)
-        --         force.character_mining_speed_modifier = new_value
-        --     end,
-        --     get_value = function(force, cheat_global)
-        --         return force.character_mining_speed_modifier
-        --     end
-        -- }},
-        character_running_speed_modifier = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+        character_running_speed_modifier = {type='number', default=0, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_running_speed_modifier = new_value
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return force.character_running_speed_modifier
             end
         }},
-        -- character_crafting_speed_modifier = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
-        --     value_changed = function(force, cheat, cheat_global, new_value)
-        --         force.character_crafting_speed_modifier = new_value
-        --     end,
-        --     get_value = function(force, cheat_global)
-        --         return force.character_crafting_speed_modifier
-        --     end
-        -- }},
-        character_inventory_slots_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+        character_inventory_slots_bonus = {type='number', default=0, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_inventory_slots_bonus = new_value
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return force.character_inventory_slots_bonus
             end
         }},
-        character_health_bonus = {type='number', default=0, in_god_mode=false, in_editor=false, functions={
+        character_health_bonus = {type='number', default=0, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_health_bonus = new_value
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return force.character_health_bonus
             end
         }},
-        inserter_stack_size_bonus = {type='number', in_god_mode=true, in_editor=true, functions={
+        inserter_stack_size_bonus = {type='number', functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.inserter_stack_size_bonus = new_value
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return force.inserter_stack_size_bonus
             end
         }},
-        stack_inserter_capacity_bonus = {type='number', in_god_mode=true, in_editor=true, functions={
+        stack_inserter_capacity_bonus = {type='number', functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.stack_inserter_capacity_bonus = new_value
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return force.stack_inserter_capacity_bonus
             end
         }},
-        evolution_factor = {type='number', in_god_mode=true, in_editor=true, functions={
+        evolution_factor = {type='number', functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.evolution_factor = new_value
             end,
-            get_value = function(force, cheat_global)
+            get_value = function(force, cheat, cheat_global)
                 return force.evolution_factor
             end
         }},
-        chart_all = {type='action', default=true, in_god_mode=true, in_editor=true, functions={
+        chart_all = {type='action', default=true, functions={
             action = function(force, cheat, cheat_global)
                 force.chart_all()
             end
         }},
-        kill_all_units = {type='action', default=false, in_god_mode=true, in_editor=true, functions={
+        kill_all_units = {type='action', default=false, functions={
             action = function(force, cheat, cheat_global)
                 force.kill_all_units()
             end
         }}
     },
     surface = {
-        peaceful_mode = {type='toggle', in_god_mode=true, in_editor=true, functions={
+        peaceful_mode = {type='toggle', functions={
             value_changed = function(surface, cheat, cheat_global, new_value)
                 surface.peaceful_mode = new_value
             end,
-            get_value = function(surface, cheat_global)
+            get_value = function(surface, cheat, cheat_global)
                 return surface.peaceful_mode
             end
         }},
-        dont_generate_biters = {type='toggle', default=false, in_god_mode=true, in_editor=true, functions={
+        dont_generate_biters = {type='toggle', default=false, functions={
             value_changed = function(surface, cheat, cheat_global, new_value)
                 if not surface.map_gen_settings.autoplace_controls then return end
                 if new_value then
@@ -460,29 +444,76 @@ defs.cheats = {
                     cheat_global.settings_copy = nil
                 end
             end,
-            get_value = function(surface, cheat_global)
+            get_value = function(surface, cheat, cheat_global)
                 return cheat_global.cur_value
             end
         }},
-        freeze_time = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+        freeze_time = {type='toggle', default=true, functions={
             value_changed = function(surface, cheat, cheat_global, new_value)
                 surface.freeze_daytime = new_value
             end,
-            get_value = function(surface, cheat_global)
+            get_value = function(surface, cheat, cheat_global)
                 return surface.freeze_daytime
             end 
         }},
-        time_of_day = {type='number', default=0, in_god_mode=true, in_editor=true, functions={
+        time_of_day = {type='number', default=0, functions={
             value_changed = function(surface, cheat, cheat_global, new_value)
                 surface.daytime = new_value
             end,
-            get_value = function(surface, cheat_global)
+            get_value = function(surface, cheat, cheat_global)
                 return surface.daytime
             end
         }}
     },
     game = {
-
+        pollution = {type='toggle', functions={
+            value_changed = function(game, cheat, cheat_global, new_value)
+                game.map_settings.pollution.enabled = new_value
+            end,
+            get_value = function(game, cheat, cheat_global)
+                return game.map_settings.pollution.enabled
+            end
+        }},
+        evolution = {type='toggle', functions={
+            value_changed = function(game, cheat, cheat_global, new_value)
+                game.map_settings.enemy_evolution.enabled = new_value
+            end,
+            get_value = function(game, cheat, cheat_global)
+                return game.map_settings.enemy_evolution.enabled
+            end
+        }},
+        biter_expansion = {type='toggle', functions={
+            value_changed = function(game, cheat, cheat_global, new_value)
+                game.map_settings.enemy_expansion.enabled = new_value
+            end,
+            get_value = function(game, cheat, cheat_global)
+                return game.map_settings.enemy_expansion.enabled
+            end
+        }},
+        research_queue = {type='list', items={'always','after-victory','never'}, functions={
+            value_changed = function(game, cheat, cheat_global, selected_index)
+                game.difficulty_settings.research_queue_setting = cheat.items[selected_index]
+            end,
+            get_value = function(game, cheat, cheat_global)
+                return table.invert(cheat.items)[game.difficulty_settings.research_queue_setting]
+            end
+        }},
+        recipe_difficulty = {type='list', items={'normal','expensive'}, functions={
+            value_changed = function(game, cheat, cheat_global, selected_index)
+                game.difficulty_settings.recipe_difficulty = defines.difficulty_settings.recipe_difficulty[cheat.items[selected_index]]
+            end,
+            get_value = function(game, cheat, cheat_global)
+                return table.invert(cheat.items)[table.invert(defines.difficulty_settings.recipe_difficulty)[game.difficulty_settings.recipe_difficulty]]
+            end
+        }},
+        game_speed = {type='number', functions={
+            value_changed = function(game, cheat, cheat_global, new_value)
+                game.speed = new_value
+            end,
+            get_value = function(game, cheat, cheat_global)
+                return game.speed
+            end
+        }}
     }
 }
 
@@ -550,11 +581,20 @@ defs.cheats_gui_elems = {
     surface = {
         toggles = {
             peaceful_mode = {},
-            dont_generate_biters = {tooltip=true}
+            dont_generate_biters = {tooltip=true},
+            freeze_time = {},
+            time_of_day = {allow_decimal=true}
         }
     },
     game = {
-
+        toggles = {
+            pollution = {},
+            evolution = {},
+            biter_expansion = {},
+            research_queue = {tooltip=true},
+            recipe_difficulty = {},
+            game_speed = {}
+        }
     }
 }
 
