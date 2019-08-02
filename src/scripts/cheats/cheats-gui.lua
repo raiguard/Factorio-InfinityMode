@@ -80,10 +80,11 @@ local function create_tabbed_pane(player, window_frame)
     local tabbed_pane = content_frame.add{type='tabbed-pane', name='im_cheats_tabbed_pane'}
     for category,cheats in pairs(elems_def) do
         local tab = tabbed_pane.add{type='tab', name='im_cheats_'..category..'_tab', caption={'gui-cheats.tab-'..category..'-caption'}}
-        local pane = tabbed_pane.add{type='scroll-pane', name='im_cheats_'..category..'_pane', style='tab_scroll_pane', direction='vertical', horizontal_scroll_policy='never'}
-        pane.style.maximal_height = 500
-        pane.style.left_padding = 5
-        pane.style.right_padding = 5
+        local pane = tabbed_pane.add{type='scroll-pane', name='im_cheats_'..category..'_pane', style='tab_scroll_pane', direction='vertical', horizontal_scroll_policy='never', vertical_scroll_policy='always'}
+        pane.style.height = 500
+        -- pane.style.left_padding = 5
+        -- pane.style.right_padding = 5
+        pane.style.padding = 5
         tabbed_pane.add_tab(tab,pane)
     end
     tabbed_pane.selected_tab_index = player_table.cheats_gui.cur_tab
