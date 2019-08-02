@@ -16,21 +16,7 @@ local util = require('scripts/util/util')
 -- ----------------------------------------------------------------------------------------------------
 -- MOD GUI
 
-event.on_init(function()
-    cheats.create()
-    for i,p in pairs(game.players) do
-        cheats.apply_defaults('player', p)
-    end
-    for i,f in pairs(game.forces) do
-        cheats.apply_defaults('force', f)
-    end
-    for i,s in pairs(game.surfaces) do
-        cheats.apply_defaults('surface', s)
-    end
-    cheats.apply_defaults('game', game)
-end)
-
-on_event(defines.events.on_player_created, function(e)
+local function player_setup(e)
     local player = util.get_player(e)
     local flow = mod_gui.get_button_flow(player)
     if not flow.im_button then
@@ -44,6 +30,24 @@ on_event(defines.events.on_player_created, function(e)
         cur_surface = player.surface,
         cur_tab = 1
     }
+end
+
+event.on_init(function()
+    cheats.create()
+    for i,p in pairs(game.players) do
+        player_setup{player_index=i}
+    end
+    for i,f in pairs(game.forces) do
+        cheats.apply_defaults('force', f)
+    end
+    for i,s in pairs(game.surfaces) do
+        cheats.apply_defaults('surface', s)
+    end
+    cheats.apply_defaults('game', game)
+end)
+
+on_event(defines.events.on_player_created, function(e)
+    player_setup(e)
 end)
 
 local function toggle_gui(e)

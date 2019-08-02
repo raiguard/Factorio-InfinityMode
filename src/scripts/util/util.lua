@@ -58,14 +58,20 @@ end
 -- ----------------------------------------------------------------------------------------------------
 -- GLOBAL
 
+local function player_setup(e)
+    global.players[e.player_index] = {}
+end
+
 on_event('on_init', function(e)
     global.players = {}
     global.cheats = {}
+    for i,p in pairs(game.players) do
+        player_setup{player_index=i}
+    end
 end)
 
 on_event(defines.events.on_player_created, function(e)
-    local data = {}
-    global.players[e.player_index] = data
+    player_setup(e)
 end)
 
 function util.player_table(player)
