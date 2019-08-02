@@ -36,7 +36,7 @@ register_recipes{'infinity-cargo-wagon', 'infinity-fluid-wagon', 'infinity-locom
 
 local cw_entity = table.deepcopy(data.raw['cargo-wagon']['cargo-wagon'])
 cw_entity.name = 'infinity-cargo-wagon'
-cw_entity.inventory_size = 48
+cw_entity.inventory_size = 100
 cw_entity.minable.result = 'infinity-cargo-wagon'
 for _,t in pairs(cw_entity.pictures.layers) do
     apply_infinity_tint(t)
