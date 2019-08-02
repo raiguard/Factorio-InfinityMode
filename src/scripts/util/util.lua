@@ -77,7 +77,8 @@ end
 
 function util.cheat_table(category, name, obj)
     if category == 'game' then return global.cheats[category][name] end
-    return obj and global.cheats[category][name][obj.index] or global.cheats[category][name]
+    local index = type(obj) == 'table' and obj.index or obj
+    return index and global.cheats[category][name][index] or global.cheats[category][name]
 end
 
 function util.cheat_enabled(category, name, index, exclude_idx)

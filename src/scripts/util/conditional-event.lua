@@ -9,6 +9,8 @@ local table = require('__stdlib__/stdlib/utils/table')
 
 local util = require('scripts/util/util')
 
+local conditional_event = {}
+
 -- all conditional events are contained here to enable lookup
 local events_def = {
     cheats = {
@@ -18,7 +20,44 @@ local events_def = {
                     if not e.player_index then return end
                     if not util.cheat_enabled('player', 'instant_blueprint', e.player_index) then return end
                     local entity = e.created_entity or e.entity
-                    if util.is_ghost(entity) then entity.revive{raise_revive=true} end
+                    local cheat_table = util.cheat_table('player', 'instant_blueprint', e.player_index)
+                    if util.is_ghost(entity) then
+                        if not entity.revive{raise_revive=true} then
+                            if #cheat_table.next_tick_entities == 0 then
+                                conditional_event.register('cheats.player.instant_blueprint.next_tick')
+                            end
+                            table.insert(cheat_table.next_tick_entities, {tries=1, entity=entity})
+                        end
+                    end
+                end},
+                next_tick = {{defines.events.on_tick}, function(e)
+                    local cheat_parent = util.cheat_table('player', 'instant_blueprint')
+                    local deregister = true
+                    -- since on_tick does not have a player_index, we must iterate over every player's table
+                    for _,cheat_table in pairs(cheat_parent) do
+                        -- check if the table has contents
+                        if #cheat_table.next_tick_entities > 0 then
+                            -- for each entity in the table
+                            for i,t in pairs(cheat_table.next_tick_entities) do
+                                -- try to revive the entity and act on the result
+                                if t.entity.revive{raise_revive=true} then
+                                    cheat_table.next_tick_entities[i] = nil
+                                else
+                                    t.tries = t.tries + 1
+                                    -- after ten tries, remove the entity from the table
+                                    if t.tries >= 10 then
+                                        log('Unable to revive entity at position '..serpent.line(t.entity.position)..', deregistering')
+                                        cheat_table.next_tick_entities[i] = nil
+                                    end
+                                    deregister = false
+                                end
+                            end     
+                        end
+                    end
+                    -- if all entites have been revived or deregistered, deregister this event
+                    if deregister then
+                        conditional_event.deregister('cheats.player.instant_blueprint.next_tick')
+                    end
                 end}
             },
             instant_upgrade = {
@@ -42,7 +81,9 @@ local events_def = {
                 on_deconstruction = {{defines.events.on_marked_for_deconstruction}, function(e)
                     if not e.player_index then return end
                     if not util.cheat_enabled('player', 'instant_deconstruction', e.player_index) then return end
-                    e.entity.destroy{do_cliff_correction=true, raise_destroy=true}
+                    if not e.entity.destroy{do_cliff_correction=true, raise_destroy=true} then
+                        game.print('Entity '..e.entity.name..' at position '..serpent.line(e.entity.position)..'was not destroyed!')
+                    end
                 end}
             },
             keep_last_item = {
@@ -155,8 +196,6 @@ local events_def = {
         end}
     }
 }
-
-local conditional_event = {}
 
 local function get_object(string)
     local def = events_def
