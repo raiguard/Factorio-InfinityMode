@@ -150,9 +150,9 @@ data:extend{pfr_equipment, pr_equipment}
 -- ------------------------------------------------------------------------------------------
 -- MODULES
 
-local function get_module_icon(name)
-    local obj = data.raw['module'][name]
-    return {apply_infinity_tint{icon=obj.icon, icon_size=obj.icon_size}}
+local function get_module_icon(icon_ref, tint)
+    local obj = data.raw['module'][icon_ref]
+    return {{icon=obj.icon, icon_size=obj.icon_size, tint=tint}}
 end
 
 local module_template = {
@@ -162,16 +162,18 @@ local module_template = {
 }
 
 local modules = {
-    {name='super-speed-module', icon_ref='speed-module-3', order='ba', category = 'speed', tier=50, effect={speed={bonus=2.5}}},
-    {name='super-effectivity-module', icon_ref='effectivity-module-3', order='bb', category = 'effectivity', tier=50, effect={consumption={bonus=-2.5}}},
-    {name='super-productivity-module', icon_ref='productivity-module-3', order='bc', category = 'productivity', tier=50, effect={productivity={bonus=2.5}}},
-    {name='super-slow-module', icon_ref='speed-module', order='ca', category = 'speed', tier=50, effect={speed={bonus=-2.5}}},
-    {name='super-ineffectivity-module', icon_ref='effectivity-module', order='cb', category = 'effectivity', tier=50, effect={consumption={bonus=2.5}}}
+    {name='super-speed-module', icon_ref='speed-module-3', order='ba', category = 'speed', tier=50, effect={speed={bonus=2.5}}, tint={r=0.5,g=0.5,b=1}},
+    {name='super-effectivity-module', icon_ref='effectivity-module-3', order='bb', category='effectivity', tier=50, effect={consumption={bonus=-2.5}}, tint={r=0.5,g=1,b=0.5}},
+    {name='super-productivity-module', icon_ref='productivity-module-3', order='bc', category='productivity', tier=50, effect={productivity={bonus=2.5}}, tint={r=1,g=0.5,b=0.5}},
+    {name='super-clean-module', icon_ref='speed-module-3', order='bd', category='effectivity', tier=50, effect={pollution={bonus=-2.5}}, tint={r=0.5,g=1,b=1}},
+    {name='super-slow-module', icon_ref='speed-module', order='ca', category = 'speed', tier=50, effect={speed={bonus=-2.5}}, tint={r=0.5,g=0.5,b=1}},
+    {name='super-ineffectivity-module', icon_ref='effectivity-module', order='cb', category = 'effectivity', tier=50, effect={consumption={bonus=2.5}}, tint={r=0.5,g=1,b=0.5}},
+    {name='super-dirty-module', icon_ref='speed-module', order='cc', category='effectivity', tier=50, effect={pollution={bonus=2.5}}, tint={r=0.5,g=1,b=1}}
 }
 
 for _,v in pairs(modules) do
     v = table.merge(v, module_template)
-    v.icons = get_module_icon(v.icon_ref)
+    v.icons = get_module_icon(v.icon_ref, v.tint)
     v.icon_ref = nil
     data:extend{v}
     register_recipes{v.name}
