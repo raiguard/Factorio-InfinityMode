@@ -95,17 +95,19 @@ local function create_tabbed_pane(player, window_frame)
     local player_is_god = cur_player.controller_type == defines.controllers.god
     local player_is_editor = cur_player.controller_type == defines.controllers.editor
     -- player switcher
-    local switcher_flow = pane.add{type='flow', name='im_cheats_player_switcher_flow', style='vertically_centered_flow', direction='horizontal'}
-    switcher_flow.style.horizontally_stretchable = true
-    switcher_flow.add{type='label', name='im_cheats_player_switcher_label', style='caption_label', caption={'gui-cheats-player.switcher-label-caption'}}
-    switcher_flow.add{type='empty-widget', name='im_cheats_player_switcher_filler', style='invisible_horizontal_filler'}
-    local players = {}
-    for i,player in pairs(game.players) do
-        players[i] = player.name
+    if game.is_multiplayer() and player.admin then
+        local switcher_flow = pane.add{type='flow', name='im_cheats_player_switcher_flow', style='vertically_centered_flow', direction='horizontal'}
+        switcher_flow.style.horizontally_stretchable = true
+        switcher_flow.add{type='label', name='im_cheats_player_switcher_label', style='caption_label', caption={'gui-cheats-player.switcher-label-caption'}}
+        switcher_flow.add{type='empty-widget', name='im_cheats_player_switcher_filler', style='invisible_horizontal_filler'}
+        local players = {}
+        for i,player in pairs(game.players) do
+            players[i] = player.name
+        end
+        switcher_flow.add{type='drop-down', name='im_cheats_player_switcher_dropdown', items=players, selected_index=player_table.cheats_gui.cur_player.index}
+        switcher_flow.style.bottom_margin = 4
+        pane.add{type='line', name='im_cheats_player_switcher_line', direction='horizontal'}.style.horizontally_stretchable = true
     end
-    switcher_flow.add{type='drop-down', name='im_cheats_player_switcher_dropdown', items=players, selected_index=player_table.cheats_gui.cur_player.index}
-    switcher_flow.style.bottom_margin = 4
-    pane.add{type='line', name='im_cheats_player_switcher_line', direction='horizontal'}.style.horizontally_stretchable = true
     -- toggles
     local toggles_flow_table = pane.add{type='table', name='im_cheats_player_toggles_table', column_count=2}
     toggles_flow_table.style.horizontally_stretchable = true
