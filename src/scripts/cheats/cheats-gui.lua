@@ -133,7 +133,7 @@ local function create_tabbed_pane(player, window_frame)
         forces[i] = force.name
     end
     local forces_list = upper_flow.add{type='list-box', name='im_cheats_force_listbox', style='list_box_in_tabbed_pane', items=forces, selected_index=cur_force.index}
-    forces_list.style.width = 140
+    forces_list.style.minimal_width = 140
     forces_list.style.height = 140
     local toggles_flow = upper_flow.add{type='flow', name='im_cheats_force_toggles_flow', direction='vertical'}
     toggles_flow.style.horizontally_stretchable = true
@@ -167,7 +167,7 @@ local function create_tabbed_pane(player, window_frame)
         surfaces[i] = surface.name
     end
     local surfaces_list = upper_flow.add{type='list-box', name='im_cheats_surface_listbox', style='list_box_in_tabbed_pane', items=surfaces, selected_index=cur_surface.index}
-    surfaces_list.style.width = 140
+    surfaces_list.style.minimal_width = 140
     surfaces_list.style.height = 140
     -- toggles
     local toggles_flow = upper_flow.add{type='flow', name='im_cheats_surface_toggles_flow', direction='vertical'}
@@ -175,7 +175,21 @@ local function create_tabbed_pane(player, window_frame)
     for n,t in pairs(elems_def.surface.toggles) do
         create_cheat_ui(toggles_flow, cur_surface, {'surface',n}, t)
     end
-    create_cheat_ui(pane, cur_surface, {'surface','time_of_day'}, elems_def.surface.numbers.time_of_day)
+    -- table
+    local surface_table = pane.add{type='table', name='im_cheats_surface_table', style='bordered_table', column_count=1}
+    surface_table.style.top_margin = 5
+    local time_flow = surface_table.add{type='flow', name='im_cheats_surface_time_flow', direction='vertical'}
+    for n,t in pairs(elems_def.surface.time) do
+        create_cheat_ui(time_flow, cur_surface, {'surface',n}, t)
+    end
+    local clear_flow = surface_table.add{type='flow', name='im_cheats_surface_clear_flow', direction='vertical'}
+    for n,t in pairs(elems_def.surface.clear_entities) do
+        create_cheat_ui(clear_flow, cur_surface, {'surface',n}, t)
+    end
+    local fill_flow = surface_table.add{type='flow', name='im_cheats_surface_fill_flow', direction='vertical'}
+    for n,t in pairs(elems_def.surface.fill) do
+        create_cheat_ui(fill_flow, cur_surface, {'surface',n}, t)
+    end
 
     -- GAME
     pane = tabs[4].content

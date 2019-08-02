@@ -612,16 +612,20 @@ defs.cheats_gui_elems = {
         toggles = {
             peaceful_mode = {},
             dont_generate_biters = {tooltip=true},
-            freeze_time = {},
-            clear_pollution = {tooltip=true},
-            clear_all_entities = {tooltip=true},
-            fill_with_lab_tiles = {tooltip=true}
+            clear_pollution = {tooltip=true}
         },
-        numbers = {
+        time = {
+            freeze_time = {},
             time_of_day = {
                 slider = {min_value=0, max_value=1, value_step=0.1},
                 textfield = {allow_decimal=true, width=50}
             }
+        },
+        clear_entities = {
+            clear_all_entities = {tooltip=true}
+        },
+        fill = {
+            fill_with_lab_tiles = {tooltip=true}
         }
     },
     game = {
