@@ -206,8 +206,8 @@ end
 function cheats_gui.create(player, parent)
     local window_frame = parent.add{type='frame', name='im_cheats_window', style='dialog_frame', direction='vertical'}
     -- window_frame.style.height=530
-    -- window_frame.location = {0,(44*player.display_scale)}
-    window_frame.location = {1998,363}
+    window_frame.location = {0,(44*player.display_scale)}
+    -- window_frame.location = {1998,363}
     local titlebar = titlebar.create(window_frame, 'im_cheats_titlebar', {
         label = {'gui-cheats.window-caption'},
         draggable = true,
