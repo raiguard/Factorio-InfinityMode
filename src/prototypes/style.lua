@@ -153,5 +153,12 @@ data:extend{
         filename = '__InfinityMode__/graphics/gui/from-top-white.png',
         size = 32,
         flags = {'icon'}
+    },
+    {
+        type = 'sprite',
+        name = 'im-info-black-inline',
+        filename = '__InfinityMode__/graphics/gui/info-black-inline.png',
+        size = {16,40},
+        flags = {'icon'}
     }
 }

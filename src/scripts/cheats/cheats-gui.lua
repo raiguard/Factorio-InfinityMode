@@ -46,7 +46,7 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, player_is_god, pl
         end
     elseif cheat_def.type == 'action' then
         element = parent.add{type='button', name='im_cheats-'..cheat_name..'-button', style='stretchable_button',
-            caption={'gui-cheats-'..locale_name..'-caption'},
+            caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=im-info-black-inline]' or nil},
             tooltip=elem_table.tooltip and {'gui-cheats-'..locale_name..'-tooltip'} or nil}
     elseif cheat_def.type == 'list' then
         local setting_flow = parent.add{type='flow', name='im_cheats-'..cheat_name..'-flow', direction='horizontal'}

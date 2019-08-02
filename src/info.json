@@ -6,6 +6,6 @@
     "contact": "https://twitter.com/raiguard_",
     "homepage": "https://github.com/raiguard/InfinityMode",
     "factorio_version": "0.17",
-    "dependencies": ["base >= 0.17.54", "stdlib >= 1.2.0"],
+    "dependencies": ["base >= 0.17.60", "stdlib >= 1.2.0"],
     "description": "A modernized, simplified, and optimized replacement for Creative Mode. Tools have been streamlined and new capabilities have been added to take testing to a new level."
 }
