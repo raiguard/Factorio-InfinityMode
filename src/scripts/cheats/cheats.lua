@@ -33,6 +33,8 @@ function cheats.apply_defaults(category, obj)
             if def.default ~= nil then
                 data[obj.index] = def.functions.setup_global and def.functions.setup_global(obj, def.default) or {cur_value=def.default}
                 cheats.update(obj, {category,name}, def.default)
+            else
+                data[category == 'game' and 1 or obj.index] = {cur_value=def.functions.get_value(obj, def, data)}
             end
         end
     end

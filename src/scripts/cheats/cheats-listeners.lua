@@ -109,7 +109,11 @@ on_event(defines.events.on_gui_text_changed, function(e)
         local text = e.element.text
         if text == '' or (cheat_def.min_value and tonumber(text) < cheat_def.min_value) or (cheat_def.max_value and tonumber(text) > cheat_def.max_value) then
             e.element.style = 'invalid_short_number_textfield'
-            if player_table.cheats_gui.prev_value == nil then player_table.cheats_gui.prev_value = 0 end
+            if player_table.cheats_gui.prev_value == nil then
+                local index = params[2] == 'game' and 1 or player_table.cheats_gui['cur_'..params[2]].index
+                player_table.cheats_gui.prev_value = util.cheat_table(params[2], params[3], index).cur_value
+                log(serpent.block(util.cheat_table(params[2], params[3], index)))
+            end
             return nil
         else
             e.element.style = 'short_number_textfield'

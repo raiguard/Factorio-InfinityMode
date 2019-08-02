@@ -71,7 +71,6 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, player_is_god, pl
         element.enabled = false
         element.tooltip = {'gui-cheats.disabled-in-editor-tooltip'}
     end
-    return element
 end
 
 local function create_tabbed_pane(player, window_frame)
