@@ -82,8 +82,6 @@ local function create_tabbed_pane(player, window_frame)
         local tab = tabbed_pane.add{type='tab', name='im_cheats_'..category..'_tab', caption={'gui-cheats.tab-'..category..'-caption'}}
         local pane = tabbed_pane.add{type='scroll-pane', name='im_cheats_'..category..'_pane', style='tab_scroll_pane', direction='vertical', horizontal_scroll_policy='never', vertical_scroll_policy='always'}
         pane.style.height = 500
-        -- pane.style.left_padding = 5
-        -- pane.style.right_padding = 5
         pane.style.padding = 5
         tabbed_pane.add_tab(tab,pane)
     end

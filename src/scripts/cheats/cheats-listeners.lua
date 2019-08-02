@@ -114,7 +114,6 @@ on_event(defines.events.on_gui_text_changed, function(e)
             if player_table.cheats_gui.prev_value == nil then
                 local index = params[2] == 'game' and 1 or player_table.cheats_gui['cur_'..params[2]].index
                 player_table.cheats_gui.prev_value = util.cheat_table(params[2], params[3], index).cur_value
-                log(serpent.block(util.cheat_table(params[2], params[3], index)))
             end
             return nil
         else
