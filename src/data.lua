@@ -28,3 +28,11 @@ require('prototypes/infinity-robot')
 require('prototypes/infinity-wagon')
 require('prototypes/item-group')
 require('prototypes/style')
+
+data:extend{
+    {
+        type = 'custom-input',
+        name = 'im-toggle-cheats-gui',
+        key_sequence = 'CONTROL + SHIFT + C'
+    }
+}

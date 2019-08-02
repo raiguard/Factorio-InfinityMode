@@ -46,14 +46,22 @@ on_event(defines.events.on_player_created, function(e)
     }
 end)
 
-gui.on_click('im_button', function(e)
+local function toggle_gui(e)
     local player = util.get_player(e)
-    local frame_flow = player.gui.screen
-    if not frame_flow.im_cheats_window then
-        cheats_gui.create(player, frame_flow)
+    local screen = player.gui.screen
+    if not screen.im_cheats_window then
+        cheats_gui.create(player, screen)
     else
-        frame_flow.im_cheats_window.destroy()
+        screen.im_cheats_window.destroy()
     end
+end
+
+gui.on_click('im_button', function(e)
+    toggle_gui(e)
+end)
+
+on_event('im-toggle-cheats-gui', function(e)
+    toggle_gui(e)
 end)
 
 -- ----------------------------------------------------------------------------------------------------
