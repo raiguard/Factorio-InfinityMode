@@ -24,7 +24,6 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, player_is_god, pl
             tooltip=elem_table.tooltip and {'gui-cheats-'..locale_name..'-tooltip'} or nil}
     elseif cheat_def.type == 'number' then
         local setting_flow = parent.add{type='flow', name='im_cheats-'..cheat_name..'-flow', direction='horizontal'}
-        setting_flow.style.horizontal_spacing = 10
         setting_flow.style.vertical_align = 'center'
         setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-label',
             caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
@@ -37,6 +36,7 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, player_is_god, pl
                 value_step=elem_table.slider.value_step or nil, discrete_slider=elem_table.slider.value_step and true or nil,
                 discrete_values=elem_table.slider.value_step and true or nil}
             slider.slider_value = cheat_def.functions.get_value(obj, cheat_def, cheat_table)
+            slider.style.right_margin = 5
         end
         element = setting_flow.add{type='textfield', name='im_cheats-'..cheat_name..'-textfield', style='short_number_textfield',
             text=cheat_def.functions.get_value(obj, cheat_def, cheat_table), numeric=true, lose_focus_on_confirm=true,
