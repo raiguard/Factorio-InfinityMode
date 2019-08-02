@@ -76,7 +76,9 @@ local events_def = {
                         force = entity.force,
                         fast_replace = true,
                         spill = false,
-                        raise_built = true
+                        raise_built = true,
+                        -- underground belt
+                        type = entity.belt_to_ground_type or nil
                     }
                 end}
             },
