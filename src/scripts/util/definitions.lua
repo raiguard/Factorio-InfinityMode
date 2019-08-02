@@ -260,6 +260,11 @@ defs.cheats = {
             get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_health_bonus
             end
+        }},
+        clear_inventory = {type='action', in_god_mode=true, in_editor=true, functions={
+            action = function(player, cheat, cheat_table)
+                player.get_main_inventory().clear()
+            end
         }}
     },
     force = {
@@ -590,6 +595,9 @@ defs.cheats_gui_elems = {
             character_crafting_speed_modifier = {},
             character_inventory_slots_bonus = {},
             character_health_bonus = {}
+        },
+        actions = {
+            clear_inventory = {}
         }
     },
     force = {

@@ -124,6 +124,15 @@ local function create_tabbed_pane(player, window_frame)
     for n,t in pairs(elems_def.player.bonuses) do
         create_cheat_ui(pane, cur_player, {'player',n}, t, player_is_god, player_is_editor)
     end
+    -- actions
+    local player_actions_label = pane.add{type='label', name='im_cheats_player_actions_label', style='caption_label', caption={'gui-cheats-player.group-actions-caption'}}
+    player_actions_label.style.top_margin = 3
+    player_actions_label.style.bottom_margin = 6
+    local action_flow = pane.add{type='flow', name='im_cheats_player_actions_flow', direction='horizontal'}
+    for n,t in pairs(elems_def.player.actions) do
+        create_cheat_ui(pane, cur_player, {'player',n}, t, player_is_god, player_is_editor)
+    end
+
 
     -- FORCE
     pane = tabs[2].content
