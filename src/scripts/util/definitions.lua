@@ -630,7 +630,7 @@ defs.cheats_gui_elems = {
             freeze_time = {},
             time_of_day = {
                 slider = {min_value=0, max_value=1, value_step=0.1},
-                textfield = {allow_decimal=true, width=50}
+                textfield = {allow_decimal=true, width=42}
             }
         },
         clear_entities = {
@@ -645,8 +645,8 @@ defs.cheats_gui_elems = {
             pollution = {},
             evolution = {},
             biter_expansion = {},
-            research_queue = {tooltip=true},
-            recipe_difficulty = {},
+            -- research_queue = {tooltip=true},
+            -- recipe_difficulty = {},
             game_speed = {
                 slider = {min_value=1, max_value=10, value_step=1},
                 textfield = {allow_decimal=true, width=50}
