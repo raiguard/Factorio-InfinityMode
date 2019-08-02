@@ -22,10 +22,13 @@ local events_def = {
                     local entity = e.created_entity or e.entity
                     local cheat_table = util.cheat_table('player', 'instant_blueprint', e.player_index)
                     if util.is_ghost(entity) then
+                        -- attempt to revive the ghost
                         if not entity.revive{raise_revive=true} then
+                            -- if the table is empty, register the on_tick event
                             if #cheat_table.next_tick_entities == 0 then
                                 conditional_event.register('cheats.player.instant_blueprint.next_tick')
                             end
+                            -- add the entity to the table
                             table.insert(cheat_table.next_tick_entities, {tries=1, entity=entity})
                         end
                     end
@@ -81,8 +84,45 @@ local events_def = {
                 on_deconstruction = {{defines.events.on_marked_for_deconstruction}, function(e)
                     if not e.player_index then return end
                     if not util.cheat_enabled('player', 'instant_deconstruction', e.player_index) then return end
-                    if not e.entity.destroy{do_cliff_correction=true, raise_destroy=true} then
-                        game.print('Entity '..e.entity.name..' at position '..serpent.line(e.entity.position)..'was not destroyed!')
+                    local entity = e.entity
+                    local cheat_table = util.cheat_table('player', 'instant_deconstruction', e.player_index)
+                    -- attempt to destroy the entity
+                    if not entity.destroy{do_cliff_correction=true, raise_destroy=true} then
+                        -- if the table is empty, register the on_tick event
+                        if #cheat_table.next_tick_entities == 0 then
+                            conditional_event.register('cheats.player.instant_deconstruction.next_tick')
+                        end
+                        -- add the entity to the table
+                        table.insert(cheat_table.next_tick_entities, {tries=1, entity=entity})
+                    end
+                end},
+                next_tick = {{defines.events.on_tick}, function(e)
+                    local cheat_parent = util.cheat_table('player', 'instant_deconstruction')
+                    local deregister = true
+                    -- since on_tick does not have a player_index, we must iterate over every player's table
+                    for _,cheat_table in pairs(cheat_parent) do
+                        -- check if the table has contents
+                        if #cheat_table.next_tick_entities > 0 then
+                            -- for each entity in the table
+                            for i,t in pairs(cheat_table.next_tick_entities) do
+                                -- try to revive the entity and act on the result
+                                if t.entity.destroy{do_cliff_correction=true, raise_destroy=true} then
+                                    cheat_table.next_tick_entities[i] = nil
+                                else
+                                    t.tries = t.tries + 1
+                                    -- after ten tries, remove the entity from the table
+                                    if t.tries >= 10 then
+                                        log('Unable to destroy entity at position '..serpent.line(t.entity.position)..', deregistering')
+                                        cheat_table.next_tick_entities[i] = nil
+                                    end
+                                    deregister = false
+                                end
+                            end     
+                        end
+                    end
+                    -- if all entites have been revived or deregistered, deregister this event
+                    if deregister then
+                        conditional_event.deregister('cheats.player.instant_deconstruction.next_tick')
                     end
                 end}
             },

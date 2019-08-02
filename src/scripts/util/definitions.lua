@@ -98,6 +98,12 @@ defs.cheats = {
             end
         }},
         instant_deconstruction = {type='toggle', default=true, in_god_mode=true, in_editor=false, functions={
+            setup_global = function(player, default)
+                return {
+                    cur_value = default,
+                    next_tick_entities = {}
+                }
+            end,
             value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.instant_deconstruction.on_deconstruction')
