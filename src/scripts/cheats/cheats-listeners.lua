@@ -171,6 +171,10 @@ gui.on_selection_state_changed('im_cheats_surface_listbox', function(e)
     cheats_gui.refresh(player, player.gui.screen)
 end)
 
+gui.on_click('im_cheats_titlebar_button_close', function(e)
+    e.element.parent.parent.destroy()
+end)
+
 -- ----------------------------------------------------------------------------------------------------
 -- CHEATS
 
