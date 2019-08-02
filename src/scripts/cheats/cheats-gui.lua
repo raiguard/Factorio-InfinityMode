@@ -44,6 +44,9 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, player_is_god, pl
         if elem_table.textfield and elem_table.textfield.width then
             element.style.width = elem_table.textfield.width
         end
+        if elem_table.slider then
+            element.style.horizontal_align = 'center'
+        end
     elseif cheat_def.type == 'action' then
         element = parent.add{type='button', name='im_cheats-'..cheat_name..'-button', style='stretchable_button',
             caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=im-info-black-inline]' or nil},
