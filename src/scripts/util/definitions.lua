@@ -478,6 +478,21 @@ defs.cheats = {
                     end
                 end
             end
+        }},
+        fill_with_lab_tiles = {type='action', functions={
+            action = function(surface, cheat, cheat_global)
+                surface.destroy_decoratives{}
+                for chunk_pos in surface.get_chunks() do
+                    local tiles = {}
+                    local chunk_area = chunk.to_area(chunk_pos)
+                    for y=chunk_area.left_top.y,chunk_area.right_bottom.y-1 do
+                        for x=chunk_area.left_top.x,chunk_area.right_bottom.x-1 do
+                            table.insert(tiles, {name=((x+y)%2==0 and 'lab-dark-1' or 'lab-dark-2'), position={x,y}})
+                        end
+                    end
+                    surface.set_tiles(tiles, false)
+                end
+            end
         }}
     },
     game = {
@@ -599,7 +614,8 @@ defs.cheats_gui_elems = {
             dont_generate_biters = {tooltip=true},
             freeze_time = {},
             clear_pollution = {tooltip=true},
-            clear_all_entities = {tooltip=true}
+            clear_all_entities = {tooltip=true},
+            fill_with_lab_tiles = {tooltip=true}
         },
         numbers = {
             time_of_day = {
