@@ -68,11 +68,8 @@ defs.cheats = {
             end
         }},
         instant_blueprint = {type='toggle', default=true, in_god_mode=true, in_editor=false, functions={
-            setup_global = function(player, default)
-                return {
-                    cur_value = default,
-                    next_tick_entities = {}
-                }
+            setup_global_global = function(player, default)
+                return {next_tick_entities={}}
             end,
             value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
@@ -98,11 +95,8 @@ defs.cheats = {
             end
         }},
         instant_deconstruction = {type='toggle', default=true, in_god_mode=true, in_editor=false, functions={
-            setup_global = function(player, default)
-                return {
-                    cur_value = default,
-                    next_tick_entities = {}
-                }
+            setup_global_global = function(player, default)
+                return {next_tick_entities={}}
             end,
             value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then

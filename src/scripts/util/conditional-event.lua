@@ -20,42 +20,40 @@ local events_def = {
                     if not e.player_index then return end
                     if not util.cheat_enabled('player', 'instant_blueprint', e.player_index) then return end
                     local entity = e.created_entity or e.entity
-                    local cheat_table = util.cheat_table('player', 'instant_blueprint', e.player_index)
+                    local global_table = util.cheat_table('player', 'instant_blueprint', 'global')
                     if util.is_ghost(entity) then
                         -- attempt to revive the ghost
                         if not entity.revive{raise_revive=true} then
                             -- if the table is empty, register the on_tick event
-                            if #cheat_table.next_tick_entities == 0 then
+                            if #global_table.next_tick_entities == 0 then
                                 conditional_event.register('cheats.player.instant_blueprint.next_tick')
                             end
                             -- add the entity to the table
-                            table.insert(cheat_table.next_tick_entities, {tries=1, entity=entity})
+                            table.insert(global_table.next_tick_entities, {tries=1, entity=entity})
                         end
                     end
                 end},
                 next_tick = {{defines.events.on_tick}, function(e)
-                    local cheat_parent = util.cheat_table('player', 'instant_blueprint')
+                    local global_table = util.cheat_table('player', 'instant_blueprint', 'global')
                     local deregister = true
-                    -- since on_tick does not have a player_index, we must iterate over every player's table
-                    for _,cheat_table in pairs(cheat_parent) do
-                        -- check if the table has contents
-                        if #cheat_table.next_tick_entities > 0 then
-                            -- for each entity in the table
-                            for i,t in pairs(cheat_table.next_tick_entities) do
-                                -- try to revive the entity and act on the result
-                                if t.entity.revive{raise_revive=true} then
-                                    cheat_table.next_tick_entities[i] = nil
+                    -- check if the table has contents
+                    if #global_table.next_tick_entities > 0 then
+                        -- for each entity in the table
+                        for i,t in pairs(global_table.next_tick_entities) do
+                            -- try to revive the entity and act on the result
+                            if t.entity.revive{raise_revive=true} then
+                                global_table.next_tick_entities[i] = nil
+                            else
+                                t.tries = t.tries + 1
+                                -- after ten tries, remove the entity from the table
+                                if t.tries >= 10 then
+                                    log('Unable to revive entity at position '..serpent.line(t.entity.position)..', deregistering')
+                                    global_table.next_tick_entities[i] = nil
                                 else
-                                    t.tries = t.tries + 1
-                                    -- after ten tries, remove the entity from the table
-                                    if t.tries >= 10 then
-                                        log('Unable to revive entity at position '..serpent.line(t.entity.position)..', deregistering')
-                                        cheat_table.next_tick_entities[i] = nil
-                                    end
                                     deregister = false
                                 end
-                            end     
-                        end
+                            end
+                        end     
                     end
                     -- if all entites have been revived or deregistered, deregister this event
                     if deregister then
@@ -87,40 +85,38 @@ local events_def = {
                     if not e.player_index then return end
                     if not util.cheat_enabled('player', 'instant_deconstruction', e.player_index) then return end
                     local entity = e.entity
-                    local cheat_table = util.cheat_table('player', 'instant_deconstruction', e.player_index)
+                    local global_table = util.cheat_table('player', 'instant_deconstruction', 'global')
                     -- attempt to destroy the entity
                     if not entity.destroy{do_cliff_correction=true, raise_destroy=true} then
                         -- if the table is empty, register the on_tick event
-                        if #cheat_table.next_tick_entities == 0 then
+                        if #global_table.next_tick_entities == 0 then
                             conditional_event.register('cheats.player.instant_deconstruction.next_tick')
                         end
                         -- add the entity to the table
-                        table.insert(cheat_table.next_tick_entities, {tries=1, entity=entity})
+                        table.insert(global_table.next_tick_entities, {tries=1, entity=entity})
                     end
                 end},
                 next_tick = {{defines.events.on_tick}, function(e)
-                    local cheat_parent = util.cheat_table('player', 'instant_deconstruction')
+                    local global_table = util.cheat_table('player', 'instant_deconstruction', 'global')
                     local deregister = true
-                    -- since on_tick does not have a player_index, we must iterate over every player's table
-                    for _,cheat_table in pairs(cheat_parent) do
-                        -- check if the table has contents
-                        if #cheat_table.next_tick_entities > 0 then
-                            -- for each entity in the table
-                            for i,t in pairs(cheat_table.next_tick_entities) do
-                                -- try to revive the entity and act on the result
-                                if t.entity.destroy{do_cliff_correction=true, raise_destroy=true} then
-                                    cheat_table.next_tick_entities[i] = nil
+                    -- check if the table has contents
+                    if #global_table.next_tick_entities > 0 then
+                        -- for each entity in the table
+                        for i,t in pairs(global_table.next_tick_entities) do
+                            -- try to revive the entity and act on the result
+                            if t.entity.destroy{do_cliff_correction=true, raise_destroy=true} then
+                                global_table.next_tick_entities[i] = nil
+                            else
+                                t.tries = t.tries + 1
+                                -- after ten tries, remove the entity from the table
+                                if t.tries >= 10 then
+                                    log('Unable to destroy entity at position '..serpent.line(t.entity.position)..', deregistering')
+                                    global_table.next_tick_entities[i] = nil
                                 else
-                                    t.tries = t.tries + 1
-                                    -- after ten tries, remove the entity from the table
-                                    if t.tries >= 10 then
-                                        log('Unable to destroy entity at position '..serpent.line(t.entity.position)..', deregistering')
-                                        cheat_table.next_tick_entities[i] = nil
-                                    end
                                     deregister = false
                                 end
-                            end     
-                        end
+                            end
+                        end     
                     end
                     -- if all entites have been revived or deregistered, deregister this event
                     if deregister then
@@ -199,12 +195,10 @@ local events_def = {
                             for i=1,player.character.request_slot_count do
                                 requests[i] = get_slot(i) or {}
                             end
-                            log(serpent.block(requests))
                             global_table.active_players[player.index] = requests
                             -- register events
                             conditional_event.register('cheats.player.instant_request.on_gui_closed')
                             conditional_event.register('cheats.player.instant_request.on_nth_tick')
-                            log(serpent.block(global_table))
                         end
                     end
                 end},
