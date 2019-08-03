@@ -584,9 +584,9 @@ defs.cheats_gui_elems = {
             },
             inventory = {
                 cheat_mode = {},
-                keep_last_item = {},
-                repair_used_item = {},
-                instant_request = {},
+                keep_last_item = {tooltip=true},
+                repair_used_item = {tooltip=true},
+                instant_request = {tooltip=true},
                 instant_trash = {}
             }
         },
