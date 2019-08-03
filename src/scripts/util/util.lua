@@ -99,7 +99,7 @@ function util.cheat_enabled(category, name, index, exclude_idx)
     else
         -- check if any players have the cheat enabled
         for i=1,#cheat_table do
-            if cheat_table[i].cur_value then return true end
+            if cheat_table[i] and cheat_table[i].cur_value then return true end
         end
     end
 end
