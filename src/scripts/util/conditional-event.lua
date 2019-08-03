@@ -172,13 +172,67 @@ local events_def = {
                         contents[stack.name] = stack.count + (contents[stack.name] or 0)
                     end
                     -- iterate over all request slots
+                    local get_slot = character.get_request_slot
+                    local insert = inventory.insert
                     for i=1,character.request_slot_count do
-                        local request = character.get_request_slot(i)
+                        local request = get_slot(i)
                         if request then
                             -- subtract request from the actual count
                             local diff = request.count - (contents[request.name] or 0)
                             if diff > 0 then
-                                inventory.insert{name=request.name, count=diff}
+                                insert{name=request.name, count=diff}
+                            end
+                        end
+                    end
+                end},
+                on_gui_opened = {{defines.events.on_gui_opened}, function(e)
+                    -- check if the opened GUI was of the "controller" type
+                    if e.gui_type == defines.gui_type.controller then
+                        local player = util.get_player(e)
+                        if not util.cheat_enabled('player', 'instant_request', player.index) then return end
+                        -- check to be sure the player has a character and is controlling it
+                        if player.character and player.controller_type == defines.controllers.character then
+                            -- insert the player into the active_players table
+                            local global_table = util.cheat_table('player', 'instant_request', 'global')
+                            local get_slot = player.character.get_request_slot
+                            local requests = {}
+                            for i=1,player.character.request_slot_count do
+                                requests[i] = get_slot(i)
+                            end
+                            global_table.active_players[player.index] = requests
+                            -- register events
+                            conditional_event.register('cheats.player.instant_request.on_gui_closed')
+                            conditional_event.register('cheats.player.instant_request.on_tick')
+                            log(serpent.block(global_table))
+                        end
+                    end
+                end},
+                on_gui_closed = {{defines.events.on_gui_closed}, function(e)
+                    -- check if the closed GUI was of the 'controller' type
+                    if e.gui_type == defines.gui_type.controller then
+                        if not util.cheat_enabled('player', 'instant_request', e.player_index) then return end
+                        -- remove player from active_players
+                        local global_table = util.cheat_table('player', 'instant_request', 'global')
+                        global_table.active_players[e.player_index] = nil
+                        -- if no active players, deregister events
+                        if #global_table.active_players == 0 then
+                            conditional_event.deregister('cheats.player.instant_request.on_gui_closed')
+                            conditional_event.deregister('cheats.player.instant_request.on_tick')
+                        end
+                    end
+                end},
+                on_tick = {{defines.events.on_tick}, function(e)
+                    local active_players = util.cheat_table('player', 'instant_request', 'global').active_players
+                    for i,t in pairs(active_players) do
+                        local player = game.players[i]
+                        local character = player.character
+                        -- perform extra check to be sure the player is still in a valid state
+                        if character and player.controller_type == defines.controllers.character then
+                            local get_slot = character.get_request_slot
+                            for n=1,character.request_slot_count do
+                                if get_slot(n) ~= t then
+                                    event.dispatch{name=defines.events.on_main_inventory_changed, player_index=i}
+                                end
                             end
                         end
                     end

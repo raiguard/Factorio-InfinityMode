@@ -7,7 +7,8 @@ local util = {}
 -- GENERAL
 
 function util.get_player(obj)
-    if obj.player_index then return game.players[obj.player_index] end
+    if obj.player_index then return game.players[obj.player_index]
+    else return game.players[obj] end
 end
 
 function util.is_player_god(player)
@@ -83,6 +84,9 @@ end
 
 function util.cheat_table(category, name, obj)
     if category == 'game' then return global.cheats[category][name][1] end
+    if type(obj) == 'string' and obj == 'global' then
+        return global.cheats[category][name].global
+    end
     local index = type(obj) == 'table' and obj.index or obj
     return index and global.cheats[category][name][index] or global.cheats[category][name]
 end
@@ -94,7 +98,9 @@ function util.cheat_enabled(category, name, index, exclude_idx)
         return cheat_table[index].cur_value
     else
         -- check if any players have the cheat enabled
-        return table.any(cheat_table, function(data) return data.cur_value end)
+        for i=1,#cheat_table do
+            if cheat_table[i].cur_value then return true end
+        end
     end
 end
 

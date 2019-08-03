@@ -148,12 +148,20 @@ defs.cheats = {
             end
         }},
         instant_request = {type='toggle', default=true, in_god_mode=false, in_editor=false, functions={
+            setup_global = function(player, default)
+                return {cur_value=default}
+            end,
+            setup_global_global = function(player, default)
+                return {active_players={}}
+            end,
             value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.instant_request.on_main_inventory_changed')
+                    conditional_event.cheat_register(player, cheat, 'cheats.player.instant_request.on_gui_opened')
                     event.dispatch{name=defines.events.on_player_main_inventory_changed, player_index=player.index}
                 else
                     conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_request.on_main_inventory_changed')
+                    conditional_event.cheat_deregister(player, cheat, 'cheats.player.instant_request.on_gui_opened')
                 end
             end,
             get_value = function(player, cheat, cheat_global)

@@ -48,6 +48,7 @@ end)
 
 on_event(defines.events.on_player_created, function(e)
     player_setup(e)
+    print(serpent.block(global))
 end)
 
 local function toggle_gui(e)
