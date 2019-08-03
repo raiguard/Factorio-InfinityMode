@@ -197,12 +197,13 @@ local events_def = {
                             local get_slot = player.character.get_request_slot
                             local requests = {}
                             for i=1,player.character.request_slot_count do
-                                requests[i] = get_slot(i)
+                                requests[i] = get_slot(i) or {}
                             end
+                            log(serpent.block(requests))
                             global_table.active_players[player.index] = requests
                             -- register events
                             conditional_event.register('cheats.player.instant_request.on_gui_closed')
-                            conditional_event.register('cheats.player.instant_request.on_tick')
+                            conditional_event.register('cheats.player.instant_request.on_nth_tick')
                             log(serpent.block(global_table))
                         end
                     end
@@ -217,11 +218,11 @@ local events_def = {
                         -- if no active players, deregister events
                         if #global_table.active_players == 0 then
                             conditional_event.deregister('cheats.player.instant_request.on_gui_closed')
-                            conditional_event.deregister('cheats.player.instant_request.on_tick')
+                            conditional_event.deregister('cheats.player.instant_request.on_nth_tick')
                         end
                     end
                 end},
-                on_tick = {{defines.events.on_tick}, function(e)
+                on_nth_tick = {{-30}, function(e)
                     local active_players = util.cheat_table('player', 'instant_request', 'global').active_players
                     for i,t in pairs(active_players) do
                         local player = game.players[i]
@@ -229,10 +230,15 @@ local events_def = {
                         -- perform extra check to be sure the player is still in a valid state
                         if character and player.controller_type == defines.controllers.character then
                             local get_slot = character.get_request_slot
-                            for n=1,character.request_slot_count do
-                                if get_slot(n) ~= t then
-                                    event.dispatch{name=defines.events.on_main_inventory_changed, player_index=i}
-                                end
+                            -- build request slots
+                            local requests = {}
+                            for i=1,character.request_slot_count do
+                                requests[i] = get_slot(i) or {}
+                            end
+                            -- check if current status of requests has changed
+                            if not table.deep_compare(requests,t) then
+                                active_players[i] = requests
+                                event.dispatch{name=defines.events.on_player_main_inventory_changed, player_index=i}
                             end
                         end
                     end
