@@ -7,8 +7,8 @@ local util = {}
 -- GENERAL
 
 function util.get_player(obj)
-    if obj.player_index then return game.players[obj.player_index]
-    else return game.players[obj] end
+    if type(obj) == 'number' then return game.players[obj]
+    else return game.players[obj.player_index] end
 end
 
 function util.is_player_god(player)

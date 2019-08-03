@@ -129,12 +129,17 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        repair_damaged_item = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+        repair_used_item = {type='toggle', default=true, in_god_mode=true, in_editor=true, functions={
+            setup_global_global = function(player, default)
+                return {cur_players={}}
+            end,
             value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
-                    conditional_event.cheat_register(player, cheat, 'cheats.player.repair_damaged_item.on_main_inv_changed')
+                    conditional_event.cheat_register(player, cheat, 'cheats.player.repair_used_item.on_main_inventory_changed')
+                    conditional_event.cheat_register(player, cheat, 'cheats.player.repair_used_item.on_cursor_stack_changed')
                 else
-                    conditional_event.cheat_deregister(player, cheat, 'cheats.player.repair_damaged_item.on_main_inv_changed')
+                    conditional_event.cheat_deregister(player, cheat, 'cheats.player.repair_used_item.on_main_inventory_changed')
+                    conditional_event.cheat_deregister(player, cheat, 'cheats.player.repair_used_item.on_cursor_stack_changed')
                 end
             end,
             get_value = function(player, cheat, cheat_global)
@@ -580,7 +585,7 @@ defs.cheats_gui_elems = {
             inventory = {
                 cheat_mode = {},
                 keep_last_item = {},
-                repair_damaged_item = {},
+                repair_used_item = {},
                 instant_request = {},
                 instant_trash = {}
             }

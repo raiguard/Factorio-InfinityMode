@@ -134,23 +134,57 @@ local events_def = {
                     end
                 end}
             },
-            repair_damaged_item = {
-                on_main_inv_changed = {{defines.events.on_player_main_inventory_changed}, function(e)
+            repair_used_item = {
+                on_main_inventory_changed = {{defines.events.on_player_main_inventory_changed}, function(e)
+                    if not util.cheat_enabled('player', 'repair_used_item', e.player_index) then return end
                     local player = util.get_player(e)
-                    if not util.cheat_enabled('player', 'repair_damaged_item', player.index) then return end
                     local inventory = player.get_main_inventory()
-                    -- iterate over every slot in the inventory, repairing any damaged items
+                    -- iterate over every slot in the inventory
                     for i=1,#inventory do
-                        if inventory[i].valid_for_read and inventory[i].durability then inventory[i].add_durability(1000000) end
-                        -- there is currently no way to get the max ammo for an ammoitem, and simply setting it to 1000000 will cause additional items to be created
-                        -- if inventory[i].valid_for_read and inventory[i].type == 'ammo' then inventory[i].add_ammo(1000000) end
+                        -- reset tool durability to max
+                        if inventory[i].valid_for_read and inventory[i].durability then
+                            inventory[i].durability = game.item_prototypes[inventory[i].name].durability
+                        end
+                        -- reset magazine ammo to max
+                        if inventory[i].valid_for_read and inventory[i].type == 'ammo' then
+                            inventory[i].ammo = game.item_prototypes[inventory[i].name].magazine_size
+                        end
                     end
                 end},
                 on_cursor_stack_changed = {{defines.events.on_player_cursor_stack_changed}, function(e)
-                    
+                    local player = util.get_player(e)
+                    local cursor_stack = player.cursor_stack
+                    local global_table = util.cheat_table('player', 'repair_used_item', 'global')
+                    -- if the player is holding an ammo magazine or tool
+                    if cursor_stack.valid_for_read and (cursor_stack.type == 'ammo' or cursor_stack.type == 'tool' or cursor_stack.type == 'repair-tool') then
+                        -- add to global table and register event
+                        global_table.cur_players[e.player_index] = true
+                        conditional_event.register('cheats.player.repair_used_item.on_tick')
+                    else
+                        -- remove from global table
+                        global_table.cur_players[e.player_index] = nil
+                        -- if no players are in the table, deregister the event
+                        if #global_table.cur_players == 0 then
+                            conditional_event.deregister('cheats.player.repair_used_item.on_tick')
+                        end
+                    end
                 end},
                 on_tick = {{defines.events.on_tick}, function(e)
-                    
+                    local global_table = util.cheat_table('player', 'repair_used_item', 'global')
+                    -- for every player in the table
+                    for i,_ in pairs(global_table.cur_players) do
+                        local player = util.get_player(i)
+                        local cursor_stack = player.cursor_stack
+                        if cursor_stack.valid_for_read then
+                            -- check cursor stack type and add ammo / durability
+                            local type = cursor_stack.type
+                            if type == 'ammo' then
+                                cursor_stack.ammo = game.item_prototypes[cursor_stack.name].magazine_size
+                            elseif type == 'tool' or type == 'repair-tool' then
+                                cursor_stack.durability = game.item_prototypes[cursor_stack.name].durability
+                            end
+                        end
+                    end
                 end}
             },
             instant_request = {
