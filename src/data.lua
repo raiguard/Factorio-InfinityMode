@@ -22,6 +22,7 @@ end
 
 require('prototypes/infinity-accumulator')
 require('prototypes/infinity-chest')
+require('prototypes/infinity-loader')
 require('prototypes/infinity-misc')
 require('prototypes/infinity-pole')
 require('prototypes/infinity-robot')

@@ -7,13 +7,13 @@ local table = require('__stdlib__/stdlib/utils/table')
 local ip_item = data.raw['item']['infinity-pipe']
 ip_item.icons = {apply_infinity_tint(ip_item.icons[1])}
 ip_item.subgroup = 'im-misc'
-ip_item.order = 'aa'
+ip_item.order = 'ab'
 ip_item.stack_size = 50
 
 -- heat interface
 local hi_item = data.raw['item']['heat-interface']
 hi_item.subgroup = 'im-misc'
-hi_item.order = 'ab'
+hi_item.order = 'ac'
 hi_item.stack_size = 50
 hi_item.icons = {apply_infinity_tint{icon=data.raw['item']['heat-pipe'].icon, icon_size=data.raw['item']['heat-pipe'].icon_size}}
 
