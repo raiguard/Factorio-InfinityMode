@@ -8,7 +8,7 @@ data:extend{
         localised_name = {'entity-name.infinity-loader'},
         icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32}},
         stack_size = 50,
-        -- place_result = 'infinity-loader-underneathy',
+        place_result = 'infinity-loader',
         subgroup = 'im-misc',
         oreder = 'aa'
     }
