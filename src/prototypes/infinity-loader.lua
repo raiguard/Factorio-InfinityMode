@@ -8,7 +8,7 @@ data:extend{
         localised_name = {'entity-name.infinity-loader'},
         icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32}},
         stack_size = 50,
-        place_result = 'infinity-loader',
+        place_result = 'infinity-loader-underneathy',
         subgroup = 'im-misc',
         oreder = 'aa'
     }
@@ -27,26 +27,43 @@ local empty_sheet = {
     frame_count = 1,
 }
 
+-- infinity chest
+data:extend{
+    {
+        type = 'infinity-container',
+        name = 'infinity-loader-chest',
+        gui_mode = 'none',
+        erase_contents_when_mined = true,
+        inventory_size = 10,
+        picture = empty_sheet,
+        icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32}},
+        flags = {'placeable-off-grid'},
+        collision_box = {{-0.1,-0.5}, {0.1,0.5}},
+        -- collision_mask = {'layer-12'},
+        selection_box = {{-0.1,-0.5}, {0.1,0.5}},
+        selection_priority = 100
+    }
+}
+
 -- inserter
 data:extend{
     {
         type = 'inserter',
         name = 'infinity-loader-inserter',
-        localised_name = {'entity-name.infinity-loader'},
         icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32}},
-        minable = {mining_time=0.1, result='infinity-loader'},
-        collision_box = {{-0.2, -0.2}, {0.2, 0.2}},
-        -- collision_mask = base_entity.collision_mask,
-        selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
-        selection_priority = 50,
+        collision_box = {{-0.1,-0.1}, {0.1,0.1}},
+        -- collision_mask = {'layer-12'},
+        selection_box = {{-0.1,-0.1}, {0.1,0.1}},
+        -- selectable_in_game = false,
+        selection_priority = 99,
         allow_custom_vectors = true,
-        energy_per_movement = ".0000001J",
-        energy_per_rotation = ".0000001J",
         energy_source = {type='void'},
-        extension_speed = 1,
-        rotation_speed = 0.5,
+        extension_speed = 10,
+        rotation_speed = 10,
+        energy_per_movement = '0.00001J',
+        energy_per_extension = '0.00001J',
         pickup_position = {0, -0.2},
-        insert_position = {0, 0.8},
+        insert_position = {0, 0.2},
         draw_held_item = false,
         platform_picture = empty_sheet,
         hand_base_picture = empty_sheet,
@@ -67,6 +84,7 @@ for n,t in pairs(underneathy_base.structure) do
     end
 end
 underneathy_base.icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32}}
+-- table.insert(underneathy_base.collision_mask or {}, 'layer-12')
 
 -- underground belt
 local function create_underneathy(base_underground)
@@ -76,7 +94,7 @@ local function create_underneathy(base_underground)
     entity.icons = underneathy_base.icons
     -- basic data
     local suffix = entity.name:gsub('%-?underground%-belt', '')
-    entity.name = 'infinity-loader' .. (suffix ~= '' and '-'..suffix or '')
+    entity.name = 'infinity-loader-underneathy' .. (suffix ~= '' and '-'..suffix or '')
     entity.next_upgrade = nil
     entity.max_distance = 0
     entity.order = 'a'

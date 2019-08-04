@@ -2,6 +2,7 @@
 -- INFINITY LOADER CONTROL SCRIPTING
 
 local event = require('__stdlib__/stdlib/event/event')
+local position = require('__stdlib__/stdlib/area/position')
 local on_event = event.register
 local util = require('scripts/util/util')
 
@@ -18,16 +19,25 @@ end)
 on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built, defines.events.script_raised_revive}, function(e)
     local entity = e.created_entity or e.entity
     if string.find(entity.name, 'infinity%-loader') then
-        local max_index = entity.get_max_transport_line_index()
-        local data = {
-            entity = entity,
-            num_lines = max_index
+        local chest = entity.surface.create_entity{
+            name = 'infinity-loader-chest',
+            position = position.add(entity.position, {0.8,0}),
+            force = entity.force
         }
-        for i=1,max_index do
-            data['transport_line_'..i] = entity.get_transport_line(i)
-            data['filter_'..i] = 'iron-ore'
-        end
-        global.loaders[entity.unit_number] = data
+        local inserter = entity.surface.create_entity{
+            name='infinity-loader-inserter',
+            position = entity.position,
+            force = entity.force,
+            direction = entity.direction
+        }
+        -- inserter.drop_target = chest
+        inserter.pickup_position = chest.position
+        inserter.drop_position = position.add(entity.position, {-0.2,0.25})
+        rendering.draw_circle{target=inserter.pickup_position, color={r=0,g=1,b=0}, radius=0.035, filled=true, surface=inserter.surface}
+        rendering.draw_circle{target=inserter.drop_position, color={r=0,g=0,b=1}, radius=0.035, filled=true, surface=inserter.surface}
+        -- inserter.pickup_position = 
+        chest.set_infinity_container_filter(1, {name='iron-ore', count=50, mode='exactly'})
+        chest.set_infinity_container_filter(2, {name='copper-ore', count=50, mode='exactly'})
     end
 end)
 
@@ -38,14 +48,3 @@ on_event({defines.events.on_player_mined_entity, defines.events.on_robot_mined_e
         global.loaders[entity.unit_number] = nil
     end
 end)
-
--- on_event(defines.events.on_tick, function(e)
---     for _,t in pairs(global.loaders) do
---         for i=1,t.num_lines do
---             local line = t['transport_line_'..i]
---             if line.can_insert_at_back() and t['filter_'..i] then
---                 line.insert_at_back{name=t['filter_'..i], count=1}
---             end
---         end
---     end
--- end)
