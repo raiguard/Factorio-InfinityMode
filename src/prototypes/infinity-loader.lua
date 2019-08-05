@@ -8,9 +8,9 @@ data:extend{
         localised_name = {'entity-name.infinity-loader'},
         icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32}},
         stack_size = 50,
-        place_result = 'infinity-loader-underneathy',
+        place_result = 'infinity-loader-underneathy-express',
         subgroup = 'im-misc',
-        oreder = 'aa'
+        order = 'aa'
     }
 }
 
@@ -38,12 +38,15 @@ data:extend{
         picture = empty_sheet,
         icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32}},
         flags = {'placeable-off-grid'},
-        collision_box = {{-0.1,-0.5}, {0.1,0.5}},
+        collision_box = {{-0.05,-0.5}, {0.05,0.5}},
+        selectable_in_game = false
         -- collision_mask = {'layer-12'},
-        selection_box = {{-0.1,-0.5}, {0.1,0.5}},
-        selection_priority = 100
+        -- selection_box = {{-0.05,-0.5}, {0.05,0.5}},
+        -- selection_priority = 100
     }
 }
+
+local filter_inserter = data.raw['inserter']['filter-inserter']
 
 -- inserter
 data:extend{
@@ -53,9 +56,9 @@ data:extend{
         icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32}},
         collision_box = {{-0.1,-0.1}, {0.1,0.1}},
         -- collision_mask = {'layer-12'},
-        selection_box = {{-0.1,-0.1}, {0.1,0.1}},
-        -- selectable_in_game = false,
-        selection_priority = 99,
+        -- selection_box = {{-0.1,-0.1}, {0.1,0.1}},
+        selectable_in_game = false,
+        -- selection_priority = 99,
         allow_custom_vectors = true,
         energy_source = {type='void'},
         extension_speed = 10,
@@ -69,6 +72,9 @@ data:extend{
         hand_base_picture = empty_sheet,
         hand_open_picture = empty_sheet,
         hand_closed_picture = empty_sheet,
+        -- hand_base_picture = filter_inserter.hand_base_picture,
+        -- hand_open_picture = filter_inserter.hand_open_picture,
+        -- hand_closed_picture = filter_inserter.hand_closed_picture,
         draw_inserter_arrow = false,
         flags = {'hide-alt-info'}
     }
@@ -84,13 +90,16 @@ for n,t in pairs(underneathy_base.structure) do
     end
 end
 underneathy_base.icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32}}
--- table.insert(underneathy_base.collision_mask or {}, 'layer-12')
 
 -- underground belt
 local function create_underneathy(base_underground)
     local entity = table.deepcopy(data.raw['underground-belt'][base_underground])
     -- adjust pictures and icon
     entity.structure = underneathy_base.structure
+    -- entity.structure = {
+    --     direction_in = empty_sheet,
+    --     direction_out = empty_sheet
+    -- }
     entity.icons = underneathy_base.icons
     -- basic data
     local suffix = entity.name:gsub('%-?underground%-belt', '')
