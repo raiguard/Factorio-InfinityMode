@@ -52,14 +52,14 @@ end
 
 local function update_inserters(entity)
     local inserters = entity.surface.find_entities_filtered{name='infinity-loader-inserter', position=entity.position}
-    local chest = entity.surface.find_entities_filtered{name='infinity-loader-chest', position=entity.position}
+    local chest = entity.surface.find_entities_filtered{name='infinity-loader-chest', position=entity.position}[1]
     local e_type = entity.belt_to_ground_type
     local e_position = entity.position
     local e_direction = entity.direction
     for i=1,#inserters do
         local side = i > (#inserters/2) and 0.25 or -0.25
         local inserter = inserters[i]
-        local mod = (i % (#inserters/2) + 1) * -1 
+        local mod = (i % (#inserters/2)) * -1 
         if e_type == 'input' then
             -- pickup on belt, drop in chest
             inserter.pickup_target = entity
@@ -69,7 +69,7 @@ local function update_inserters(entity)
         elseif e_type == 'output' then
             -- pickup from chest, drop on belt
             inserter.pickup_target = chest
-            inserter.pickup_position = e_position
+            inserter.pickup_position = chest.position
             inserter.drop_target = entity
             inserter.drop_position = position.add(e_position, offset(e_direction,-mod*0.2,side))
         end
@@ -102,6 +102,7 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
                 force = entity.force,
                 direction = entity.direction
             }
+            inserter.inserter_stack_size_override = 1
         end
         update_inserters(entity)
         chest.set_infinity_container_filter(1, {name='iron-ore', count=50, mode='exactly'})

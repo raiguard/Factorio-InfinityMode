@@ -39,9 +39,9 @@ data:extend{
         icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32}},
         flags = {'placeable-off-grid'},
         collision_box = {{-0.05,-0.05}, {0.05,0.05}},
-        selectable_in_game = false
-        -- selection_box = {{-0.05,-0.5}, {0.05,0.5}},
-        -- selection_priority = 100
+        -- selectable_in_game = false
+        selection_box = {{-0.05,-0.05}, {0.05,0.05}},
+        selection_priority = 100
     }
 }
 
@@ -54,9 +54,9 @@ data:extend{
         name = 'infinity-loader-inserter',
         icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32}},
         collision_box = {{-0.1,-0.1}, {0.1,0.1}},
-        selection_box = {{-0.1,-0.1}, {0.1,0.1}},
-        selection_priority = 99,
-        -- selectable_in_game = false,
+        -- selection_box = {{-0.1,-0.1}, {0.1,0.1}},
+        -- selection_priority = 99,
+        selectable_in_game = false,
         allow_custom_vectors = true,
         energy_source = {type='void'},
         extension_speed = 10,
