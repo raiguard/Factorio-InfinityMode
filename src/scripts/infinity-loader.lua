@@ -15,7 +15,7 @@ local util = require('scripts/util/util')
 -- this table is to be used when the auto-detection fails
 local connected_belt_overrides = {
     -- ultimate belts - https://mods.factorio.com/mod/UltimateBelts
-    -- ['ultimate-belt'] = 'original-ultimate'
+    ['ultimate-belt'] = 'original-ultimate'
 }
 
 -- removing all of these patterns from the connected belt name will result in the suffix 
@@ -34,7 +34,7 @@ local function get_belt_type(entity)
             type = type:gsub(pattern, '')
         end
         -- check to see if the underneathy exists
-        if not game.entity_prototypes['infinity-loader-underneathy-'..type] then
+        if type ~= '' and not game.entity_prototypes['infinity-loader-underneathy-'..type] then
             -- print warning message
             game.print{'chat-message.unable-to-identify-belt-warning'}
             game.print('belt_name=\''..entity.name..'\', parse_result=\''..type..'\'')
@@ -143,7 +143,6 @@ end
 
 -- snap adjacent loaders to a placed belt entity
 local function perform_snapping(entity)
-    game.print('snapping!')
     for _,pos in pairs(tile.adjacent(entity.surface, position.floor(entity.position))) do
         local entities = entity.surface.find_entities_filtered{area=position.to_tile_area(pos), type='underground-belt'} or {}
         for _,e in pairs(entities) do
@@ -182,8 +181,10 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
             mode = 'output'
         end
         local loader,inserters,chest = create_loader(type, mode, entity.surface, entity.position, opposite_direction(entity.direction), entity.force)
+        
         entity.destroy()
         update_inserters(loader)
+        -- TEMPORARY: set filters
         chest.set_infinity_container_filter(1, {name='solid-fuel', count=50, mode='exactly'})
         chest.remove_unfiltered_items = true
     elseif entity.type == 'transport-belt' or entity.type == 'underground-belt' or entity.type == 'splitter' then
@@ -205,7 +206,7 @@ end)
 -- when an entity is destroyed
 on_event({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity, defines.events.on_entity_died, defines.events.script_raised_destroy}, function(e)
     local entity = e.entity
-    if string.find(entity.name, 'infinity%-loader%-underneathy') then
+    if string.find(entity.name, 'infinity%-loader%-chest') then
         local entities = entity.surface.find_entities_filtered{position=entity.position}
         for _,e in pairs(entities) do e.destroy() end
     end

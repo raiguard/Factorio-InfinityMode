@@ -75,7 +75,9 @@ data:extend{
         picture = empty_sheet,
         icons = underneathy_base.icons,
         collision_box = underneathy_base.collision_box,
-        selection_box = underneathy_base.selection_box
+        selection_box = underneathy_base.selection_box,
+        minable = {result='infinity-loader', mining_time=0.1},
+        placeable_by = {item='infinity-loader', count=1}
     },
     -- combinator (for placement and blueprints)
     {
