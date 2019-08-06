@@ -23,7 +23,8 @@ local connected_belt_patterns = {
     '%-?belt',
     '%-?transport',
     '%-?underground',
-    '%-?splitter'
+    '%-?splitter',
+    'infinity%-loader%-underneathy%-'
 }
 
 local function get_belt_type(entity)
@@ -112,6 +113,25 @@ local function update_inserters(entity)
     end
 end
 
+local function update_filters(entity)
+    local inserters = entity.surface.find_entities_filtered{name='infinity-loader-inserter', position=entity.position}
+    local chest = entity.surface.find_entities_filtered{name='infinity-loader-chest', position=entity.position}[1]
+    local filters = entity.get_control_behavior().parameters.parameters
+    log(serpent.block(filters))
+    -- update inserter filter based on side
+    for i=1,#inserters do
+        local side = i > (#inserters/2) and 1 or 2
+        inserters[i].set_filter(1, filters[side].signal.name or nil)
+    end
+    for i=1,2 do
+        local name = filters[i].signal.name
+        if name then
+            chest.set_infinity_container_filter(i, {name=name, count=game.item_prototypes[name].stack_size, mode='exactly', index=i})
+        end
+    end
+    chest.remove_unfiltered_items = true
+end
+
 local function create_loader(type, mode, surface, position, direction, force)
     local underneathy = surface.create_entity{
         name = 'infinity-loader-underneathy' .. (type == '' and '' or '-'..type),
@@ -135,7 +155,13 @@ local function create_loader(type, mode, surface, position, direction, force)
         position = position,
         force = force
     }
-    return underneathy, inserters, chest
+    local combinator = surface.create_entity{
+        name = 'infinity-loader-logic-combinator',
+        position = position,
+        force = force,
+        direction = direction
+    }
+    return underneathy, inserters, chest, combinator
 end
 
 -- ----------------------------------------------------------------------------------------------------
@@ -160,6 +186,23 @@ local function perform_snapping(entity)
 end
 
 -- ----------------------------------------------------------------------------------------------------
+-- BLUEPRINTING
+
+-- when a blueprint is selected
+local function loader_to_blueprint(bp)
+    local entities = bp.get_blueprint_entities()
+    if not entities then return end
+    for i=1,#entities do
+        if entities[i].name == 'infinity-loader-logic-combinator' then
+            log(entities[i].direction)
+            entities[i].name = 'infinity-loader-dummy-combinator'
+            entities[i].direction = opposite_direction(entities[i].direction or defines.direction.north)
+        end
+    end
+    bp.set_blueprint_entities(entities)
+end
+
+-- ----------------------------------------------------------------------------------------------------
 -- LISTENERS
 
 event.on_init(function()
@@ -170,7 +213,7 @@ end)
 on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built, defines.events.script_raised_revive}, function(e)
     local entity = e.created_entity or e.entity
     -- if the placed entity is an infinity underneathy
-    if entity.name == 'infinity-loader-combinator' then
+    if entity.name == 'infinity-loader-dummy-combinator' then
         local connected_belt = get_connected_belt(entity)
         local type, mode
         if connected_belt then
@@ -180,13 +223,13 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
             type = 'express'
             mode = 'output'
         end
-        local loader,inserters,chest = create_loader(type, mode, entity.surface, entity.position, opposite_direction(entity.direction), entity.force)
-        
+        local loader,inserters,chest,combinator = create_loader(type, mode, entity.surface, entity.position, opposite_direction(entity.direction), entity.force)
+        -- get previous filters, if any
+        combinator.get_or_create_control_behavior().parameters = entity.get_or_create_control_behavior().parameters
         entity.destroy()
+        -- update entitiy
         update_inserters(loader)
-        -- TEMPORARY: set filters
-        chest.set_infinity_container_filter(1, {name='solid-fuel', count=50, mode='exactly'})
-        chest.remove_unfiltered_items = true
+        update_filters(combinator)
     elseif entity.type == 'transport-belt' or entity.type == 'underground-belt' or entity.type == 'splitter' then
         perform_snapping(entity)
     end
@@ -206,8 +249,17 @@ end)
 -- when an entity is destroyed
 on_event({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity, defines.events.on_entity_died, defines.events.script_raised_destroy}, function(e)
     local entity = e.entity
-    if string.find(entity.name, 'infinity%-loader%-chest') then
+    if string.find(entity.name, 'infinity%-loader%-logic%-combinator') then
         local entities = entity.surface.find_entities_filtered{position=entity.position}
         for _,e in pairs(entities) do e.destroy() end
     end
+end)
+
+on_event(defines.events.on_player_setup_blueprint, function(e)
+    local player = util.get_player(e)
+    local bp = player.blueprint_to_setup
+    if not bp or not bp.valid_for_read then
+        bp = player.cursor_stack
+    end
+    loader_to_blueprint(bp)
 end)
