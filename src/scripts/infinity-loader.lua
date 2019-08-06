@@ -15,13 +15,13 @@ local util = require('scripts/util/util')
 
 -- connected belt name -> underneathy suffix
 -- this table is to be used when the auto-detection fails
-local connected_belt_overrides = {
+local belt_type_overrides = {
     -- ultimate belts - https://mods.factorio.com/mod/UltimateBelts
     ['ultimate-belt'] = 'original-ultimate'
 }
 
 -- removing all of these patterns from the connected belt name will result in the suffix 
-local connected_belt_patterns = {
+local belt_type_patterns = {
     '%-?belt',
     '%-?transport',
     '%-?underground',
@@ -30,13 +30,13 @@ local connected_belt_patterns = {
 }
 
 local function get_belt_type(entity)
-    local type = connected_belt_overrides[entity.name]
+    local type = belt_type_overrides[entity.name]
     if not type then
         type = entity.name
-        for _,pattern in pairs(connected_belt_patterns) do
+        for _,pattern in pairs(belt_type_patterns) do
             type = type:gsub(pattern, '')
         end
-        -- check to see if the underneathy exists
+        -- check to see if the underneathy prototype exists
         if type ~= '' and not game.entity_prototypes['infinity-loader-underneathy-'..type] then
             -- print warning message
             game.print{'chat-message.unable-to-identify-belt-warning'}
