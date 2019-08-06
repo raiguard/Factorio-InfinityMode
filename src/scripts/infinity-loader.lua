@@ -1,6 +1,7 @@
 -- ----------------------------------------------------------------------------------------------------
 -- INFINITY LOADER CONTROL SCRIPTING
 
+local conditional_event = require('scripts/util/conditional-event')
 local event = require('__stdlib__/stdlib/event/event')
 local position = require('__stdlib__/stdlib/area/position')
 local table = require('__stdlib__/stdlib/utils/table')
@@ -204,6 +205,7 @@ end
 
 event.on_init(function()
     global.loaders = {}
+    remote.add_interface('infinity_mode', {update_loader_filters=update_filters})
 end)
 
 -- when an entity is built
@@ -263,4 +265,33 @@ on_event(defines.events.on_player_setup_blueprint, function(e)
         bp = player.cursor_stack
     end
     loader_to_blueprint(bp)
+end)
+
+-- when a player opens a GUI
+on_event(defines.events.on_gui_opened, function(e)
+    local entity = e.entity
+    if entity and entity.name == 'infinity-loader-logic-combinator' then
+        if #global.loaders == 0 then
+            conditional_event.register('infinity_loader.on_tick')
+        end
+        global.loaders[entity.unit_number] = entity
+    end
+end)
+
+-- when a player closes a GUI
+on_event(defines.events.on_gui_closed, function(e)
+    local entity = e.entity
+    if entity and entity.name == 'infinity-loader-logic-combinator' then
+        global.loaders[entity.unit_number] = nil
+        if #global.loaders == 0 then
+            conditional_event.deregister('infinity_loader.on_tick')
+        end
+    end
+end)
+
+-- when an entity settings copy/paste occurs
+on_event(defines.events.on_entity_settings_pasted, function(e)
+    if e.destination.name == 'infinity-loader-logic-combinator' then
+        update_filters(e.destination)
+    end
 end)
