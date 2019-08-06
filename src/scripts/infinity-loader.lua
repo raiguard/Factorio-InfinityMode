@@ -236,8 +236,11 @@ end)
 on_event(defines.events.on_player_rotated_entity, function(e)
     local entity = e.entity
     local surface = entity.surface
-    if string.find(entity.name, 'infinity%-loader%-underneathy') then
-        update_inserters(entity)
+    if string.find(entity.name, 'infinity%-loader%-logic%-combinator') then
+        entity.direction = e.previous_direction
+        local underneathy = entity.surface.find_entities_filtered{type='underground-belt', position=entity.position}[1]
+        underneathy.rotate()
+        update_inserters(underneathy)
     elseif entity.type == 'transport-belt' or entity.type == 'underground-belt' or entity.type == 'splitter' then
         perform_snapping(entity)
     end
