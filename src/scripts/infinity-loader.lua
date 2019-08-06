@@ -91,7 +91,7 @@ local function update_inserters(entity)
     local e_direction = entity.direction
     local connected_belt = get_connected_belt(entity)
     for i=1,#inserters do
-        local side = i > (#inserters/2) and 0.25 or -0.25
+        local side = i > (#inserters/2) and -0.25 or 0.25
         local inserter = inserters[i]
         local mod = (i % (#inserters/2))
         if e_type == 'input' then
@@ -117,7 +117,6 @@ local function update_filters(entity)
     local inserters = entity.surface.find_entities_filtered{name='infinity-loader-inserter', position=entity.position}
     local chest = entity.surface.find_entities_filtered{name='infinity-loader-chest', position=entity.position}[1]
     local filters = entity.get_control_behavior().parameters.parameters
-    log(serpent.block(filters))
     -- update inserter filter based on side
     for i=1,#inserters do
         local side = i > (#inserters/2) and 1 or 2
@@ -125,9 +124,7 @@ local function update_filters(entity)
     end
     for i=1,2 do
         local name = filters[i].signal.name
-        if name then
-            chest.set_infinity_container_filter(i, {name=name, count=game.item_prototypes[name].stack_size, mode='exactly', index=i})
-        end
+        chest.set_infinity_container_filter(i, name and {name=name, count=game.item_prototypes[name].stack_size, mode='exactly', index=i} or nil)
     end
     chest.remove_unfiltered_items = true
 end
@@ -255,6 +252,7 @@ on_event({defines.events.on_player_mined_entity, defines.events.on_robot_mined_e
     end
 end)
 
+-- when a player selects an area for blueprinting
 on_event(defines.events.on_player_setup_blueprint, function(e)
     local player = util.get_player(e)
     local bp = player.blueprint_to_setup

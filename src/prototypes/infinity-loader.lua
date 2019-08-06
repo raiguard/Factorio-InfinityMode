@@ -72,6 +72,7 @@ data:extend{
         localised_name = {'entity-name.infinity-loader'},
         erase_contents_when_mined = true,
         inventory_size = 10,
+        flags = {'hide-alt-info'},
         picture = empty_sheet,
         icons = underneathy_base.icons,
         collision_box = {{-0.05,-0.05},{0.05,0.05}}
@@ -136,13 +137,12 @@ data:extend{
     }
 }
 
--- logic combinator is what is used for the loader logic. it's invisible and doesn't show its alt-info, but is selectable and minable
+-- logic combinator is what is used for the loader logic. it's invisible, but is selectable and minable
 local logic_combinator = table.deepcopy(data.raw['constant-combinator']['infinity-loader-dummy-combinator'])
 logic_combinator.name = 'infinity-loader-logic-combinator'
 logic_combinator.sprites = empty_sheet
 logic_combinator.selection_box = underneathy_base.selection_box
 logic_combinator.minable = {result='infinity-loader', mining_time=0.1}
-logic_combinator.flags = {'player-creation','hide-alt-info'}
 data:extend{logic_combinator}
 
 -- inserter
