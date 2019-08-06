@@ -15,7 +15,7 @@ local util = require('scripts/util/util')
 -- this table is to be used when the auto-detection fails
 local connected_belt_overrides = {
     -- ultimate belts - https://mods.factorio.com/mod/UltimateBelts
-    ['ultimate-belt'] = 'original-ultimate'
+    -- ['ultimate-belt'] = 'original-ultimate'
 }
 
 -- removing all of these patterns from the connected belt name will result in the suffix 
@@ -25,6 +25,25 @@ local connected_belt_patterns = {
     '%-?underground',
     '%-?splitter'
 }
+
+local function get_belt_type(entity)
+    local type = connected_belt_overrides[entity.name]
+    if not type then
+        type = entity.name
+        for _,pattern in pairs(connected_belt_patterns) do
+            type = type:gsub(pattern, '')
+        end
+        -- check to see if the underneathy exists
+        if not game.entity_prototypes['infinity-loader-underneathy-'..type] then
+            -- print warning message
+            game.print{'chat-message.unable-to-identify-belt-warning'}
+            game.print('belt_name=\''..entity.name..'\', parse_result=\''..type..'\'')
+            -- set to default type
+            type = 'express'
+        end
+    end
+    return type
+end
 
 local function check_is_loader(e)
     if string.find(e, 'infinity-loader') then return true end
@@ -52,7 +71,7 @@ end
 
 -- gets the transport belt, underneathy, or splitter that the entity is facing
 local function get_connected_belt(entity)
-    local entities = entity.surface.find_entities_filtered{type={'transport-belt','underground-belt','splitter'}, area=position.to_tile_area(position.add(entity.position, dir_offset(entity.direction,1*(entity.belt_to_ground_type == 'output' and 1 or -1),0)))}
+    local entities = entity.surface.find_entities_filtered{type={'transport-belt','underground-belt','splitter'}, area=position.to_tile_area(position.add(entity.position, dir_offset(entity.direction,-1,0)))}
     if entities then return entities[1] end
     return nil
 end
@@ -70,7 +89,6 @@ local function update_inserters(entity)
     local e_position = entity.position
     local e_direction = entity.direction
     local connected_belt = get_connected_belt(entity)
-    -- log(get_connected_belt(entity)[1].name)
     for i=1,#inserters do
         local side = i > (#inserters/2) and 0.25 or -0.25
         local inserter = inserters[i]
@@ -94,11 +112,38 @@ local function update_inserters(entity)
     end
 end
 
+local function create_loader(type, mode, surface, position, direction, force)
+    local underneathy = surface.create_entity{
+        name = 'infinity-loader-underneathy' .. (type == '' and '' or '-'..type),
+        position = position,
+        direction = mode == 'input' and opposite_direction(direction) or direction,
+        force = force,
+        type = mode
+    }
+    local inserters = {}
+    for i=1,num_inserters(underneathy) do
+         inserters[i] = surface.create_entity{
+            name='infinity-loader-inserter',
+            position = position,
+            force = force,
+            direction = direction
+        }
+        inserters[i].inserter_stack_size_override = 1
+    end
+    local chest = surface.create_entity{
+        name = 'infinity-loader-chest',
+        position = position,
+        force = force
+    }
+    return underneathy, inserters, chest
+end
+
 -- ----------------------------------------------------------------------------------------------------
 -- SNAPPING
 
 -- snap adjacent loaders to a placed belt entity
 local function perform_snapping(entity)
+    game.print('snapping!')
     for _,pos in pairs(tile.adjacent(entity.surface, position.floor(entity.position))) do
         local entities = entity.surface.find_entities_filtered{area=position.to_tile_area(pos), type='underground-belt'} or {}
         for _,e in pairs(entities) do
@@ -124,78 +169,25 @@ end)
 
 -- when an entity is built
 on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built, defines.events.script_raised_revive}, function(e)
-    local e_entity = e.created_entity or e.entity
+    local entity = e.created_entity or e.entity
     -- if the placed entity is an infinity underneathy
-    if string.find(e_entity.name, 'infinity%-loader%-underneathy') then
-        -- attempt to get the connected belt's type
-        local connected_belt = get_connected_belt(e_entity)
-        -- get type from the manual overrides table, or attempt to auto-detect it
-        local suffix = connected_belt and connected_belt_overrides[connected_belt.name]
-        if connected_belt and not suffix then
-            suffix = connected_belt.name
-            for _,pattern in pairs(connected_belt_patterns) do
-                suffix = suffix:gsub(pattern, '')
-            end
-        end
-        local entity
-        -- if the type exists and is not the same as the underneathy
-        if suffix and e_entity.name:gsub('infinity%-loader%-underneathy%-', '') ~= suffix then
-            -- if the required underneathy exists, create it
-            if suffix and game.entity_prototypes[suffix ~= '' and 'infinity-loader-underneathy-'..suffix or 'infinity-loader-underneathy'] then
-                -- we need to destroy the old entity first, so save all of the pertinent data here
-                local position = e_entity.position
-                local direction = e_entity.direction
-                local type = e_entity.belt_to_ground_type
-                local force = e_entity.force
-                local surface = e_entity.surface
-                e_entity.destroy()
-                entity = surface.create_entity{
-                    name = suffix ~= '' and 'infinity-loader-underneathy-'..suffix or 'infinity-loader-underneathy',
-                    position = position,
-                    direction = direction,
-                    type = type,
-                    force = force
-                }
-            elseif suffix then
-                -- use default belt type (express), print error message
-                entity = e_entity
-                local player = util.get_player(e)
-                player.print('ERROR: Could not identify belt type, using express belt')
-                player.print('Please give the following information to the mod author via GitHub or the Mod Portal:')
-                player.print('connected_belt.name=\''..connected_belt.name..'\', suffix=\''..suffix..'\'')
-            else
-                entity = e_entity
-                entity.rotate()
-            end
-        else
-            entity = e_entity
-            entity.rotate()
-        end
-        -- underneathy snapping
+    if entity.name == 'infinity-loader-combinator' then
+        local connected_belt = get_connected_belt(entity)
+        local type, mode
         if connected_belt then
-            if connected_belt.direction ~= entity.direction then
-                entity.rotate()
-            end
+            type = get_belt_type(connected_belt)
+            mode = connected_belt.direction ~= entity.direction and 'output' or 'input'
+        else
+            type = 'express'
+            mode = 'output'
         end
-        local chest = entity.surface.create_entity{
-            name = 'infinity-loader-chest',
-            position = entity.position,
-            force = entity.force
-        }
-        for i=1,num_inserters(entity) do        
-            local inserter = entity.surface.create_entity{
-                name='infinity-loader-inserter',
-                position = entity.position,
-                force = entity.force,
-                direction = entity.direction
-            }
-            inserter.inserter_stack_size_override = 1
-        end
-        update_inserters(entity)
+        local loader,inserters,chest = create_loader(type, mode, entity.surface, entity.position, opposite_direction(entity.direction), entity.force)
+        entity.destroy()
+        update_inserters(loader)
         chest.set_infinity_container_filter(1, {name='solid-fuel', count=50, mode='exactly'})
         chest.remove_unfiltered_items = true
-    elseif e_entity.type == 'transport-belt' or e_entity.type == 'underground-belt' or e_entity.type == 'splitter' then
-        perform_snapping(e_entity)
+    elseif entity.type == 'transport-belt' or entity.type == 'underground-belt' or entity.type == 'splitter' then
+        perform_snapping(entity)
     end
 end)
 
