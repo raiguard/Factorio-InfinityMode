@@ -66,6 +66,8 @@ local events_def = {
                     if not e.player_index then return end
                     if not util.cheat_enabled('player', 'instant_upgrade', e.player_index) then return end
                     local entity = e.entity
+                    local belt_to_ground_type
+                    if entity.type == 'underground-belt' then belt_to_ground_type = entity.belt_to_ground_type end
                     -- game.print('upgrading entity ' .. entity.name .. ' at position ' .. entity.position.x .. ',' .. entity.position.y .. ' to: ' .. e.target.name)
                     entity.surface.create_entity{
                         name = e.target.name,
@@ -76,7 +78,7 @@ local events_def = {
                         spill = false,
                         raise_built = true,
                         -- underground belt
-                        type = entity.belt_to_ground_type or nil
+                        type = belt_to_ground_type or nil
                     }
                 end}
             },

@@ -4,11 +4,27 @@
 local event = require('__stdlib__/stdlib/event/event')
 local position = require('__stdlib__/stdlib/area/position')
 local table = require('__stdlib__/stdlib/utils/table')
+local tile = require('__stdlib__/stdlib/area/tile')
 local on_event = event.register
 local util = require('scripts/util/util')
 
 -- ----------------------------------------------------------------------------------------------------
 -- UTILITIES
+
+-- connected belt name -> underneathy suffix
+-- this table is to be used when the auto-detection fails
+local connected_belt_overrides = {
+    -- ultimate belts - https://mods.factorio.com/mod/UltimateBelts
+    ['ultimate-belt'] = 'original-ultimate'
+}
+
+-- removing all of these patterns from the connected belt name will result in the suffix 
+local connected_belt_patterns = {
+    '%-?belt',
+    '%-?transport',
+    '%-?underground',
+    '%-?splitter'
+}
 
 local function check_is_loader(e)
     if string.find(e, 'infinity-loader') then return true end
@@ -79,22 +95,32 @@ local function update_inserters(entity)
 end
 
 -- ----------------------------------------------------------------------------------------------------
+-- SNAPPING
+
+-- snap adjacent loaders to a placed belt entity
+local function perform_snapping(entity)
+    for _,pos in pairs(tile.adjacent(entity.surface, position.floor(entity.position))) do
+        local entities = entity.surface.find_entities_filtered{area=position.to_tile_area(pos), type='underground-belt'} or {}
+        for _,e in pairs(entities) do
+            if e.name:find('infinity%-loader%-underneathy') then
+                if e.direction ~= entity.direction and e.belt_to_ground_type == 'input' then
+                    e.rotate()
+                    update_inserters(e)
+                elseif opposite_direction(e.direction) == entity.direction then
+                    e.rotate()
+                    update_inserters(e)
+                end
+            end
+        end
+    end
+end
+
+-- ----------------------------------------------------------------------------------------------------
 -- LISTENERS
 
 event.on_init(function()
     global.loaders = {}
 end)
-
-local connected_belt_overrides = {
-    ['ultimate-belt'] = 'original-ultimate'
-}
-
-local connected_belt_patterns = {
-    '%-?belt',
-    '%-?transport',
-    '%-?underground',
-    '%-?splitter'
-}
 
 -- when an entity is built
 on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built, defines.events.script_raised_revive}, function(e)
@@ -116,6 +142,7 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
         if suffix and e_entity.name:gsub('infinity%-loader%-underneathy%-', '') ~= suffix then
             -- if the required underneathy exists, create it
             if suffix and game.entity_prototypes[suffix ~= '' and 'infinity-loader-underneathy-'..suffix or 'infinity-loader-underneathy'] then
+                -- we need to destroy the old entity first, so save all of the pertinent data here
                 local position = e_entity.position
                 local direction = e_entity.direction
                 local type = e_entity.belt_to_ground_type
@@ -138,9 +165,17 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
                 player.print('connected_belt.name=\''..connected_belt.name..'\', suffix=\''..suffix..'\'')
             else
                 entity = e_entity
+                entity.rotate()
             end
         else
             entity = e_entity
+            entity.rotate()
+        end
+        -- underneathy snapping
+        if connected_belt then
+            if connected_belt.direction ~= entity.direction then
+                entity.rotate()
+            end
         end
         local chest = entity.surface.create_entity{
             name = 'infinity-loader-chest',
@@ -159,6 +194,8 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
         update_inserters(entity)
         chest.set_infinity_container_filter(1, {name='solid-fuel', count=50, mode='exactly'})
         chest.remove_unfiltered_items = true
+    elseif e_entity.type == 'transport-belt' or e_entity.type == 'underground-belt' or e_entity.type == 'splitter' then
+        perform_snapping(e_entity)
     end
 end)
 
@@ -168,13 +205,16 @@ on_event(defines.events.on_player_rotated_entity, function(e)
     local surface = entity.surface
     if string.find(entity.name, 'infinity%-loader%-underneathy') then
         update_inserters(entity)
+    elseif entity.type == 'transport-belt' or entity.type == 'underground-belt' or entity.type == 'splitter' then
+        perform_snapping(entity)
     end
 end)
 
 -- when an entity is destroyed
 on_event({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity, defines.events.on_entity_died, defines.events.script_raised_destroy}, function(e)
     local entity = e.entity
-    if string.find(entity.name, 'infinity%-loader') then
-        global.loaders[entity.unit_number] = nil
+    if string.find(entity.name, 'infinity%-loader%-underneathy') then
+        local entities = entity.surface.find_entities_filtered{position=entity.position}
+        for _,e in pairs(entities) do e.destroy() end
     end
 end)
