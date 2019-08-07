@@ -78,6 +78,7 @@ local function num_inserters(entity)
   return math.ceil(entity.prototype.belt_speed / BELT_SPEED_FOR_60_PER_SECOND) * 2
 end
 
+-- update inserter pickup/drop positions
 local function update_inserters(entity)
     local inserters = entity.surface.find_entities_filtered{name='infinity-loader-inserter', position=entity.position}
     local chest = entity.surface.find_entities_filtered{name='infinity-loader-chest', position=entity.position}[1]
@@ -108,6 +109,23 @@ local function update_inserters(entity)
     end
 end
 
+-- update inserter and chest filters
+local function update_filters(entity)
+    local inserters = entity.surface.find_entities_filtered{name='infinity-loader-inserter', position=entity.position}
+    local chest = entity.surface.find_entities_filtered{name='infinity-loader-chest', position=entity.position}[1]
+    local filters = entity.get_control_behavior().parameters.parameters
+    -- update inserter filter based on side
+    for i=1,#inserters do
+        local side = i > (#inserters/2) and 1 or 2
+        inserters[i].set_filter(1, filters[side].signal.name or nil)
+    end
+    for i=1,2 do
+        local name = filters[i].signal.name
+        chest.set_infinity_container_filter(i, name and {name=name, count=game.item_prototypes[name].stack_size, mode='exactly', index=i} or nil)
+    end
+    chest.remove_unfiltered_items = true
+end
+
 -- offsets based on direction
 local facing_lib = {
     [defines.direction.north] = {0,-1},
@@ -125,22 +143,7 @@ local function loader_facing_belt(loader, belt)
     return false
 end
 
-local function update_filters(entity)
-    local inserters = entity.surface.find_entities_filtered{name='infinity-loader-inserter', position=entity.position}
-    local chest = entity.surface.find_entities_filtered{name='infinity-loader-chest', position=entity.position}[1]
-    local filters = entity.get_control_behavior().parameters.parameters
-    -- update inserter filter based on side
-    for i=1,#inserters do
-        local side = i > (#inserters/2) and 1 or 2
-        inserters[i].set_filter(1, filters[side].signal.name or nil)
-    end
-    for i=1,2 do
-        local name = filters[i].signal.name
-        chest.set_infinity_container_filter(i, name and {name=name, count=game.item_prototypes[name].stack_size, mode='exactly', index=i} or nil)
-    end
-    chest.remove_unfiltered_items = true
-end
-
+-- create an infinity loader
 local function create_loader(type, mode, surface, position, direction, force)
     local loader = surface.create_entity{
         name = 'infinity-loader-loader' .. (type == '' and '' or '-'..type),
@@ -177,7 +180,7 @@ end
 -- SNAPPING
 
 -- snap adjacent loaders to a belt entity
-local function perform_snapping(entity)
+local function snap_to_belt(entity)
     for _,pos in pairs(tile.adjacent(entity.surface, position.floor(entity.position))) do
         local entities = entity.surface.find_entities_filtered{area=position.to_tile_area(pos), type='underground-belt'} or {}
         for _,e in pairs(entities) do
@@ -218,7 +221,7 @@ local function update_loader_types(entity)
                     local parameters = combinator.get_control_behavior().parameters
                     combinator.destroy{raise_destroy=true}
                     -- create new loader, sync filters
-                    local new_loader, new_inserters, _, new_combinator = create_loader(belt_type, mode, surface, position, direction, force)
+                    local new_loader, new_inserters, new_chest, new_combinator = create_loader(belt_type, mode, surface, position, direction, force)
                     new_combinator.get_or_create_control_behavior().parameters = parameters
                     update_inserters(new_loader)
                     update_filters(new_combinator)
@@ -279,7 +282,7 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
         update_filters(combinator)
     elseif entity.type == 'transport-belt' or entity.type == 'underground-belt' or entity.type == 'splitter' then
         update_loader_types(entity)
-        perform_snapping(entity)
+        snap_to_belt(entity)
     end
 end)
 
@@ -293,7 +296,7 @@ on_event(defines.events.on_player_rotated_entity, function(e)
         loader.rotate()
         update_inserters(loader)
     elseif entity.type == 'transport-belt' or entity.type == 'underground-belt' or entity.type == 'splitter' then
-        perform_snapping(entity)
+        snap_to_belt(entity)
     end
 end)
 
