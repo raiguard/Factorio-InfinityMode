@@ -69,7 +69,6 @@ data:extend{
     {
         type = 'infinity-container',
         name = 'infinity-loader-chest',
-        localised_name = {'entity-name.infinity-loader'},
         erase_contents_when_mined = true,
         inventory_size = 10,
         flags = {'hide-alt-info'},
@@ -144,6 +143,7 @@ logic_combinator.icons = {}
 logic_combinator.sprites = empty_sheet
 logic_combinator.selection_box = loader_base.selection_box
 logic_combinator.minable = {result='infinity-loader', mining_time=0.1}
+logic_combinator.flags = {'player-creation','hidden'}
 data:extend{logic_combinator}
 
 -- inserter
