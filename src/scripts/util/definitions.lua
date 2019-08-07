@@ -673,12 +673,12 @@ defs.cheats_gui_elems = {
             }
         },
         clear_entities = {
-            clear_all_entities = {tooltip=true},
-            auto_clear_all_entities = {tooltip=true}
+            auto_clear_all_entities = {tooltip=true},
+            clear_all_entities = {tooltip=true}
         },
         fill = {
-            fill_with_lab_tiles = {tooltip=true},
-            auto_fill_with_lab_tiles = {tooltip=true}
+            auto_fill_with_lab_tiles = {tooltip=true},
+            fill_with_lab_tiles = {tooltip=true}
         }
     },
     game = {
