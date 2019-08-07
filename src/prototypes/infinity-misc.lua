@@ -9,6 +9,7 @@ ip_item.icons = {apply_infinity_tint(ip_item.icons[1])}
 ip_item.subgroup = 'im-misc'
 ip_item.order = 'ab'
 ip_item.stack_size = 50
+ip_item.flags = {}
 
 -- heat interface
 local hi_item = data.raw['item']['heat-interface']
@@ -16,6 +17,7 @@ hi_item.subgroup = 'im-misc'
 hi_item.order = 'ac'
 hi_item.stack_size = 50
 hi_item.icons = {apply_infinity_tint{icon=data.raw['item']['heat-pipe'].icon, icon_size=data.raw['item']['heat-pipe'].icon_size}}
+hi_item.flags = {}
 
 -- infinity radar
 local ir_item = table.deepcopy(data.raw['item']['radar'])

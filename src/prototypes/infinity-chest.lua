@@ -15,6 +15,7 @@ local ic_item = data.raw['item']['infinity-chest']
 ic_item.subgroup = 'im-inventories'
 ic_item.order = 'aa'
 ic_item.stack_size = 50
+ic_item.flags = {}
 
 -- create logistic chest items
 ic_item = table.deepcopy(data.raw['item']['infinity-chest'])
@@ -24,6 +25,7 @@ for lm,d in pairs(chest_data) do
     chest.icons = { {icon=chest.icon, tint = d.t} }
     chest.place_result = 'infinity-chest-' .. lm
     chest.order = d.o
+    chest.flags = {}
     data:extend{chest}
 end
 
