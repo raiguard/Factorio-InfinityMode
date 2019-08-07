@@ -53,13 +53,6 @@ local function check_is_loader(e)
     return false
 end
 
-local function opposite_direction(direction)
-    if direction >= 4 then
-        return direction - 4
-    end
-    return direction + 4
-end
-
 local function to_vector_2d(direction, longitudinal, orthogonal)
     if direction == defines.direction.north then
         return {x=orthogonal, y=-longitudinal}
@@ -152,7 +145,7 @@ local function create_loader(type, mode, surface, position, direction, force)
     local underneathy = surface.create_entity{
         name = 'infinity-loader-underneathy' .. (type == '' and '' or '-'..type),
         position = position,
-        direction = mode == 'input' and opposite_direction(direction) or direction,
+        direction = mode == 'input' and util.oppositedirection(direction) or direction,
         force = force,
         type = mode
     }
@@ -193,7 +186,7 @@ local function perform_snapping(entity)
                     if e.direction ~= entity.direction and e.belt_to_ground_type == 'input' then
                         e.rotate()
                         update_inserters(e)
-                    elseif opposite_direction(e.direction) == entity.direction then
+                    elseif util.oppositedirection(e.direction) == entity.direction then
                         e.rotate()
                         update_inserters(e)
                     end
@@ -243,7 +236,7 @@ local function convert_blueprint_loaders(bp)
     for i=1,#entities do
         if entities[i].name == 'infinity-loader-logic-combinator' then
             entities[i].name = 'infinity-loader-dummy-combinator'
-            entities[i].direction = opposite_direction(entities[i].direction or defines.direction.north)
+            entities[i].direction = util.oppositedirection(entities[i].direction or defines.direction.north)
         end
     end
     bp.set_blueprint_entities(entities)
@@ -275,7 +268,7 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
             type = 'express'
             mode = 'output'
         end
-        local loader,inserters,chest,combinator = create_loader(type, mode, entity.surface, entity.position, opposite_direction(entity.direction), entity.force)
+        local loader,inserters,chest,combinator = create_loader(type, mode, entity.surface, entity.position, util.oppositedirection(entity.direction), entity.force)
         -- get previous filters, if any
         combinator.get_or_create_control_behavior().parameters = entity.get_or_create_control_behavior().parameters
         entity.destroy()

@@ -1,7 +1,7 @@
 local on_event = require('__stdlib__/stdlib/event/event').register
 local table = require('__stdlib__/stdlib/utils/table')
 
-local util = {}
+local util = require('__core__/lualib/util')
 
 -- ----------------------------------------------------------------------------------------------------
 -- GENERAL
