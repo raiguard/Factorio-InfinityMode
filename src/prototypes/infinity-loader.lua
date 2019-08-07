@@ -27,8 +27,8 @@ local empty_sheet = {
     frame_count = 1,
 }
 
-local underneathy_base = table.deepcopy(data.raw['underground-belt']['underground-belt'])
-for n,t in pairs(underneathy_base.structure) do
+local loader_base = table.deepcopy(data.raw['underground-belt']['underground-belt'])
+for n,t in pairs(loader_base.structure) do
     apply_infinity_tint(t.sheet)
     apply_infinity_tint(t.sheet.hr_version)
     if n ~= 'back_patch' and n ~= 'front_patch' then
@@ -36,21 +36,21 @@ for n,t in pairs(underneathy_base.structure) do
         t.sheet.hr_version.filename = '__InfinityMode__/graphics/entity/hr-infinity-loader.png'
     end
 end
-underneathy_base.icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32}}
+loader_base.icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32}}
 
 -- underground belt
-local function create_underneathy(base_underground)
+local function create_loader(base_underground)
     local entity = table.deepcopy(data.raw['underground-belt'][base_underground])
     -- adjust pictures and icon
-    entity.structure = underneathy_base.structure
+    entity.structure = loader_base.structure
     -- entity.structure = {
     --     direction_in = empty_sheet,
     --     direction_out = empty_sheet
     -- }
-    entity.icons = underneathy_base.icons
+    entity.icons = loader_base.icons
     -- basic data
     local suffix = entity.name:gsub('%-?underground%-belt', '')
-    entity.name = 'infinity-loader-underneathy' .. (suffix ~= '' and '-'..suffix or '')
+    entity.name = 'infinity-loader-loader' .. (suffix ~= '' and '-'..suffix or '')
     entity.next_upgrade = nil
     entity.max_distance = 0
     entity.order = 'a'
@@ -59,10 +59,10 @@ local function create_underneathy(base_underground)
 end
 
 for n,_ in pairs(table.deepcopy(data.raw['underground-belt'])) do
-    create_underneathy(n)
+    create_loader(n)
 end
 
-local base_underneathy_path = '__base__/graphics/entity/underground-belt/'
+local base_loader_path = '__base__/graphics/entity/underground-belt/'
 
 data:extend{
     -- infinity chest
@@ -74,7 +74,7 @@ data:extend{
         inventory_size = 10,
         flags = {'hide-alt-info'},
         picture = empty_sheet,
-        icons = underneathy_base.icons,
+        icons = loader_base.icons,
         collision_box = {{-0.05,-0.05},{0.05,0.05}}
     },
     -- dummy combinator (for placement and blueprints)
@@ -83,20 +83,20 @@ data:extend{
         name = 'infinity-loader-dummy-combinator',
         localised_name = {'entity-name.infinity-loader'},
         order = 'a',
-        collision_box = underneathy_base.collision_box,
+        collision_box = loader_base.collision_box,
         fast_replaceable_group = 'transport-belt',
         placeable_by = {item='infinity-loader', count=1},
         flags = {'player-creation'},
         item_slot_count = 2,
-        icons = underneathy_base.icons,
+        icons = loader_base.icons,
         sprites = {
             sheets = {
                 apply_infinity_tint{
-                    filename = base_underneathy_path..'underground-belt-structure-back-patch.png',
+                    filename = base_loader_path..'underground-belt-structure-back-patch.png',
                     width = 96,
                     height = 96,
                     hr_version = apply_infinity_tint{
-                        filename = base_underneathy_path..'hr-underground-belt-structure-back-patch.png',
+                        filename = base_loader_path..'hr-underground-belt-structure-back-patch.png',
                         width = 192,
                         height = 192,
                         scale = 0.5
@@ -114,11 +114,11 @@ data:extend{
                     }
                 },
                 apply_infinity_tint{
-                    filename = base_underneathy_path..'underground-belt-structure-front-patch.png',
+                    filename = base_loader_path..'underground-belt-structure-front-patch.png',
                     width = 96,
                     height = 96,
                     hr_version = apply_infinity_tint{
-                        filename = base_underneathy_path..'hr-underground-belt-structure-front-patch.png',
+                        filename = base_loader_path..'hr-underground-belt-structure-front-patch.png',
                         width = 192,
                         height = 192,
                         scale = 0.5
@@ -141,7 +141,7 @@ data:extend{
 local logic_combinator = table.deepcopy(data.raw['constant-combinator']['infinity-loader-dummy-combinator'])
 logic_combinator.name = 'infinity-loader-logic-combinator'
 logic_combinator.sprites = empty_sheet
-logic_combinator.selection_box = underneathy_base.selection_box
+logic_combinator.selection_box = loader_base.selection_box
 logic_combinator.minable = {result='infinity-loader', mining_time=0.1}
 data:extend{logic_combinator}
 
