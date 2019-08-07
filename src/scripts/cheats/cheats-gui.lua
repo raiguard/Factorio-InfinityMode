@@ -133,7 +133,6 @@ local function create_tabbed_pane(player, window_frame)
         create_cheat_ui(pane, cur_player, {'player',n}, t, player_is_god, player_is_editor)
     end
 
-
     -- FORCE
     pane = tabs[2].content
     local cur_force = player_table.cheats_gui.cur_force
@@ -167,6 +166,12 @@ local function create_tabbed_pane(player, window_frame)
     for n,t in pairs(elems_def.force.actions) do
         create_cheat_ui(action_flow, cur_force, {'force',n}, t)
     end
+    local technology_flow = pane.add{type='flow', name='im_cheats_force_technology_flow', direction='horizontal'}
+    technology_flow.add{type='button', name='im_cheats-force-research_all_technologies-button', caption='Research all technologies [img=im-info-black-inline]'}.style.horizontally_stretchable = true
+    local reset_button = technology_flow.add{type='sprite-button', name='im_cheats-force-reset_technologies-button', style='red_button', sprite='utility/reset'}
+    reset_button.style.width = 28
+    reset_button.style.left_padding = 2
+    reset_button.style.right_padding = 2
 
     -- SURFACE
     pane = tabs[3].content

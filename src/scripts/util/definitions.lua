@@ -287,18 +287,6 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        research_all_technologies = {type='toggle', default=true, functions={
-            value_changed = function(force, cheat, cheat_global, new_value)
-                if new_value then
-                    force.research_all_technologies()
-                else
-                    force.reset()
-                end
-            end,
-            get_value = function(force, cheat, cheat_global)
-                return cheat_global.cur_value
-            end
-        }},
         infinity_tools_recipes = {type='toggle', default=true, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 for n,r in pairs(game.recipe_prototypes) do
@@ -443,6 +431,22 @@ defs.cheats = {
         kill_all_units = {type='action', default=false, functions={
             action = function(force, cheat, cheat_global)
                 force.kill_all_units()
+            end
+        }},
+        research_all_technologies = {type='action', default=true, functions={
+            action = function(force, cheat, cheat_global)
+                force.research_all_technologies()
+            end,
+            get_value = function(force, cheat, cheat_global)
+                
+            end
+        }},
+        reset_technologies = {type='action', functions={
+            action = function(force, cheat, cheat_global)
+                force.reset()
+            end,
+            get_value = function(force, cheat, cheat_global)
+
             end
         }}
     },
@@ -634,7 +638,6 @@ defs.cheats_gui_elems = {
     force = {
         toggles = {
             instant_research = {},
-            research_all_technologies = {tooltip=true},
             infinity_tools_recipes = {},
             free_resource_recipes = {tooltip=true},
             vanilla_loaders_recipes = {},
