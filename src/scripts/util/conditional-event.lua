@@ -131,7 +131,7 @@ local events_def = {
                     local player = util.get_player(e)
                     if not util.cheat_enabled('player', 'keep_last_item', player.index) then return end
                     local cursor_stack = player.cursor_stack
-                    if cursor_stack.valid_for_read and cursor_stack.count == 1 then
+                    if cursor_stack.valid_for_read and cursor_stack.count == 1 and not (cursor_stack.type == 'blueprint' or cursor_stack.type == 'blueprint-book') then
                         player.get_main_inventory().insert{name=cursor_stack.name, count=cursor_stack.count}
                     end
                 end}
