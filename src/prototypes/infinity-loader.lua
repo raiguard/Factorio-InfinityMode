@@ -140,6 +140,7 @@ data:extend{
 -- logic combinator is what is used for the loader logic. it's invisible, but is selectable and minable
 local logic_combinator = table.deepcopy(data.raw['constant-combinator']['infinity-loader-dummy-combinator'])
 logic_combinator.name = 'infinity-loader-logic-combinator'
+logic_combinator.icons = {}
 logic_combinator.sprites = empty_sheet
 logic_combinator.selection_box = loader_base.selection_box
 logic_combinator.minable = {result='infinity-loader', mining_time=0.1}

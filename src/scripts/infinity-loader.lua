@@ -111,13 +111,21 @@ end
 
 -- update inserter and chest filters
 local function update_filters(entity)
+    local loader = entity.surface.find_entities_filtered{type='underground-belt', position=entity.position}[1]
     local inserters = entity.surface.find_entities_filtered{name='infinity-loader-inserter', position=entity.position}
     local chest = entity.surface.find_entities_filtered{name='infinity-loader-chest', position=entity.position}[1]
     local filters = entity.get_control_behavior().parameters.parameters
+    local inserter_filter_mode
+    if filters[1].signal.name or filters[2].signal.name or loader.belt_to_ground_type == 'output' then
+        inserter_filter_mode = 'whitelist'
+    elseif loader.belt_to_ground_type == 'input' then
+        inserter_filter_mode = 'blacklist'
+    end
     -- update inserter filter based on side
     for i=1,#inserters do
         local side = i > (#inserters/2) and 1 or 2
         inserters[i].set_filter(1, filters[side].signal.name or nil)
+        inserters[i].inserter_filter_mode = inserter_filter_mode
     end
     for i=1,2 do
         local name = filters[i].signal.name
@@ -189,9 +197,11 @@ local function snap_to_belt(entity)
                     if e.direction ~= entity.direction and e.belt_to_ground_type == 'input' then
                         e.rotate()
                         update_inserters(e)
+                        update_filters(e.surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=e.position}[1])
                     elseif util.oppositedirection(e.direction) == entity.direction then
                         e.rotate()
                         update_inserters(e)
+                        update_filters(e.surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=e.position}[1])
                     end
                 end
             end
@@ -295,6 +305,7 @@ on_event(defines.events.on_player_rotated_entity, function(e)
         local loader = entity.surface.find_entities_filtered{type='underground-belt', position=entity.position}[1]
         loader.rotate()
         update_inserters(loader)
+        update_filters(entity)
     elseif entity.type == 'transport-belt' or entity.type == 'underground-belt' or entity.type == 'splitter' then
         snap_to_belt(entity)
     end
