@@ -295,7 +295,31 @@ local events_def = {
             }
         },
         surface = {
-            
+            auto_clear_all_entities = {
+                on_chunk_generated = {{defines.events.on_chunk_generated}, function(e)
+                    local area = e.area
+                    local surface = e.surface
+                    if not util.cheat_enabled('surface', 'auto_clear_all_entities', surface.index) then return end
+                    for _,e in pairs(surface.find_entities(area)) do
+                        e.destroy()
+                    end
+                end}
+            },
+            auto_fill_with_lab_tiles = {
+                on_chunk_generated = {{defines.events.on_chunk_generated}, function(e)
+                    local area = e.area
+                    local surface = e.surface
+                    if not util.cheat_enabled('surface', 'auto_fill_with_lab_tiles', surface.index) then return end
+                    surface.destroy_decoratives{area=area}
+                    local tiles = {}
+                    for y=area.left_top.y,area.right_bottom.y-1 do
+                        for x=area.left_top.x,area.right_bottom.x-1 do
+                            table.insert(tiles, {name=((x+y)%2==0 and 'lab-dark-1' or 'lab-dark-2'), position={x,y}})
+                        end
+                    end
+                    surface.set_tiles(tiles, false)
+                end}
+            }
         }
     },
     infinity_loader = {

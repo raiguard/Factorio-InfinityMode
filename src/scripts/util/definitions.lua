@@ -503,6 +503,18 @@ defs.cheats = {
                 end
             end
         }},
+        auto_clear_all_entities = {type='toggle', default=false, functions={
+            value_changed = function(surface, cheat, cheat_global, new_value)
+                if new_value then
+                    conditional_event.cheat_register(surface, cheat, 'cheats.surface.auto_clear_all_entities.on_chunk_generated')
+                else
+                    conditional_event.cheat_deregister(surface, cheat, 'cheats.surface.auto_clear_all_entities.on_chunk_generated')
+                end
+            end,
+            get_value = function(surface, cheat, cheat_global)
+                return cheat_global.cur_value
+            end
+        }},
         fill_with_lab_tiles = {type='action', functions={
             action = function(surface, cheat, cheat_global)
                 surface.destroy_decoratives{}
@@ -517,7 +529,19 @@ defs.cheats = {
                     surface.set_tiles(tiles, false)
                 end
             end
-        }}
+        }},
+        auto_fill_with_lab_tiles = {type='toggle', default=false, functions={
+            value_changed = function(surface, cheat, cheat_global, new_value)
+                if new_value then
+                    conditional_event.cheat_register(surface, cheat, 'cheats.surface.auto_fill_with_lab_tiles.on_chunk_generated')
+                else
+                    conditional_event.cheat_deregister(surface, cheat, 'cheats.surface.auto_fill_with_lab_tiles.on_chunk_generated')
+                end
+            end,
+            get_value = function(surface, cheat, cheat_global)
+                return cheat_global.cur_value
+            end
+        }},
     },
     game = {
         pollution = {type='toggle', functions={
@@ -649,10 +673,12 @@ defs.cheats_gui_elems = {
             }
         },
         clear_entities = {
-            clear_all_entities = {tooltip=true}
+            clear_all_entities = {tooltip=true},
+            auto_clear_all_entities = {tooltip=true}
         },
         fill = {
-            fill_with_lab_tiles = {tooltip=true}
+            fill_with_lab_tiles = {tooltip=true},
+            auto_fill_with_lab_tiles = {tooltip=true}
         }
     },
     game = {
