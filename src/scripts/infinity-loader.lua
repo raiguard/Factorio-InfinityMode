@@ -88,11 +88,11 @@ local function update_inserters(entity)
     for i=1,#inserters do
         local side = i > (#inserters/2) and -0.25 or 0.25
         local inserter = inserters[i]
-        local mod = (i % (#inserters/2))
+        local mod = math.min((i % (#inserters/2)),3)
         if e_type == 'input' then
             -- pickup on belt, drop in chest
             inserter.pickup_target = entity
-            inserter.pickup_position = position.add(e_position, to_vector_2d(e_direction,(-mod*0.2 + 0.4),side))
+            inserter.pickup_position = position.add(e_position, to_vector_2d(e_direction,(-mod*0.2 + 0.3),side))
             inserter.drop_target = chest
             inserter.drop_position = e_position
         elseif e_type == 'output' then
@@ -100,11 +100,11 @@ local function update_inserters(entity)
             inserter.pickup_target = chest
             inserter.pickup_position = chest.position
             inserter.drop_target = entity
-            inserter.drop_position = position.add(e_position, to_vector_2d(e_direction,(mod*0.2 - 0.4),side))
+            inserter.drop_position = position.add(e_position, to_vector_2d(e_direction,(mod*0.2 - 0.3),side))
         end
         -- TEMPORARY rendering
-        -- rendering.draw_circle{target=inserter.pickup_position, color={r=0,g=1,b=0,a=0.5}, surface=entity.surface, radius=0.03, filled=true, time_to_live=300}
-        -- rendering.draw_circle{target=inserter.drop_position, color={r=0,g=1,b=1,a=0.5}, surface=entity.surface, radius=0.03, filled=true, time_to_live=300}
+        -- rendering.draw_circle{target=inserter.pickup_position, color={r=0,g=1,b=0,a=0.5}, surface=entity.surface, radius=0.03, filled=true, time_to_live=180}
+        -- rendering.draw_circle{target=inserter.drop_position, color={r=0,g=1,b=1,a=0.5}, surface=entity.surface, radius=0.03, filled=true, time_to_live=180}
     end
 end
 
@@ -200,26 +200,28 @@ end
 local function update_loader_types(entity)
     local belt_type = get_belt_type(entity)
     for _,pos in pairs(tile.adjacent(entity.surface, position.floor(entity.position))) do
+        -- find any underneathies
         local entities = entity.surface.find_entities_filtered{area=position.to_tile_area(pos), type='underground-belt'} or {}
         for _,e in pairs(entities) do
+            -- if the underneathy is an infinity loader
             if e.name:find('infinity%-loader%-loader') and loader_facing_belt(e, entity) then
                 local loader_type = get_belt_type(e)
+                -- if belt types do not match
                 if belt_type ~= loader_type then
                     -- old loader has to be destroyed first, so save its info here
                     local position = e.position
                     local force = e.force
                     local direction = e.direction
-                    local type = e.belt_to_ground_type
+                    local mode = e.belt_to_ground_type
                     local surface = e.surface
-                    e.destroy()
-                    local new_loader = surface.create_entity{
-                        name = 'infinity-loader-loader' .. (belt_type == '' and '' or '-'..belt_type),
-                        position = position,
-                        force = force,
-                        direction = direction,
-                        type = type
-                    }
+                    local combinator = surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=position}[1]
+                    local parameters = combinator.get_control_behavior().parameters
+                    combinator.destroy{raise_destroy=true}
+                    -- create new loader, sync filters
+                    local new_loader, new_inserters, _, new_combinator = create_loader(belt_type, mode, surface, position, direction, force)
+                    new_combinator.get_or_create_control_behavior().parameters = parameters
                     update_inserters(new_loader)
+                    update_filters(new_combinator)
                 end
             end
         end
