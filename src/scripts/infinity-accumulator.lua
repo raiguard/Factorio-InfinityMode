@@ -122,7 +122,8 @@ local function change_ia_mode_or_priority(e)
     local new_entity = entity.surface.create_entity{
         name = 'infinity-accumulator-' .. (mode == 'buffer' and 'tertiary' or priority) .. (mode ~= 'buffer' and ('-' .. mode) or ''),
         position = entity.position,
-        force = entity.force
+        force = entity.force,
+        create_build_effect_smoke = false
     }
     entity.destroy()
     set_ia_params(new_entity, mode, data.slider.slider_value, data.slider_dropdown.selected_index * 3)
