@@ -128,34 +128,6 @@ data:extend{
     },
     {
         type = 'sprite',
-        name = 'im-to-top-black',
-        filename = '__InfinityMode__/graphics/gui/to-top-black.png',
-        size = 32,
-        flags = {'icon'}
-    },
-    {
-        type = 'sprite',
-        name = 'im-to-top-white',
-        filename = '__InfinityMode__/graphics/gui/to-top-white.png',
-        size = 32,
-        flags = {'icon'}
-    },
-    {
-        type = 'sprite',
-        name = 'im-from-top-black',
-        filename = '__InfinityMode__/graphics/gui/from-top-black.png',
-        size = 32,
-        flags = {'icon'}
-    },
-    {
-        type = 'sprite',
-        name = 'im-from-top-white',
-        filename = '__InfinityMode__/graphics/gui/from-top-white.png',
-        size = 32,
-        flags = {'icon'}
-    },
-    {
-        type = 'sprite',
         name = 'im-info-black-inline',
         filename = '__InfinityMode__/graphics/gui/info-black-inline.png',
         size = {16,40},
