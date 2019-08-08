@@ -20,6 +20,6 @@ For Factorio mod developers, Infinity Mode is planned to include a comprehensive
 ## History
 I have over 1000 hours in Factorio. Over that time, I have spent a lot of time using Creative Mode to test my setups. From the first time I used it, I noticed that it has a rather large performance overhead. Figuring that that was just a side effect of what it was doing, I continued to use it.
 
-Fast forward to Spring 2019, I make my first mod, [Tapeline][https://github.com/raiguard/Tapeline]. I go back to playing Factorio and end up using Creative Mode again. Now that I have some familiarity with the API, I realize that Creative Mode _was_ working with a limited API, but that it hadn't been properly updated since 0.15!
+Fast forward to Spring 2019, I make my first mod, [Tapeline](https://github.com/raiguard/Tapeline). I go back to playing Factorio and end up using Creative Mode again. Now that I have some familiarity with the API, I realize that Creative Mode _was_ working with a limited API, but that it hadn't been properly updated since 0.15!
 
 Thus, I set out to replace it. Many, _many_ new API features have been introduced since Creative Mode was released, and I was able to harness them to create a mod that has almost 1:1 feature parity, with consolidated tools, much better performance, and additional features to boot!
