@@ -163,12 +163,12 @@ local events_def = {
                         global_table.cur_players[e.player_index] = true
                         conditional_event.register('cheats.player.repair_used_item.on_tick')
                     else
-                        -- remove from global table
-                        global_table.cur_players[e.player_index] = nil
-                        -- if no players are in the table, deregister the event
-                        if #global_table.cur_players == 0 then
+                        -- if we are about to remove the last player, deregister the event
+                        if #global_table.cur_players == 1 then
                             conditional_event.deregister('cheats.player.repair_used_item.on_tick')
                         end
+                        -- remove from global table
+                        global_table.cur_players[e.player_index] = nil
                     end
                 end},
                 on_tick = {{defines.events.on_tick}, function(e)
