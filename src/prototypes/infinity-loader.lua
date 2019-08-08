@@ -28,39 +28,7 @@ local empty_sheet = {
 }
 
 local loader_base = table.deepcopy(data.raw['underground-belt']['underground-belt'])
-for n,t in pairs(loader_base.structure) do
-    apply_infinity_tint(t.sheet)
-    apply_infinity_tint(t.sheet.hr_version)
-    if n ~= 'back_patch' and n ~= 'front_patch' then
-        t.sheet.filename = '__InfinityMode__/graphics/entity/infinity-loader.png'
-        t.sheet.hr_version.filename = '__InfinityMode__/graphics/entity/hr-infinity-loader.png'
-    end
-end
 loader_base.icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32}}
-
--- underground belt
-local function create_loader(base_underground)
-    local entity = table.deepcopy(data.raw['underground-belt'][base_underground])
-    -- adjust pictures and icon
-    entity.structure = loader_base.structure
-    -- entity.structure = {
-    --     direction_in = empty_sheet,
-    --     direction_out = empty_sheet
-    -- }
-    entity.icons = loader_base.icons
-    -- basic data
-    local suffix = entity.name:gsub('%-?underground%-belt', '')
-    entity.name = 'infinity-loader-loader' .. (suffix ~= '' and '-'..suffix or '')
-    entity.next_upgrade = nil
-    entity.max_distance = 0
-    entity.order = 'a'
-    entity.selectable_in_game = false
-    data:extend{entity}
-end
-
-for n,_ in pairs(table.deepcopy(data.raw['underground-belt'])) do
-    create_loader(n)
-end
 
 local base_loader_path = '__base__/graphics/entity/underground-belt/'
 
