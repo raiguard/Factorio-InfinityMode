@@ -329,9 +329,10 @@ end)
 on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built, defines.events.script_raised_revive}, function(e)
     local entity = e.created_entity or e.entity
     -- if the placed entity is an infinity loader
-    if entity.name == 'infinity-loader-dummy-combinator' then
+    if entity.name == 'infinity-loader-dummy-combinator' or entity.name == 'infinity-loader-logic-combinator' then
         local type, mode = get_loader_type_and_mode(entity, true)
-        local loader, inserters, chest, combinator = create_loader(type, mode, entity.surface, entity.position, util.oppositedirection(entity.direction), entity.force)
+        local direction = entity.name == 'infinity-loader-dummy-combinator' and util.oppositedirection(entity.direction) or entity.direction
+        local loader, inserters, chest, combinator = create_loader(type, mode, entity.surface, entity.position, direction, entity.force)
         -- get previous filters, if any
         local old_control = entity.get_or_create_control_behavior()
         local new_control = combinator.get_or_create_control_behavior()
