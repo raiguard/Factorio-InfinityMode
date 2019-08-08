@@ -126,7 +126,9 @@ local function update_filters(entity)
     local loader = entity.surface.find_entities_filtered{type='underground-belt', position=entity.position}[1]
     local inserters = entity.surface.find_entities_filtered{name='infinity-loader-inserter', position=entity.position}
     local chest = entity.surface.find_entities_filtered{name='infinity-loader-chest', position=entity.position}[1]
-    local filters = entity.get_control_behavior().parameters.parameters
+    local control = entity.get_control_behavior()
+    local enabled = control.enabled
+    local filters = control.parameters.parameters
     local inserter_filter_mode
     if filters[1].signal.name or filters[2].signal.name or loader.belt_to_ground_type == 'output' then
         inserter_filter_mode = 'whitelist'
@@ -138,7 +140,9 @@ local function update_filters(entity)
         local side = i > (#inserters/2) and 1 or 2
         inserters[i].set_filter(1, filters[side].signal.name or nil)
         inserters[i].inserter_filter_mode = inserter_filter_mode
+        inserters[i].active = enabled
     end
+    -- update chest filters
     for i=1,2 do
         local name = filters[i].signal.name
         chest.set_infinity_container_filter(i, name and {name=name, count=game.item_prototypes[name].stack_size, mode='exactly', index=i} or nil)
@@ -247,11 +251,16 @@ local function update_loader_types(entity)
                     local mode = e.belt_to_ground_type
                     local surface = e.surface
                     local combinator = surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=position}[1]
-                    local parameters = combinator.get_control_behavior().parameters
+                    local control = combinator.get_control_behavior()
+                    local parameters = control.parameters
+                    local enabled = control.enabled
+                    -- destroy combinator and raise event, which will cause everything else to be destroyed as well
                     combinator.destroy{raise_destroy=true}
                     -- create new loader, sync filters
                     local new_loader, new_inserters, new_chest, new_combinator = create_loader(belt_type, mode, surface, position, direction, force)
-                    new_combinator.get_or_create_control_behavior().parameters = parameters
+                    local new_control = new_combinator.get_or_create_control_behavior()
+                    new_control.parameters = parameters
+                    new_control.enabled = enabled
                     update_inserters(new_loader)
                     update_filters(new_combinator)
                 end
@@ -324,7 +333,10 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
         local type, mode = get_loader_type_and_mode(entity, true)
         local loader, inserters, chest, combinator = create_loader(type, mode, entity.surface, entity.position, util.oppositedirection(entity.direction), entity.force)
         -- get previous filters, if any
-        combinator.get_or_create_control_behavior().parameters = entity.get_or_create_control_behavior().parameters
+        local old_control = entity.get_or_create_control_behavior()
+        local new_control = combinator.get_or_create_control_behavior()
+        new_control.parameters = old_control.parameters
+        new_control.enabled = old_control.enabled
         entity.destroy()
         -- update entitiy
         update_inserters(loader)
