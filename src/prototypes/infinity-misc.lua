@@ -120,7 +120,7 @@ ib_entity.name = 'infinity-beacon'
 ib_entity.icons = ib_item.icons
 ib_entity.minable.result = 'infinity-beacon'
 ib_entity.energy_source = {type='void'}
-ib_entity.allowed_effects = {'consumption', 'speed', 'productivity'}
+ib_entity.allowed_effects = {'consumption', 'speed', 'productivity', 'pollution'}
 ib_entity.supply_area_distance = 64
 ib_entity.module_specification = {module_slots=12}
 apply_infinity_tint(ib_entity.base_picture)
