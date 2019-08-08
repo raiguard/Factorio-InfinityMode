@@ -66,10 +66,22 @@ local function to_vector_2d(direction, longitudinal, orthogonal)
 end
 
 -- gets the transport belt, loader, or splitter that the entity is facing
-local function get_connected_belt(entity)
-    local entities = entity.surface.find_entities_filtered{type={'transport-belt','underground-belt','splitter'}, area=position.to_tile_area(position.add(entity.position, to_vector_2d(entity.direction,-1,0)))}
+local function get_connected_belt(entity, flip)
+    local entities = entity.surface.find_entities_filtered{type={'transport-belt','underground-belt','splitter'}, area=position.to_tile_area(position.add(entity.position, to_vector_2d(entity.direction,flip and -1 or 1, 0)))}
     if entities then return entities[1] end
     return nil
+end
+
+-- returns loader type and mode based on adjacent belts
+local function get_loader_type_and_mode(entity, flip)
+    local connected_belt = get_connected_belt(entity, flip)
+    if connected_belt then
+        return
+            get_belt_type(connected_belt),
+            connected_belt.direction ~= entity.direction and (flip and 'output' or 'input') or (flip and 'input' or 'output')
+    else
+        return 'express', 'output'
+    end
 end
 
 -- 60 items/second / 60 ticks/second / 8 items/tile = X tiles/tick
@@ -152,13 +164,14 @@ local function loader_facing_belt(loader, belt)
 end
 
 -- create an infinity loader
-local function create_loader(type, mode, surface, position, direction, force)
+local function create_loader(type, mode, surface, position, direction, force, skip_combinator)
     local loader = surface.create_entity{
         name = 'infinity-loader-loader' .. (type == '' and '' or '-'..type),
         position = position,
         direction = mode == 'input' and util.oppositedirection(direction) or direction,
         force = force,
-        type = mode
+        type = mode,
+        create_build_effect_smoke = false
     }
     local inserters = {}
     for i=1,num_inserters(loader) do
@@ -166,21 +179,27 @@ local function create_loader(type, mode, surface, position, direction, force)
             name='infinity-loader-inserter',
             position = position,
             force = force,
-            direction = direction
+            direction = direction,
+            create_build_effect_smoke = false
         }
         inserters[i].inserter_stack_size_override = 1
     end
     local chest = surface.create_entity{
         name = 'infinity-loader-chest',
         position = position,
-        force = force
-    }
-    local combinator = surface.create_entity{
-        name = 'infinity-loader-logic-combinator',
-        position = position,
         force = force,
-        direction = direction
+        create_build_effect_smoke = false
     }
+    local combinator 
+    if not skip_combinator then
+        combinator = surface.create_entity{
+            name = 'infinity-loader-logic-combinator',
+            position = position,
+            force = force,
+            direction = direction,
+            create_build_effect_smoke = false
+        }
+    end
     return loader, inserters, chest, combinator
 end
 
@@ -258,15 +277,43 @@ local function convert_blueprint_loaders(bp)
 end
 
 -- ----------------------------------------------------------------------------------------------------
+-- COMPATIBILITY
+
+-- picker dollies
+local function picker_dollies_move(e)
+    local entity = e.moved_entity
+    if string.find(entity.name, 'infinity%-loader%-logic%-combinator') then
+        -- destroy all entities in the previous position
+        for _,e in pairs(e.moved_entity.surface.find_entities_filtered{position=e.start_pos}) do
+            e.destroy()
+        end
+        local type, mode = get_loader_type_and_mode(entity)
+        local loader, inserters, chest = create_loader(type, mode, entity.surface, entity.position, entity.direction, entity.force, true)
+        -- update entitiy
+        update_inserters(loader)
+        update_filters(entity)
+    end
+end
+
+-- ----------------------------------------------------------------------------------------------------
 -- LISTENERS
+
+-- interface to allow conditional on_tick to update the filters
+remote.add_interface('infinity_mode', {update_loader_filters=update_filters})
 
 event.on_init(function()
     global.loaders = {}
-    remote.add_interface('infinity_mode', {update_loader_filters=update_filters})
+    -- picker dollies
+    if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
+        on_event(remote.call("PickerDollies", "dolly_moved_entity_id"), picker_dollies_move)
+    end
 end)
 
 event.on_load(function()
-    remote.add_interface('infinity_mode', {update_loader_filters=update_filters})
+    -- picker dollies
+    if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
+        on_event(remote.call("PickerDollies", "dolly_moved_entity_id"), picker_dollies_move)
+    end
 end)
 
 -- when an entity is built
@@ -274,16 +321,8 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
     local entity = e.created_entity or e.entity
     -- if the placed entity is an infinity loader
     if entity.name == 'infinity-loader-dummy-combinator' then
-        local connected_belt = get_connected_belt(entity)
-        local type, mode
-        if connected_belt then
-            type = get_belt_type(connected_belt)
-            mode = connected_belt.direction ~= entity.direction and 'output' or 'input'
-        else
-            type = 'express'
-            mode = 'output'
-        end
-        local loader,inserters,chest,combinator = create_loader(type, mode, entity.surface, entity.position, util.oppositedirection(entity.direction), entity.force)
+        local type, mode = get_loader_type_and_mode(entity, true)
+        local loader, inserters, chest, combinator = create_loader(type, mode, entity.surface, entity.position, util.oppositedirection(entity.direction), entity.force)
         -- get previous filters, if any
         combinator.get_or_create_control_behavior().parameters = entity.get_or_create_control_behavior().parameters
         entity.destroy()
