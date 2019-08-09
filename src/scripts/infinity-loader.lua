@@ -407,6 +407,19 @@ end)
 -- when an entity settings copy/paste occurs
 on_event(defines.events.on_entity_settings_pasted, function(e)
     if e.destination.name == 'infinity-loader-logic-combinator' then
+        -- sanitize filters to remove any fluids
+        local parameters = {parameters={}}
+        local items = 0
+        for i,p in pairs(table.deepcopy(e.source.get_control_behavior().parameters.parameters)) do
+            if p.signal and p.signal.type == 'item' and items < 2 then
+                items = items + 1
+                p.index = items
+                table.insert(parameters.parameters, p)
+            end
+        end
+        print(serpent.block(parameters))
+        e.destination.get_control_behavior().parameters = parameters
+        -- update filters
         update_filters(e.destination)
     end
 end)
