@@ -27,4 +27,4 @@ for _,t in pairs(global.wagons) do
 end
 
 -- delete surface of holding
-game.delete_surface('soh')
+if game.surfaces['soh'] then game.delete_surface('soh') end
