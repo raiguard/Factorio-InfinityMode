@@ -8,7 +8,6 @@ local conditional_event = require('scripts/util/conditional-event')
 
 -- on game init
 event.on_init(function()
-    game.create_surface('soh', {width = 1, height = 1})
     global.wagons = {}
 end)
 
