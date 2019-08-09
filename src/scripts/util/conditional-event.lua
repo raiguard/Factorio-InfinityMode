@@ -141,15 +141,18 @@ local events_def = {
                     if not util.cheat_enabled('player', 'repair_used_item', e.player_index) then return end
                     local player = util.get_player(e)
                     local inventory = player.get_main_inventory()
-                    -- iterate over every slot in the inventory
-                    for i=1,#inventory do
-                        -- reset tool durability to max
-                        if inventory[i].valid_for_read and inventory[i].durability then
-                            inventory[i].durability = game.item_prototypes[inventory[i].name].durability
-                        end
-                        -- reset magazine ammo to max
-                        if inventory[i].valid_for_read and inventory[i].type == 'ammo' then
-                            inventory[i].ammo = game.item_prototypes[inventory[i].name].magazine_size
+                    -- check to make sure the inventory exists, to avoid crashing
+                    if inventory then
+                        -- iterate over every slot in the inventory
+                        for i=1,#inventory do
+                            -- reset tool durability to max
+                            if inventory[i].valid_for_read and inventory[i].durability then
+                                inventory[i].durability = game.item_prototypes[inventory[i].name].durability
+                            end
+                            -- reset magazine ammo to max
+                            if inventory[i].valid_for_read and inventory[i].type == 'ammo' then
+                                inventory[i].ammo = game.item_prototypes[inventory[i].name].magazine_size
+                            end
                         end
                     end
                 end},
