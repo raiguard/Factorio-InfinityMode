@@ -1,12 +1,19 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.1.1
+Version: 0.2.0
 Date: 2019.08.09
+  Additions:
+    - Added dialog to optionally enable the mod when first loaded
+    - Added /enable-infinity-mode command
+    - Added infinity inserter
+    - Added infinity pump
   Changes:
+    - Recipes are now disabled by default, so they will only appear if the mod is enabled
     - Removed surface of holding
   Bugfixes:
     - Fixed infinity accumulator showing build smoke when priority or mode was changed
     - Fixed infinity accumulator GUI not closing when the entity was destroyed
     - Fixed infinity loader not registering modded belts in some cases (#1)
+    - Fixed a crash with infinity loaders when a settings paste contains non-items
     - Fixed a crash with the "repair used item" cheat when a player doesn't have an inventory
     - Fixed several small locale errors
     - Fixed infinity wagons only being openable when the player was within reach distance of position {0,0} on the map

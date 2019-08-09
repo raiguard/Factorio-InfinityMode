@@ -29,7 +29,6 @@ for lm,d in pairs(chest_data) do
     data:extend{chest}
 end
 
-
 -- ------------------------------------------------------------------------------------------
 -- ENTITIES
 
@@ -58,7 +57,6 @@ for lm,d in pairs(chest_data) do
     chest.inventory_size = 100
     data:extend{chest}
 end
-
 
 -- ------------------------------------------------------------------------------------------
 -- RECIPES

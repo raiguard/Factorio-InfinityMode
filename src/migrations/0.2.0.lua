@@ -27,4 +27,10 @@ for _,t in pairs(global.wagons) do
 end
 
 -- delete surface of holding
-game.delete_surface('soh')
+if game.surfaces['soh'] then game.delete_surface('soh') end
+
+-- mod enabled metadata
+if global.mod_enabled == nil then
+    global.mod_enabled = true
+    global.dialog_shown = true
+end

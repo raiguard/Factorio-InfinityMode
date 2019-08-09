@@ -7,14 +7,14 @@ local table = require('__stdlib__/stdlib/utils/table')
 local ip_item = data.raw['item']['infinity-pipe']
 ip_item.icons = {apply_infinity_tint(ip_item.icons[1])}
 ip_item.subgroup = 'im-misc'
-ip_item.order = 'ab'
+ip_item.order = 'ba'
 ip_item.stack_size = 50
 ip_item.flags = {}
 
 -- heat interface
 local hi_item = data.raw['item']['heat-interface']
 hi_item.subgroup = 'im-misc'
-hi_item.order = 'ac'
+hi_item.order = 'ca'
 hi_item.stack_size = 50
 hi_item.icons = {apply_infinity_tint{icon=data.raw['item']['heat-pipe'].icon, icon_size=data.raw['item']['heat-pipe'].icon_size}}
 hi_item.flags = {}
@@ -25,7 +25,7 @@ ir_item.name = 'infinity-radar'
 ir_item.icons = {apply_infinity_tint{icon=ir_item.icon}}
 ir_item.place_result = 'infinity-radar'
 ir_item.subgroup = 'im-misc'
-ir_item.order = 'ba'
+ir_item.order = 'da'
 
 -- infinity beacon
 local ib_item = table.deepcopy(data.raw['item']['beacon'])
@@ -41,9 +41,25 @@ lab_item.name = 'infinity-lab'
 lab_item.icons = {apply_infinity_tint{icon=lab_item.icon}}
 lab_item.place_result = 'infinity-lab'
 lab_item.subgroup = 'im-misc'
-lab_item.order = 'ca'
+lab_item.order = 'ea'
 
-data:extend{ip_item, hi_item, ir_item, ib_item, lab_item}
+-- infinity inserter
+local ii_item = table.deepcopy(data.raw['item']['filter-inserter'])
+ii_item.name = 'infinity-inserter'
+ii_item.icons = {apply_infinity_tint{icon=ii_item.icon, icon_size=ii_item.icon_size, icon_mipmaps=ii_item.icon_mipmaps}}
+ii_item.place_result = 'infinity-inserter'
+ii_item.subgroup = 'im-misc'
+ii_item.order = 'ab'
+
+-- infinity pump
+local ip_item = table.deepcopy(data.raw['item']['pump'])
+ip_item.name = 'infinity-pump'
+ip_item.icons = {apply_infinity_tint{icon=ip_item.icon, icon_size=ip_item.icon_size, icon_mipmaps=ip_item.icon_mipmaps}}
+ip_item.place_result = 'infinity-pump'
+ip_item.subgroup = 'im-misc'
+ip_item.order = 'bb'
+
+data:extend{ip_item, hi_item, ir_item, ib_item, lab_item, ii_item, ip_item}
 
 data:extend{
     {
@@ -70,7 +86,8 @@ data:extend{
     }
 }
 
-register_recipes{'infinity-pipe', 'heat-interface', 'infinity-radar', 'infinity-beacon', 'infinity-lab', 'infinity-fusion-reactor-equipment', 'infinity-personal-roboport-equipment'}
+register_recipes{'infinity-pipe', 'heat-interface', 'infinity-radar', 'infinity-beacon', 'infinity-lab', 'infinity-inserter',
+    'infinity-pump', 'infinity-fusion-reactor-equipment', 'infinity-personal-roboport-equipment'}
 
 
 -- ------------------------------------------------------------------------------------------
@@ -142,7 +159,40 @@ for _,k in pairs{'on_animation', 'off_animation'} do
     end
 end
 
-data:extend{ir_entity, ib_entity, lab_entity}
+-- infinity inserter
+local ii_entity = table.deepcopy(data.raw['inserter']['filter-inserter'])
+ii_entity.name = 'infinity-inserter'
+ii_entity.icons = ii_item.icons
+ii_entity.placeable_by = {item='infinity-inserter', count=1}
+ii_entity.minable.result = 'infinity-inserter'
+ii_entity.energy_source = {type='void'}
+ii_entity.energy_usage = '1W'
+ii_entity.stack = true
+ii_entity.filter_count = 0
+ii_entity.extension_speed = 1
+ii_entity.rotation_speed = 0.5
+for _,k in pairs{'hand_base_picture', 'hand_closed_picture', 'hand_open_picture'} do
+    apply_infinity_tint(ii_entity[k])
+    apply_infinity_tint(ii_entity[k].hr_version)
+end
+apply_infinity_tint(ii_entity.platform_picture.sheet)
+apply_infinity_tint(ii_entity.platform_picture.sheet.hr_version)
+
+-- infinity pump
+local ip_entity = table.deepcopy(data.raw['pump']['pump'])
+ip_entity.name = 'infinity-pump'
+ip_entity.icons = ip_item.icons
+ip_entity.placeable_by = {item='infinity-pump', count=1}
+ip_entity.minable = {result='infinity-pump', mining_time=0.1}
+ip_entity.energy_source = {type='void'}
+ip_entity.energy_usage = '1W'
+ip_entity.pumping_speed = 1000
+for k,t in pairs(ip_entity.animations) do
+    apply_infinity_tint(t)
+    apply_infinity_tint(t.hr_version)
+end
+
+data:extend{ir_entity, ib_entity, lab_entity, ii_entity, ip_entity}
 
 
 -- ------------------------------------------------------------------------------------------

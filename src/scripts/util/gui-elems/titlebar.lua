@@ -27,6 +27,7 @@ function titlebar.create(parent, name, data)
     if data.draggable then
         filler.drag_target = parent
         filler.style.natural_height = 24
+        filler.style.minimal_width = 24
     end
 
     if data.buttons then
