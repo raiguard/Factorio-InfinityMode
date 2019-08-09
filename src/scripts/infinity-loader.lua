@@ -28,24 +28,35 @@ local belt_type_patterns = {
     '%-?splitter',
     'infinity%-loader%-loader%-?'
 }
+--This is in a separate table since get_belt_type seems to get confused otherwise.
+local regular_loader_type_patterns = {
+    '%-?loader'
+}
 
 local function get_belt_type(entity)
     local type = belt_type_overrides[entity.name]
-    if not type then
-        type = entity.name
-        for _,pattern in pairs(belt_type_patterns) do
-            type = type:gsub(pattern, '')
-        end
-        -- check to see if the loader prototype exists
-        if type ~= '' and not game.entity_prototypes['infinity-loader-loader-'..type] then
-            -- print warning message
-            game.print{'chat-message.unable-to-identify-belt-warning'}
-            game.print('belt_name=\''..entity.name..'\', parse_result=\''..type..'\'')
-            -- set to default type
-            type = 'express'
-        end
-    end
-    return type
+	if not type then
+		type = entity.name
+		-- load the separate table if it's a loader
+		if entity.type ~= 'loader' then
+			for _,pattern in pairs(belt_type_patterns) do
+				type = type:gsub(pattern, '')
+			end
+		else
+			for _,pattern in pairs(regular_loader_type_patterns) do
+			type = type:gsub(pattern, '')
+		end
+		end
+		-- check to see if the loader prototype exists
+		if type ~= '' and not game.entity_prototypes['infinity-loader-loader-'..type] then
+			-- print warning message
+			game.print{'chat-message.unable-to-identify-belt-warning'}
+			game.print('belt_name=\''..entity.name..'\', parse_result=\''..type..'\'')
+			-- set to default type
+			type = 'express'
+		end
+	end
+	return type
 end
 
 local function check_is_loader(e)
@@ -67,7 +78,7 @@ end
 
 -- gets the transport belt, loader, or splitter that the entity is facing
 local function get_connected_belt(entity, flip)
-    local entities = entity.surface.find_entities_filtered{type={'transport-belt','underground-belt','splitter'}, area=position.to_tile_area(position.add(entity.position, to_vector_2d(entity.direction,flip and -1 or 1, 0)))}
+    local entities = entity.surface.find_entities_filtered{type={'transport-belt','underground-belt','splitter','loader'}, area=position.to_tile_area(position.add(entity.position, to_vector_2d(entity.direction,flip and -1 or 1, 0)))}
     if entities then return entities[1] end
     return nil
 end
@@ -172,7 +183,7 @@ local function create_loader(type, mode, surface, position, direction, force, sk
     local loader = surface.create_entity{
         name = 'infinity-loader-loader' .. (type == '' and '' or '-'..type),
         position = position,
-        direction = mode == 'input' and util.oppositedirection(direction) or direction,
+        direction = direction,
         force = force,
         type = mode,
         create_build_effect_smoke = false
@@ -209,15 +220,20 @@ end
 
 -- ----------------------------------------------------------------------------------------------------
 -- SNAPPING
+-- loader_unit_number is an optional argument for all functions that have it.
+-- When supplied, only the loader with that unit number will be snapped/updated.
+-- This is included in order to avoid rotating any other loaders that may have been
+-- intentionally rotated the 'wrong' direction by a player. Currently only used
+-- when placing a new loader.
 
 -- snap adjacent loaders to a belt entity
-local function snap_to_belt(entity)
+local function snap_to_belt(entity, loader_unit_number)
     for _,pos in pairs(tile.adjacent(entity.surface, position.floor(entity.position))) do
         local entities = entity.surface.find_entities_filtered{area=position.to_tile_area(pos), type='underground-belt'} or {}
         for _,e in pairs(entities) do
-            if e.name:find('infinity%-loader%-loader') then
+            if e.name:find('infinity%-loader%-loader') and (loader_unit_number == nil or (e.unit_number == loader_unit_number)) then
                 if loader_facing_belt(e, entity) then
-                    if e.direction ~= entity.direction and e.belt_to_ground_type == 'input' then
+					if e.direction ~= entity.direction and e.belt_to_ground_type == 'input' then
                         e.rotate()
                         update_inserters(e)
                         update_filters(e.surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=e.position}[1])
@@ -232,41 +248,137 @@ local function snap_to_belt(entity)
     end
 end
 
+-- snap adjacent loaders to a splitter entity
+local function snap_to_splitter(entity, loader_unit_number)
+    local change_these = {}
+	entity.rotate()
+	local neighbours = entity.belt_neighbours
+	for i,neighbour_type in ipairs({"inputs", "outputs"}) do
+		for j,neighbour in ipairs(neighbours[neighbour_type]) do
+			if neighbour.name:find('infinity%-loader%-loader') and (loader_unit_number == nil or (neighbour.unit_number == loader_unit_number)) then
+				table.insert(change_these, {name=neighbour.name,position=neighbour.position,type=neighbour.type})
+			end
+		end
+	end
+	entity.rotate()
+	for _,loader_entity in ipairs(change_these) do
+		local entities = entity.surface.find_entities_filtered{name=loader_entity.name, position=loader_entity.position, type=loader_entity.type}
+		for _,e in pairs(entities) do
+            if util.oppositedirection(e.direction) == entity.direction then
+				e.rotate()
+				update_inserters(e)
+				update_filters(e.surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=e.position}[1])
+			end
+        end
+	end
+end
+
+local function update_loader_type(belt_type, entity)
+	-- old loader has to be destroyed first, so save its info here
+	local position = entity.position
+	local force = entity.force
+	local direction = entity.direction
+	local mode = entity.belt_to_ground_type
+	local surface = entity.surface
+	local combinator = entity.surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=position}[1]
+	local control = combinator.get_control_behavior()
+	local parameters = control.parameters
+	local enabled = control.enabled
+	-- destroy combinator and raise event, which will cause everything else to be destroyed as well
+	combinator.destroy{raise_destroy=true}
+	-- create new loader, sync filters
+	local new_loader, new_inserters, new_chest, new_combinator = create_loader(belt_type, mode, surface, position, direction, force)
+	local new_control = new_combinator.get_or_create_control_behavior()
+	new_control.parameters = parameters
+	new_control.enabled = enabled
+	update_inserters(new_loader)
+	update_filters(new_combinator)
+end
+
 -- update adjacent loader types, if necessary
-local function update_loader_types(entity)
+local function belt_update_loader_types(entity, loader_unit_number)
     local belt_type = get_belt_type(entity)
     for _,pos in pairs(tile.adjacent(entity.surface, position.floor(entity.position))) do
         -- find any underneathies
         local entities = entity.surface.find_entities_filtered{area=position.to_tile_area(pos), type='underground-belt'} or {}
         for _,e in pairs(entities) do
             -- if the underneathy is an infinity loader
-            if e.name:find('infinity%-loader%-loader') and loader_facing_belt(e, entity) then
+            if e.name:find('infinity%-loader%-loader') and (loader_unit_number == nil or (e.unit_number == loader_unit_number)) and loader_facing_belt(e, entity) then
                 local loader_type = get_belt_type(e)
                 -- if belt types do not match
+				game.print(belt_type)
+				game.print(loader_type)
                 if belt_type ~= loader_type then
-                    -- old loader has to be destroyed first, so save its info here
-                    local position = e.position
-                    local force = e.force
-                    local direction = e.direction
-                    local mode = e.belt_to_ground_type
-                    local surface = e.surface
-                    local combinator = surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=position}[1]
-                    local control = combinator.get_control_behavior()
-                    local parameters = control.parameters
-                    local enabled = control.enabled
-                    -- destroy combinator and raise event, which will cause everything else to be destroyed as well
-                    combinator.destroy{raise_destroy=true}
-                    -- create new loader, sync filters
-                    local new_loader, new_inserters, new_chest, new_combinator = create_loader(belt_type, mode, surface, position, direction, force)
-                    local new_control = new_combinator.get_or_create_control_behavior()
-                    new_control.parameters = parameters
-                    new_control.enabled = enabled
-                    update_inserters(new_loader)
-                    update_filters(new_combinator)
+                    update_loader_type(belt_type, e)
                 end
             end
         end
     end
+end
+
+-- update adjacent loader types, if necessary
+local function splitter_update_loader_types(entity, loader_unit_number)
+    local belt_type = get_belt_type(entity)
+	local change_these = {}
+	for i=1,2 do
+		local neighbours = entity.belt_neighbours
+		for j,neighbour_type in ipairs({"inputs", "outputs"}) do
+			for k,neighbour in ipairs(neighbours[neighbour_type]) do
+				if neighbour.name:find('infinity%-loader%-loader') and (loader_unit_number == nil or (neighbour.unit_number == loader_unit_number)) then
+					local loader_type = get_belt_type(neighbour)
+					if belt_type ~= loader_type then
+						table.insert(change_these, {name=neighbour.name,position=neighbour.position,type=neighbour.type,loader_type=loader_type})
+					end
+				end
+			end
+		end
+		entity.rotate()
+	end
+	for _,loader_entity in ipairs(change_these) do
+		local entities = entity.surface.find_entities_filtered{name=loader_entity.name, position=loader_entity.position, type=loader_entity.type}
+		for _,e in pairs(entities) do
+            if belt_type ~= loader_entity.loader_type then
+                update_loader_type(belt_type, e)
+            end
+        end
+	end
+end
+
+-- update a placed loader
+local function snap_update_placed_loader(entity)
+	local entities = entity.surface.find_entities_filtered{type={'transport-belt','underground-belt','splitter','loader'}, area=position.to_tile_area(position.add(entity.position, to_vector_2d(entity.direction,flip and -1 or 1, 0)))}
+    if entities[1] ~= nil then
+		local connected_entity = entities[1]
+		if connected_entity.type == 'splitter' then
+			if connected_entity.direction == entity.direction or connected_entity.direction == util.oppositedirection(entity.direction) then
+				snap_to_splitter(connected_entity, entity.unit_number)
+				splitter_update_loader_types(connected_entity, entity.unit_number)
+			end
+		elseif connected_entity.type == 'loader' then
+			local final_mode
+			-- I couldn't think of a better way of checking loaders. Only having a belt on half of it is kind of weird.
+			for i=1,2 do
+				local neighbours = connected_entity.belt_neighbours
+				for j,neighbour_type in ipairs({"inputs", "outputs"}) do
+					for k,neighbour in ipairs(neighbours[neighbour_type]) do
+						if neighbour.name:find('infinity%-loader%-loader') and (neighbour.unit_number == entity.unit_number) then
+							final_mode = entity.belt_to_ground_type
+						end
+					end
+				end
+				entity.rotate()
+			end
+			if entity.belt_to_ground_type ~= final_mode then
+				entity.rotate()
+			end
+			snap_to_splitter(connected_entity, entity.unit_number)
+			splitter_update_loader_types(connected_entity, entity.unit_number)
+		else
+			snap_to_belt(connected_entity, entity.unit_number)
+			belt_update_loader_types(connected_entity, entity.unit_number)
+		end
+	end
+    return nil
 end
 
 -- ----------------------------------------------------------------------------------------------------
@@ -330,10 +442,13 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
     local entity = e.created_entity or e.entity
     -- if the placed entity is an infinity loader
     if entity.name == 'infinity-loader-dummy-combinator' or entity.name == 'infinity-loader-logic-combinator' then
-        local type, mode = get_loader_type_and_mode(entity, true)
-        local direction = entity.name == 'infinity-loader-dummy-combinator' and util.oppositedirection(entity.direction) or entity.direction
+        -- local type, mode = get_loader_type_and_mode(entity, true)
+		-- Just place the loader with the default values. belt_neighbors requires both entities to exist, so type/mode get set later
+		-- For some reason it still gets placed backwards if mode is set to input at this point
+		local type, mode = 'express', 'output'
+		local direction = entity.name == 'infinity-loader-dummy-combinator' and util.oppositedirection(entity.direction) or entity.direction
         local loader, inserters, chest, combinator = create_loader(type, mode, entity.surface, entity.position, direction, entity.force)
-        -- get previous filters, if any
+		-- get previous filters, if any
         local old_control = entity.get_or_create_control_behavior()
         local new_control = combinator.get_or_create_control_behavior()
         new_control.parameters = old_control.parameters
@@ -342,9 +457,13 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
         -- update entitiy
         update_inserters(loader)
         update_filters(combinator)
-    elseif entity.type == 'transport-belt' or entity.type == 'underground-belt' or entity.type == 'splitter' then
-        update_loader_types(entity)
-        snap_to_belt(entity)
+		snap_update_placed_loader(loader)
+    elseif entity.type == 'transport-belt' or entity.type == 'underground-belt'  then
+		snap_to_belt(entity)
+		belt_update_loader_types(entity)
+	elseif entity.type == 'splitter' or entity.type == 'loader' then
+		snap_to_splitter(entity)
+		splitter_update_loader_types(entity)
     end
 end)
 
@@ -358,8 +477,10 @@ on_event(defines.events.on_player_rotated_entity, function(e)
         loader.rotate()
         update_inserters(loader)
         update_filters(entity)
-    elseif entity.type == 'transport-belt' or entity.type == 'underground-belt' or entity.type == 'splitter' then
+    elseif entity.type == 'transport-belt' or entity.type == 'underground-belt' then
         snap_to_belt(entity)
+	elseif entity.type == 'splitter' or entity.type == 'loader' then
+		snap_to_splitter(entity)
     end
 end)
 
