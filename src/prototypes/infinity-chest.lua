@@ -32,7 +32,7 @@ end
 -- ------------------------------------------------------------------------------------------
 -- ENTITIES
 
-data.raw['infinity-container']['infinity-chest'].inventory_size = 2^16 - 1
+data.raw['infinity-container']['infinity-chest'].inventory_size = 100
 data.raw['infinity-container']['infinity-chest'].gui_mode = 'all'
 
 local ic_entity = table.deepcopy(data.raw['infinity-container']['infinity-chest'])
@@ -54,7 +54,7 @@ for lm,d in pairs(chest_data) do
     chest.logistic_slots_count = d.s
     chest.minable.result = 'infinity-chest-' .. lm
     chest.render_not_in_network_icon = true
-    chest.inventory_size = 2^16 - 1
+    chest.inventory_size = 100
     data:extend{chest}
 end
 
