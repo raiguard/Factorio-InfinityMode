@@ -335,28 +335,29 @@ local events_def = {
     infinity_wagon = {
         on_tick = {{defines.events.on_tick}, function(e)
             for _,t in pairs(global.wagons) do
-                if t.wagon.valid and t.ref.valid then
+                if t.wagon.valid and t.proxy.valid then
                     if t.wagon_name == 'infinity-cargo-wagon' then
                         if t.flip == 0 then
                             t.wagon_inv.clear()
-                            for n,c in pairs(t.ref_inv.get_contents()) do t.wagon_inv.insert{name=n, count=c} end
+                            for n,c in pairs(t.proxy_inv.get_contents()) do t.wagon_inv.insert{name=n, count=c} end
                             t.flip = 1
                         elseif t.flip == 1 then
-                            t.ref_inv.clear()
-                            for n,c in pairs(t.wagon_inv.get_contents()) do t.ref_inv.insert{name=n, count=c} end
+                            t.proxy_inv.clear()
+                            for n,c in pairs(t.wagon_inv.get_contents()) do t.proxy_inv.insert{name=n, count=c} end
                             t.flip = 0
                         end
                     elseif t.wagon_name == 'infinity-fluid-wagon' then
                         if t.flip == 0 then
-                            local fluid = t.ref_fluidbox[1]
+                            local fluid = t.proxy_fluidbox[1]
                             t.wagon_fluidbox[1] = fluid and {name=fluid.name, amount=(abs(fluid.amount) * 250), temperature=fluid.temperature} or nil
                             t.flip = 1
                         elseif t.flip == 1 then
                             local fluid = t.wagon_fluidbox[1]
-                            t.ref_fluidbox[1] = fluid and {name=fluid.name, amount=(abs(fluid.amount) / 250), temperature=fluid.temperature} or nil
+                            t.proxy_fluidbox[1] = fluid and {name=fluid.name, amount=(abs(fluid.amount) / 250), temperature=fluid.temperature} or nil
                             t.flip = 0
                         end
                     end
+                    t.proxy.teleport(t.wagon.position)
                 end
             end
         end}

@@ -1,6 +1,7 @@
 local abs = math.abs
 local event = require('__stdlib__/stdlib/event/event')
 local on_event = event.register
+local position = require('__stdlib__/stdlib/area/position')
 local util = require('scripts/util/util')
 
 local conditional_event = require('scripts/util/conditional-event')
@@ -15,7 +16,7 @@ end)
 on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built, defines.events.script_raised_revive}, function(e)
     local entity = e.created_entity or e.entity
     if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
-        local ref = game.surfaces.soh.create_entity{name = 'infinity-' .. (entity.name == 'infinity-cargo-wagon' and 'chest' or 'pipe'), position = {0,0}, force = entity.force}
+        local proxy = entity.surface.create_entity{name = 'infinity-wagon-' .. (entity.name == 'infinity-cargo-wagon' and 'chest' or 'pipe'), position = entity.position, force = entity.force}
         if table_size(global.wagons) == 0 then
             conditional_event.register('infinity_wagon.on_tick')
         end
@@ -25,9 +26,9 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
             wagon_name = entity.name,
             wagon_inv = entity.get_inventory(defines.inventory.cargo_wagon),
             wagon_fluidbox = entity.fluidbox,
-            ref = ref,
-            ref_inv = ref.get_inventory(defines.inventory.chest),
-            ref_fluidbox = ref.fluidbox,
+            proxy = proxy,
+            proxy_inv = proxy.get_inventory(defines.inventory.chest),
+            proxy_fluidbox = proxy.fluidbox,
             flip = 0
         }
     end
@@ -55,7 +56,7 @@ end)
 on_event({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity, defines.events.on_entity_died, defines.events.script_raised_destroy}, function(e)
     local entity = e.entity
     if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
-        global.wagons[entity.unit_number].ref.destroy()
+        global.wagons[entity.unit_number].proxy.destroy()
         global.wagons[entity.unit_number] = nil
         if table_size(global.wagons) == 0 then
             conditional_event.deregister('infinity_wagon.on_tick')
@@ -68,22 +69,24 @@ on_event('iw-open-gui', function(e)
     local player = util.get_player(e)
     local selected = player.selected
     if selected and (selected.name == 'infinity-cargo-wagon' or selected.name == 'infinity-fluid-wagon') then
-        player.opened = global.wagons[selected.unit_number].ref
+        if position.distance(player.position, selected.position) <= player.reach_distance then
+            player.opened = global.wagons[selected.unit_number].proxy
+        end
     end
 end)
 
 -- override cargo wagon's default GUI opening
 on_event(defines.events.on_gui_opened, function(e)
     if e.entity and e.entity.name == 'infinity-cargo-wagon' then
-        game.players[e.player_index].opened = global.wagons[e.entity.unit_number].ref
+        game.players[e.player_index].opened = global.wagons[e.entity.unit_number].proxy
     end
 end)
 
 -- when an entity copy/paste happens
 on_event(defines.events.on_entity_settings_pasted, function(e)
     if e.source.name == 'infinity-cargo-wagon' and e.destination.name == 'infinity-cargo-wagon' then
-        global.wagons[e.destination.unit_number].ref.copy_settings(global.wagons[e.source.unit_number].ref)
+        global.wagons[e.destination.unit_number].proxy.copy_settings(global.wagons[e.source.unit_number].proxy)
     elseif e.source.name == 'infinity-fluid-wagon' and e.destination.name == 'infinity-fluid-wagon' then
-        global.wagons[e.destination.unit_number].ref.copy_settings(global.wagons[e.source.unit_number].ref)
+        global.wagons[e.destination.unit_number].proxy.copy_settings(global.wagons[e.source.unit_number].proxy)
     end
 end)

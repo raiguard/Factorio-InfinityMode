@@ -1,3 +1,5 @@
+local sprites = require('__stdlib__/stdlib/data/modules/sprites')
+
 -- ------------------------------------------------------------------------------------------
 -- ITEMS
 
@@ -73,7 +75,28 @@ for i=1,2 do
     apply_infinity_tint(l_entity.pictures.layers[i].hr_version)
 end
 
-data:extend{cw_entity, fw_entity, l_entity}
+-- non-interactable chest and pipe
+local ic_entity = table.deepcopy(data.raw['infinity-container']['infinity-chest'])
+ic_entity.name = 'infinity-wagon-chest'
+ic_entity.picture = sprites.empty_picture()
+ic_entity.collision_mask = {'layer-15'}
+ic_entity.selection_box = nil
+ic_entity.selectable_in_game = false
+ic_entity.flags = {'hide-alt-info'}
+
+local ip_entity = table.deepcopy(data.raw['infinity-pipe']['infinity-pipe'])
+ip_entity.name = 'infinity-wagon-pipe'
+ip_entity.collision_mask = {'layer-15'}
+ip_entity.selection_box = nil
+ip_entity.selectable_in_game = false
+ip_entity.order = 'a'
+ip_entity.flags = {'hide-alt-info'}
+
+for k,t in pairs(ip_entity.pictures) do
+    ip_entity.pictures[k] = sprites.empty_picture()
+end
+
+data:extend{cw_entity, fw_entity, l_entity, ic_entity, ip_entity}
 
 -- ------------------------------------------------------------------------------------------
 -- CUSTOM INPUTS
