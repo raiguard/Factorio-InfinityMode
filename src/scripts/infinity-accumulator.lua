@@ -65,7 +65,7 @@ local function change_ia_mode_or_priority(e)
     }
     entity.destroy()
     set_ia_params(new_entity, mode, data.slider.slider_value, data.slider_dropdown.selected_index * 3)
-    refresh_ia_gui(util.get_player(e), new_entity)
+    return new_entity
 end
 
 -- ----------------------------------------------------------------------------------------------------
@@ -128,11 +128,11 @@ on_event(defines.events.on_gui_opened, function(e)
 end)
 
 gui.on_selection_state_changed('im_ia_mode_dropdown', function(e)
-    change_ia_mode_or_priority(e)
+    refresh_ia_gui(util.get_player(e), change_ia_mode_or_priority(e))
 end)
 
 gui.on_selection_state_changed('im_ia_priority_dropdown', function(e)
-    change_ia_mode_or_priority(e)
+    refresh_ia_gui(util.get_player(e), change_ia_mode_or_priority(e))
 end)
 
 gui.on_value_changed('im_ia_slider', function(e)
