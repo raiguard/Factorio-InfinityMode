@@ -7,14 +7,14 @@ local table = require('__stdlib__/stdlib/utils/table')
 local ip_item = data.raw['item']['infinity-pipe']
 ip_item.icons = {apply_infinity_tint(ip_item.icons[1])}
 ip_item.subgroup = 'im-misc'
-ip_item.order = 'ab'
+ip_item.order = 'ac'
 ip_item.stack_size = 50
 ip_item.flags = {}
 
 -- heat interface
 local hi_item = data.raw['item']['heat-interface']
 hi_item.subgroup = 'im-misc'
-hi_item.order = 'ac'
+hi_item.order = 'ad'
 hi_item.stack_size = 50
 hi_item.icons = {apply_infinity_tint{icon=data.raw['item']['heat-pipe'].icon, icon_size=data.raw['item']['heat-pipe'].icon_size}}
 hi_item.flags = {}
@@ -43,7 +43,15 @@ lab_item.place_result = 'infinity-lab'
 lab_item.subgroup = 'im-misc'
 lab_item.order = 'ca'
 
-data:extend{ip_item, hi_item, ir_item, ib_item, lab_item}
+-- infinity inserter
+local ii_item = table.deepcopy(data.raw['item']['filter-inserter'])
+ii_item.name = 'infinity-inserter'
+ii_item.icons = {apply_infinity_tint{icon=ii_item.icon, icon_size=ii_item.icon_size, icon_mipmaps=ii_item.icon_mipmaps}}
+ii_item.place_result = 'infinity-inserter'
+ii_item.subgroup = 'im-misc'
+ii_item.order = 'ab'
+
+data:extend{ip_item, hi_item, ir_item, ib_item, lab_item, ii_item}
 
 data:extend{
     {
@@ -70,7 +78,8 @@ data:extend{
     }
 }
 
-register_recipes{'infinity-pipe', 'heat-interface', 'infinity-radar', 'infinity-beacon', 'infinity-lab', 'infinity-fusion-reactor-equipment', 'infinity-personal-roboport-equipment'}
+register_recipes{'infinity-pipe', 'heat-interface', 'infinity-radar', 'infinity-beacon', 'infinity-lab', 'infinity-inserter',
+    'infinity-fusion-reactor-equipment', 'infinity-personal-roboport-equipment'}
 
 
 -- ------------------------------------------------------------------------------------------
@@ -142,7 +151,25 @@ for _,k in pairs{'on_animation', 'off_animation'} do
     end
 end
 
-data:extend{ir_entity, ib_entity, lab_entity}
+-- infinity inserter
+local ii_entity = table.deepcopy(data.raw['inserter']['filter-inserter'])
+ii_entity.name = 'infinity-inserter'
+ii_entity.icons = ii_item.icons
+ii_entity.minable.result = 'infinity-inserter'
+ii_entity.energy_source = {type='void'}
+ii_entity.energy_usage = '1W'
+ii_entity.stack = true
+ii_entity.filter_count = 5
+ii_entity.extension_speed = 1
+ii_entity.rotation_speed = 0.5
+for _,k in pairs{'hand_base_picture', 'hand_closed_picture', 'hand_open_picture'} do
+    apply_infinity_tint(ii_entity[k])
+    apply_infinity_tint(ii_entity[k].hr_version)
+end
+apply_infinity_tint(ii_entity.platform_picture.sheet)
+apply_infinity_tint(ii_entity.platform_picture.sheet.hr_version)
+
+data:extend{ir_entity, ib_entity, lab_entity, ii_entity}
 
 
 -- ------------------------------------------------------------------------------------------
