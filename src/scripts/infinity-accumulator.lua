@@ -1,14 +1,18 @@
 -- ----------------------------------------------------------------------------------------------------
 -- INFINITY ACCUMULATOR CONTROL SCRIPTING
 
-local on_event = require('__stdlib__/stdlib/event/event').register
+local event = require('__stdlib__/stdlib/event/event')
 local gui = require('__stdlib__/stdlib/event/gui')
+local on_event = event.register
 local util = require('scripts/util/util')
 
 -- GUI ELEMENTS
 local ia_page = require('scripts/util/gui-elems/ia-page')
 local entity_camera = require('scripts/util/gui-elems/entity-camera')
 local titlebar = require('scripts/util/gui-elems//titlebar')
+
+-- ----------------------------------------------------------------------------------------------------
+-- UTILITIES
 
 local entity_list = {
     ['infinity-accumulator-primary-input'] = true,
@@ -19,18 +23,50 @@ local entity_list = {
 }
 
 local function check_is_accumulator(e)
-    if not e then return false end
-    for n,t in pairs(entity_list) do
-        if e.name == n then return true end
-    end
-    return false
+    return e and entity_list[e.name] or false
 end
 
--- on_event(defines.events.on_entity_settings_pasted, function(e)
---     if check_is_accumulator(e.source) and check_is_accumulator(e.destination) and e.source.name ~= e.destination.name then
---         local name = entity.name:gsub('(%a+)-(%a+)-', '')
---     end
--- end)
+local ia_states = {
+    priority = {'primary', 'secondary', 'tertiary'},
+    mode = {'input', 'output', 'buffer'}
+}
+
+local function set_ia_params(entity, mode, value, exponent)
+    entity.power_usage = 0
+    entity.power_production = 0
+    entity.electric_buffer_size = 0
+
+    if mode == 'input' then
+        entity.power_usage = (value * 10^exponent) / 60
+        entity.electric_buffer_size = (value * 10^exponent)
+    elseif mode == 'output' then
+        entity.power_production = (value * 10^exponent) / 60
+        entity.electric_buffer_size = (value * 10^exponent)
+    elseif mode == 'buffer' then
+        entity.electric_buffer_size = (value * 10^exponent)
+    end
+end
+
+local function change_ia_mode_or_priority(e)
+    local data = util.player_table(e.player_index).ia_gui
+    local entity = data.entity
+
+    local priority = ia_states.priority[data.priority_dropdown.selected_index]
+    local mode = ia_states.mode[data.mode_dropdown.selected_index]
+
+    if priority == 'tertiary' and mode ~= 'buffer' then priority = 'primary' end
+    if mode == 'buffer' then priority = 'tertiary' end
+
+    local new_entity = entity.surface.create_entity{
+        name = 'infinity-accumulator-' .. (mode == 'buffer' and 'tertiary' or priority) .. (mode ~= 'buffer' and ('-' .. mode) or ''),
+        position = entity.position,
+        force = entity.force,
+        create_build_effect_smoke = false
+    }
+    entity.destroy()
+    set_ia_params(new_entity, mode, data.slider.slider_value, data.slider_dropdown.selected_index * 3)
+    refresh_ia_gui(util.get_player(e), new_entity)
+end
 
 -- ----------------------------------------------------------------------------------------------------
 -- GUI
@@ -80,55 +116,16 @@ local function create_ia_gui(player, entity)
     return main_frame
 end
 
--- gui management
+-- ----------------------------------------------------------------------------------------------------
+-- LISTENERS
+
+-- GUI MANAGEMENT
+
 on_event(defines.events.on_gui_opened, function(e)
     if check_is_accumulator(e.entity) then
         create_ia_gui(util.get_player(e), e.entity, ia_page).force_auto_center()
     end
 end)
-
--- element handlers
-local ia_states = {
-    priority = {'primary', 'secondary', 'tertiary'},
-    mode = {'input', 'output', 'buffer'}
-}
-
-local function set_ia_params(entity, mode, value, exponent)
-    entity.power_usage = 0
-    entity.power_production = 0
-    entity.electric_buffer_size = 0
-
-    if mode == 'input' then
-        entity.power_usage = (value * 10^exponent) / 60
-        entity.electric_buffer_size = (value * 10^exponent)
-    elseif mode == 'output' then
-        entity.power_production = (value * 10^exponent) / 60
-        entity.electric_buffer_size = (value * 10^exponent)
-    elseif mode == 'buffer' then
-        entity.electric_buffer_size = (value * 10^exponent)
-    end
-end
-
-local function change_ia_mode_or_priority(e)
-    local data = util.player_table(e.player_index).ia_gui
-    local entity = data.entity
-
-    local priority = ia_states.priority[data.priority_dropdown.selected_index]
-    local mode = ia_states.mode[data.mode_dropdown.selected_index]
-
-    if priority == 'tertiary' and mode ~= 'buffer' then priority = 'primary' end
-    if mode == 'buffer' then priority = 'tertiary' end
-
-    local new_entity = entity.surface.create_entity{
-        name = 'infinity-accumulator-' .. (mode == 'buffer' and 'tertiary' or priority) .. (mode ~= 'buffer' and ('-' .. mode) or ''),
-        position = entity.position,
-        force = entity.force,
-        create_build_effect_smoke = false
-    }
-    entity.destroy()
-    set_ia_params(new_entity, mode, data.slider.slider_value, data.slider_dropdown.selected_index * 3)
-    refresh_ia_gui(util.get_player(e), new_entity)
-end
 
 gui.on_selection_state_changed('im_ia_mode_dropdown', function(e)
     change_ia_mode_or_priority(e)
@@ -172,21 +169,18 @@ gui.on_text_changed('im_ia_slider_textfield', function(e)
     set_ia_params(entity, mode, tonumber(text), exponent)
 end)
 
-on_event(defines.events.on_gui_confirmed, function(e)
+gui.on_confirmed('im_ia_slider_textfield', function(e)
     local player_table = util.player_table(e.player_index)
-    local open_gui = player_table.open_gui
-    if open_gui and open_gui.element.name == 'im_ia_window' then
-        local data = player_table.ia_gui
-        local entity = data.entity
-        local mode = ia_states.mode[data.mode_dropdown.selected_index]
-        local exponent = data.slider_dropdown.selected_index * 3
-        if data.prev_textfield_value ~= data.slider_textfield.text then
-            data.slider_textfield.text = data.prev_textfield_value
-            e.element.tooltip = ''
-            e.element.style = 'short_number_textfield'
-            data.slider.slider_value = tonumber(data.prev_textfield_value)
-            set_ia_params(entity, mode, tonumber(data.prev_textfield_value), exponent)
-        end
+    local data = player_table.ia_gui
+    local entity = data.entity
+    local mode = ia_states.mode[data.mode_dropdown.selected_index]
+    local exponent = data.slider_dropdown.selected_index * 3
+    if data.prev_textfield_value ~= data.slider_textfield.text then
+        data.slider_textfield.text = data.prev_textfield_value
+        e.element.tooltip = ''
+        e.element.style = 'short_number_textfield'
+        data.slider.slider_value = tonumber(data.prev_textfield_value)
+        set_ia_params(entity, mode, tonumber(data.prev_textfield_value), exponent)
     end
 end)
 
@@ -200,4 +194,25 @@ gui.on_selection_state_changed('im_ia_slider_dropdown', function(e)
     set_ia_params(entity, mode, data.slider.slider_value, exponent)
 end)
 
--- ----------------------------------------------------------------------------------------------------
+
+-- OTHER LISTENERS
+
+-- -- when an entity settings copy/paste occurs
+-- on_event(defines.events.on_entity_settings_pasted, function(e)
+--     if check_is_accumulator(e.source) and check_is_accumulator(e.destination) and e.source.name ~= e.destination.name then
+        
+--     end
+-- end)
+
+-- when an entity is destroyed
+on_event({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity, defines.events.on_entity_died, defines.events.script_raised_destroy}, function(e)
+    local entity = e.entity
+    if check_is_accumulator(entity) then
+        -- check if any players have the accumulator open
+        for i,t in pairs(global.players) do
+            if t.ia_gui and t.ia_gui.entity == entity then
+                event.dispatch{name=defines.events.on_gui_click, element=t.open_gui.close_button, player_index=i, button=defines.mouse_button_type.left, alt=false, control=false, shift=false}
+            end
+        end
+    end
+end)
