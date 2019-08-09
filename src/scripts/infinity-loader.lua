@@ -26,10 +26,7 @@ local belt_type_patterns = {
     '%-?transport',
     '%-?underground',
     '%-?splitter',
-    'infinity%-loader%-loader%-?'
-}
---This is in a separate table since get_belt_type seems to get confused otherwise.
-local regular_loader_type_patterns = {
+    'infinity%-loader%-loader%-?',
     '%-?loader'
 }
 
@@ -37,16 +34,9 @@ local function get_belt_type(entity)
     local type = belt_type_overrides[entity.name]
 	if not type then
 		type = entity.name
-		-- load the separate table if it's a loader
-		if entity.type ~= 'loader' then
-			for _,pattern in pairs(belt_type_patterns) do
-				type = type:gsub(pattern, '')
-			end
-		else
-			for _,pattern in pairs(regular_loader_type_patterns) do
-			type = type:gsub(pattern, '')
-		end
-		end
+        for _,pattern in pairs(belt_type_patterns) do
+            type = type:gsub(pattern, '')
+        end
 		-- check to see if the loader prototype exists
 		if type ~= '' and not game.entity_prototypes['infinity-loader-loader-'..type] then
 			-- print warning message
@@ -60,7 +50,7 @@ local function get_belt_type(entity)
 end
 
 local function check_is_loader(e)
-    if string.find(e, 'infinity%-loader%-loader') then return true end
+    if e.name:find('infinity%-loader%-loader') then return true end
     return false
 end
 
@@ -231,7 +221,7 @@ local function snap_to_belt(entity, loader_unit_number)
     for _,pos in pairs(tile.adjacent(entity.surface, position.floor(entity.position))) do
         local entities = entity.surface.find_entities_filtered{area=position.to_tile_area(pos), type='underground-belt'} or {}
         for _,e in pairs(entities) do
-            if e.name:find('infinity%-loader%-loader') and (loader_unit_number == nil or (e.unit_number == loader_unit_number)) then
+            if check_is_loader(e) and (loader_unit_number == nil or (e.unit_number == loader_unit_number)) then
                 if loader_facing_belt(e, entity) then
 					if e.direction ~= entity.direction and e.belt_to_ground_type == 'input' then
                         e.rotate()
@@ -255,7 +245,7 @@ local function snap_to_splitter(entity, loader_unit_number)
 	local neighbours = entity.belt_neighbours
 	for i,neighbour_type in ipairs({"inputs", "outputs"}) do
 		for j,neighbour in ipairs(neighbours[neighbour_type]) do
-			if neighbour.name:find('infinity%-loader%-loader') and (loader_unit_number == nil or (neighbour.unit_number == loader_unit_number)) then
+			if check_is_loader(neighbour) and (loader_unit_number == nil or (neighbour.unit_number == loader_unit_number)) then
 				table.insert(change_these, {name=neighbour.name,position=neighbour.position,type=neighbour.type})
 			end
 		end
@@ -303,7 +293,7 @@ local function belt_update_loader_types(entity, loader_unit_number)
         local entities = entity.surface.find_entities_filtered{area=position.to_tile_area(pos), type='underground-belt'} or {}
         for _,e in pairs(entities) do
             -- if the underneathy is an infinity loader
-            if e.name:find('infinity%-loader%-loader') and (loader_unit_number == nil or (e.unit_number == loader_unit_number)) and loader_facing_belt(e, entity) then
+            if check_is_loader(e) and (loader_unit_number == nil or (e.unit_number == loader_unit_number)) and loader_facing_belt(e, entity) then
                 local loader_type = get_belt_type(e)
                 -- if belt types do not match
 				game.print(belt_type)
@@ -324,7 +314,7 @@ local function splitter_update_loader_types(entity, loader_unit_number)
 		local neighbours = entity.belt_neighbours
 		for j,neighbour_type in ipairs({"inputs", "outputs"}) do
 			for k,neighbour in ipairs(neighbours[neighbour_type]) do
-				if neighbour.name:find('infinity%-loader%-loader') and (loader_unit_number == nil or (neighbour.unit_number == loader_unit_number)) then
+				if check_is_loader(neighbour) and (loader_unit_number == nil or (neighbour.unit_number == loader_unit_number)) then
 					local loader_type = get_belt_type(neighbour)
 					if belt_type ~= loader_type then
 						table.insert(change_these, {name=neighbour.name,position=neighbour.position,type=neighbour.type,loader_type=loader_type})
@@ -361,7 +351,7 @@ local function snap_update_placed_loader(entity)
 				local neighbours = connected_entity.belt_neighbours
 				for j,neighbour_type in ipairs({"inputs", "outputs"}) do
 					for k,neighbour in ipairs(neighbours[neighbour_type]) do
-						if neighbour.name:find('infinity%-loader%-loader') and (neighbour.unit_number == entity.unit_number) then
+						if check_is_loader(neighbour) and (neighbour.unit_number == entity.unit_number) then
 							final_mode = entity.belt_to_ground_type
 						end
 					end
@@ -403,7 +393,7 @@ end
 -- picker dollies
 local function picker_dollies_move(e)
     local entity = e.moved_entity
-    if string.find(entity.name, 'infinity%-loader%-logic%-combinator') then
+    if entity.name == 'infinity-loader-logic-combinator' then
         -- destroy all entities in the previous position
         for _,e in pairs(e.moved_entity.surface.find_entities_filtered{position=e.start_pos}) do
             e.destroy()
@@ -471,7 +461,7 @@ end)
 on_event(defines.events.on_player_rotated_entity, function(e)
     local entity = e.entity
     local surface = entity.surface
-    if string.find(entity.name, 'infinity%-loader%-logic%-combinator') then
+    if entity.name == 'infinity-loader-logic-combinator' then
         entity.direction = e.previous_direction
         local loader = entity.surface.find_entities_filtered{type='underground-belt', position=entity.position}[1]
         loader.rotate()
@@ -487,7 +477,7 @@ end)
 -- when an entity is destroyed
 on_event({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity, defines.events.on_entity_died, defines.events.script_raised_destroy}, function(e)
     local entity = e.entity
-    if string.find(entity.name, 'infinity%-loader%-logic%-combinator') then
+    if entity.name == 'infinity-loader-logic-combinator' then
         local entities = entity.surface.find_entities_filtered{position=entity.position}
         for _,e in pairs(entities) do e.destroy() end
     end
