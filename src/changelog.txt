@@ -1,7 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.1
+Date: 2019.8.9
+  Bugfixes:
+    - Fixed a crash when opening a save that didn't previously contain the mod
+
+---------------------------------------------------------------------------------------------------
 Version: 0.2.0
-Date: 2019.08.09
-  Additions:
+Date: 2019.8.9
+  Features:
     - Added dialog to optionally enable the mod when first loaded
     - Added /enable-infinity-mode command
     - Added infinity inserter
@@ -21,6 +27,6 @@ Date: 2019.08.09
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.0
-Date: 2019.08.08
+Date: 2019.8.8
   Features:
     - Initial release

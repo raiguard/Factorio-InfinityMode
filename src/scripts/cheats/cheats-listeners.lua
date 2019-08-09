@@ -240,10 +240,12 @@ on_event({defines.events.on_player_created, defines.events.on_force_created, def
 end)
 
 event.on_configuration_changed(function(e)
-    for i,f in pairs(game.forces) do
-        -- update infinity tool recipes to account for any that might have been added
-        if util.cheat_enabled('force', 'infinity_tools_recipes', f.index) then
-            cheats.update(f, {'force','infinity_tools_recipes'}, true)
+    if global.mod_enabled then
+        for i,f in pairs(game.forces) do
+            -- update infinity tool recipes to account for any that might have been added
+            if util.cheat_enabled('force', 'infinity_tools_recipes', f.index) then
+                cheats.update(f, {'force','infinity_tools_recipes'}, true)
+            end
         end
     end
 end)
