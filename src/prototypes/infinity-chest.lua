@@ -55,6 +55,7 @@ for lm,d in pairs(chest_data) do
     chest.minable.result = 'infinity-chest-' .. lm
     chest.render_not_in_network_icon = true
     chest.inventory_size = 100
+    chest.next_upgrade = nil
     data:extend{chest}
 end
 

@@ -2,7 +2,8 @@
 Version: 0.2.2
 Date: 2019.8.9
   Bugfixes:
-    - Fixed a crash when changing infinty accumulator mode or priority
+    - Fixed a crash when Bob's Logistics is enabled (#5)
+    - Fixed a crash when changing infinity accumulator mode or priority (#6)
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.1
