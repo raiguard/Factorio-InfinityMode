@@ -28,3 +28,9 @@ end
 
 -- delete surface of holding
 if game.surfaces['soh'] then game.delete_surface('soh') end
+
+-- mod enabled metadata
+if global.mod_enabled == nil then
+    global.mod_enabled = true
+    global.dialog_shown = true
+end

@@ -244,4 +244,15 @@ function cheats_gui.refresh(player, parent)
     end
 end
 
+-- create the 'do you want to enable infinity mode?' prompt
+function cheats_gui.create_initial_dialog(player)
+    local window = player.gui.screen.add{type='frame', name='im_enable_window', direction='vertical'}
+    window.style.bottom_padding = 4
+    local titlebar = titlebar.create(window, 'im_enable_titlebar', {label={'gui-initial-dialog.titlebar-label-caption'}, draggable=true})
+    local buttons_flow = window.add{type='flow', name='im_enable_buttons_flow', direction='horizontal'}
+    buttons_flow.add{type='button', name='im_enable_button_yes', style='stretchable_button', caption={'gui-initial-dialog.yes-button-caption'}}
+    buttons_flow.add{type='button', name='im_enable_button_no', style='stretchable_button', caption={'', {'gui-initial-dialog.no-button-caption'}, ' [img=im-info-black-inline]'}, tooltip={'gui-initial-dialog.no-button-tooltip'}}
+    window.force_auto_center()
+end
+
 return cheats_gui

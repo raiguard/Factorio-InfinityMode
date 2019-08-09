@@ -14,14 +14,13 @@ local defs = require('scripts/util/definitions')
 local util = require('scripts/util/util')
 
 -- ----------------------------------------------------------------------------------------------------
--- MOD GUI
+-- SETUP
 
 local function player_setup(e)
     local player = util.get_player(e)
     local flow = mod_gui.get_button_flow(player)
     if not flow.im_button then
         flow.add{type='sprite-button', name='im_button', style=mod_gui.button_style, sprite='im-logo'}
-        -- flow.add{type='button', name='im_DEBUG', style=mod_gui.button_style, caption='DEBUG'}
     end
     cheats.apply_defaults('player', player)
     util.player_table(player).cheats_gui = {
@@ -32,8 +31,7 @@ local function player_setup(e)
     }
 end
 
-event.on_init(function()
-    cheats.create()
+local function enable_infinity_mode()
     for i,p in pairs(game.players) do
         player_setup{player_index=i}
     end
@@ -44,12 +42,45 @@ event.on_init(function()
         cheats.apply_defaults('surface', s)
     end
     cheats.apply_defaults('game', game)
+    global.mod_enabled = true
+    game.print{'chat-message.mod-enabled-message'}
+end
+
+event.on_init(function()
+    global.mod_enabled = false
+    global.prompt_shown = false
+    cheats.create()
+    -- on_player_joined_game does not fire when loading singleplayer worlds that
+    -- have been played before, so we must show the dialog here in that case
+    if not game.is_multiplayer() and #game.players > 0 then
+        global.prompt_shown = true
+        cheats_gui.create_initial_dialog(game.connected_players[1])
+    end
 end)
 
-on_event(defines.events.on_player_created, function(e)
-    player_setup(e)
-    print(serpent.block(global))
+on_event(defines.events.on_player_joined_game, function(e)
+    if global.mod_enabled == false then
+        if global.prompt_shown == false then
+            global.prompt_shown = true
+            local player = util.get_player(e)
+            cheats_gui.create_initial_dialog(player)
+        end
+    end
 end)
+
+gui.on_click('im_enable_button_yes', function(e)
+    e.element.parent.parent.destroy()
+    enable_infinity_mode()
+end)
+
+gui.on_click('im_enable_button_no', function(e)
+    e.element.parent.parent.destroy()
+end)
+
+commands.add_command('enable-infinity-mode', {'chat-message.enable-command-help'}, enable_infinity_mode)
+
+-- ----------------------------------------------------------------------------------------------------
+-- MOD GUI
 
 local function toggle_gui(e)
     local player = util.get_player(e)
@@ -197,11 +228,13 @@ end)
 -- CHEATS
 
 on_event({defines.events.on_player_created, defines.events.on_force_created, defines.events.on_surface_created}, function(e)
-    if e.player_index then
-        cheats.apply_defaults('player', util.get_player(e))
-    elseif e.surface_index then
-        cheats.apply_defaults('surface', game.surfaces[e.surface_index])
-    elseif e.force then
-        cheats.apply_defaults('force', e.force)
+    if global.mod_enabled then
+        if e.player_index then
+            player_setup(e)
+        elseif e.surface_index then
+            cheats.apply_defaults('surface', game.surfaces[e.surface_index])
+        elseif e.force then
+            cheats.apply_defaults('force', e.force)
+        end
     end
 end)

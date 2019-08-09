@@ -13,7 +13,7 @@ function register_recipes(t, free_resource)
                 type = 'recipe',
                 name = free_resource and 'im_free_resource_'..k or 'im_tool_'..k,
                 ingredients = {},
-                enabled = true,
+                enabled = false,
                 result = k
             }
         }
