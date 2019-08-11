@@ -42,12 +42,6 @@ end
 -- ----------------------------------------------------------------------------------------------------
 -- LISTENERS
 
--- on init
-event.on_init(function(e)
-    global.tesseract_chests = {}
-    -- log(#game.item_prototypes..' '..game.entity_prototypes['tesseract-chest'].get_inventory_size(defines.inventory.chest))
-end)
-
 event.on_configuration_changed(function(e)
     -- update filters of all tesseract chests
     update_all_chest_filters()    
