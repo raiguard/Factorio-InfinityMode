@@ -78,6 +78,7 @@ for lm,d in pairs(chest_data) do
     chest.render_not_in_network_icon = true
     chest.inventory_size = 100
     chest.next_upgrade = nil
+    chest.flags = {'player-creation'}
     data:extend{chest}
 end
 
@@ -85,7 +86,6 @@ end
 -- create the chests here to let other mods modify them. increase inventory size in data-final-fixes
 local compilatron_chest = data.raw['container']['compilatron-chest']
 local comp_chest_picture = table.deepcopy(compilatron_chest.picture)
--- logistic chests
 for lm,d in pairs(tess_chest_data) do
     local suffix = lm == '' and lm or '-'..lm
     local chest = table.deepcopy(data.raw['infinity-container']['infinity-chest'..suffix])
@@ -97,5 +97,6 @@ for lm,d in pairs(tess_chest_data) do
     chest.picture.layers[1].hr_version.tint = d.t
     chest.logistic_slots_count = 0
     chest.enable_inventory_bar = false
+    chest.flags = {'player-creation', 'hide-alt-info'}
     data:extend{chest}
 end
