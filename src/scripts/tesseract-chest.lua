@@ -3,8 +3,6 @@
 
 local event = require('__stdlib__/stdlib/event/event')
 local on_event = event.register
-local table = require('__stdlib__/stdlib/utils/table')
-local util = require('scripts/util/util')
 
 -- ----------------------------------------------------------------------------------------------------
 -- UTILITIES
@@ -32,7 +30,7 @@ end
 
 -- set the filters of all existing tesseract chests
 local function update_all_chest_filters()
-    for i,s in pairs(game.surfaces) do
+    for _,s in pairs(game.surfaces) do
         for _,e in pairs(s.find_entities_filtered{name={'tesseract-chest','tesseract-chest-passive-provider','tesseract-chest-storage'}}) do
             update_chest_filters(e)
         end
