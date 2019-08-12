@@ -240,27 +240,19 @@ end
 
 -- snap adjacent loaders to a splitter entity
 local function snap_to_splitter(entity, loader_unit_number)
-    local change_these = {}
 	entity.rotate()
-	local neighbours = entity.belt_neighbours
+	-- deepcopy the table to get around the read-only restriction
+    local neighbours = table.deepcopy(entity.belt_neighbours)
 	for i,neighbour_type in ipairs({"inputs", "outputs"}) do
 		for j,neighbour in ipairs(neighbours[neighbour_type]) do
-			if check_is_loader(neighbour) and (loader_unit_number == nil or (neighbour.unit_number == loader_unit_number)) then
-				table.insert(change_these, {name=neighbour.name,position=neighbour.position,type=neighbour.type})
+            if check_is_loader(neighbour) and (loader_unit_number == nil or (neighbour.unit_number == loader_unit_number)) then
+                neighbour.rotate()
+				update_inserters(neighbour)
+				update_filters(neighbour.surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=neighbour.position}[1])
 			end
 		end
 	end
 	entity.rotate()
-	for _,loader_entity in ipairs(change_these) do
-		local entities = entity.surface.find_entities_filtered{name=loader_entity.name, position=loader_entity.position, type=loader_entity.type}
-		for _,e in pairs(entities) do
-            if util.oppositedirection(e.direction) == entity.direction then
-				e.rotate()
-				update_inserters(e)
-				update_filters(e.surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=e.position}[1])
-			end
-        end
-	end
 end
 
 local function update_loader_type(belt_type, entity)
@@ -296,8 +288,6 @@ local function belt_update_loader_types(entity, loader_unit_number)
             if check_is_loader(e) and (loader_unit_number == nil or (e.unit_number == loader_unit_number)) and loader_facing_belt(e, entity) then
                 local loader_type = get_belt_type(e)
                 -- if belt types do not match
-				game.print(belt_type)
-				game.print(loader_type)
                 if belt_type ~= loader_type then
                     update_loader_type(belt_type, e)
                 end
@@ -309,28 +299,20 @@ end
 -- update adjacent loader types, if necessary
 local function splitter_update_loader_types(entity, loader_unit_number)
     local belt_type = get_belt_type(entity)
-	local change_these = {}
-	for i=1,2 do
-		local neighbours = entity.belt_neighbours
+    for i=1,2 do
+        -- deepcopy the table to get around the read-only restriction
+		local neighbours = table.deepcopy(entity.belt_neighbours)
 		for j,neighbour_type in ipairs({"inputs", "outputs"}) do
 			for k,neighbour in ipairs(neighbours[neighbour_type]) do
 				if check_is_loader(neighbour) and (loader_unit_number == nil or (neighbour.unit_number == loader_unit_number)) then
 					local loader_type = get_belt_type(neighbour)
 					if belt_type ~= loader_type then
-						table.insert(change_these, {name=neighbour.name,position=neighbour.position,type=neighbour.type,loader_type=loader_type})
+						update_loader_type(belt_type, neighbour)
 					end
 				end
 			end
 		end
 		entity.rotate()
-	end
-	for _,loader_entity in ipairs(change_these) do
-		local entities = entity.surface.find_entities_filtered{name=loader_entity.name, position=loader_entity.position, type=loader_entity.type}
-		for _,e in pairs(entities) do
-            if belt_type ~= loader_entity.loader_type then
-                update_loader_type(belt_type, e)
-            end
-        end
 	end
 end
 
