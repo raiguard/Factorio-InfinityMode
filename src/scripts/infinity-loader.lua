@@ -40,7 +40,7 @@ local function get_belt_type(entity)
 		-- check to see if the loader prototype exists
 		if type ~= '' and not game.entity_prototypes['infinity-loader-loader-'..type] then
 			-- print warning message
-			game.print{'chat-message.unable-to-identify-belt-warning'}
+			game.print{'', 'INFINITY MODE: ', {'chat-message.unable-to-identify-belt-warning'}}
 			game.print('belt_name=\''..entity.name..'\', parse_result=\''..type..'\'')
 			-- set to default type
 			type = 'express'
@@ -66,25 +66,6 @@ local function to_vector_2d(direction, longitudinal, orthogonal)
     end
 end
 
--- gets the transport belt, loader, or splitter that the entity is facing
-local function get_connected_belt(entity, flip)
-    local entities = entity.surface.find_entities_filtered{type={'transport-belt','underground-belt','splitter','loader'}, area=position.to_tile_area(position.add(entity.position, to_vector_2d(entity.direction,flip and -1 or 1, 0)))}
-    if entities then return entities[1] end
-    return nil
-end
-
--- returns loader type and mode based on adjacent belts
-local function get_loader_type_and_mode(entity, flip)
-    local connected_belt = get_connected_belt(entity, flip)
-    if connected_belt then
-        return
-            get_belt_type(connected_belt),
-            connected_belt.direction ~= entity.direction and (flip and 'output' or 'input') or (flip and 'input' or 'output')
-    else
-        return 'express', 'output'
-    end
-end
-
 -- 60 items/second / 60 ticks/second / 8 items/tile = X tiles/tick
 local BELT_SPEED_FOR_60_PER_SECOND = 60/60/8
 local function num_inserters(entity)
@@ -98,7 +79,6 @@ local function update_inserters(entity)
     local e_type = entity.belt_to_ground_type
     local e_position = entity.position
     local e_direction = entity.direction
-    local connected_belt = get_connected_belt(entity)
     for i=1,#inserters do
         local side = i > (#inserters/2) and -0.25 or 0.25
         local inserter = inserters[i]
@@ -363,7 +343,7 @@ local function convert_blueprint_loaders(bp)
     for i=1,#entities do
         if entities[i].name == 'infinity-loader-logic-combinator' then
             entities[i].name = 'infinity-loader-dummy-combinator'
-            entities[i].direction = util.oppositedirection(entities[i].direction or defines.direction.north)
+            entities[i].direction = entities[i].direction or defines.direction.north
         end
     end
     bp.set_blueprint_entities(entities)
@@ -380,11 +360,12 @@ local function picker_dollies_move(e)
         for _,e in pairs(e.moved_entity.surface.find_entities_filtered{position=e.start_pos}) do
             e.destroy()
         end
-        local type, mode = get_loader_type_and_mode(entity)
+        local type, mode = 'express', 'output'
         local loader, inserters, chest = create_loader(type, mode, entity.surface, entity.position, entity.direction, entity.force, true)
         -- update entitiy
         update_inserters(loader)
         update_filters(entity)
+        snap_update_placed_loader(loader)
     end
 end
 
@@ -414,11 +395,9 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
     local entity = e.created_entity or e.entity
     -- if the placed entity is an infinity loader
     if entity.name == 'infinity-loader-dummy-combinator' or entity.name == 'infinity-loader-logic-combinator' then
-        -- local type, mode = get_loader_type_and_mode(entity, true)
 		-- Just place the loader with the default values. belt_neighbors requires both entities to exist, so type/mode get set later
-		-- For some reason it still gets placed backwards if mode is set to input at this point
 		local type, mode = 'express', 'output'
-		local direction = entity.name == 'infinity-loader-dummy-combinator' and util.oppositedirection(entity.direction) or entity.direction
+		local direction = entity.direction
         local loader, inserters, chest, combinator = create_loader(type, mode, entity.surface, entity.position, direction, entity.force)
 		-- get previous filters, if any
         local old_control = entity.get_or_create_control_behavior()

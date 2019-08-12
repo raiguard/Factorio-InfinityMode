@@ -44,55 +44,20 @@ data:extend{
         icons = loader_base.icons,
         collision_box = {{-0.05,-0.05},{0.05,0.05}}
     },
-    -- dummy combinator (for placement and blueprints)
+    -- logic combinator (what you actually interact with)
     {
         type = 'constant-combinator',
-        name = 'infinity-loader-dummy-combinator',
+        name = 'infinity-loader-logic-combinator',
         localised_name = {'entity-name.infinity-loader'},
         order = 'a',
         collision_box = loader_base.collision_box,
+        selection_box = loader_base.selection_box,
         fast_replaceable_group = 'transport-belt',
         placeable_by = {item='infinity-loader', count=1},
-        flags = {'player-creation'},
+        minable = {result='infinity-loader', mining_time=0.1},
+        flags = {'player-creation', 'hidden'},
         item_slot_count = 2,
-        icons = loader_base.icons,
-        sprites = {
-            sheets = {
-                apply_infinity_tint{
-                    filename = base_loader_path..'underground-belt-structure-back-patch.png',
-                    width = 96,
-                    height = 96,
-                    hr_version = apply_infinity_tint{
-                        filename = base_loader_path..'hr-underground-belt-structure-back-patch.png',
-                        width = 192,
-                        height = 192,
-                        scale = 0.5
-                    }
-                },
-                apply_infinity_tint{
-                    filename = '__InfinityMode__/graphics/entity/infinity-loader.png',
-                    width = 96,
-                    height = 96,
-                    hr_version = apply_infinity_tint{
-                        filename = '__InfinityMode__/graphics/entity/hr-infinity-loader.png',
-                        width = 192,
-                        height = 192,
-                        scale = 0.5
-                    }
-                },
-                apply_infinity_tint{
-                    filename = base_loader_path..'underground-belt-structure-front-patch.png',
-                    width = 96,
-                    height = 96,
-                    hr_version = apply_infinity_tint{
-                        filename = base_loader_path..'hr-underground-belt-structure-front-patch.png',
-                        width = 192,
-                        height = 192,
-                        scale = 0.5
-                    }
-                }
-            }   
-        },
+        sprites = empty_sheet,
         activity_led_sprites = empty_sheet,
         activity_led_light_offsets = {{0,0}, {0,0}, {0,0}, {0,0}},
         circuit_wire_connection_points = {
@@ -104,15 +69,43 @@ data:extend{
     }
 }
 
--- logic combinator is what is used for the loader logic. it's invisible, but is selectable and minable
-local logic_combinator = table.deepcopy(data.raw['constant-combinator']['infinity-loader-dummy-combinator'])
-logic_combinator.name = 'infinity-loader-logic-combinator'
-logic_combinator.icons = {}
-logic_combinator.sprites = empty_sheet
-logic_combinator.selection_box = loader_base.selection_box
-logic_combinator.minable = {result='infinity-loader', mining_time=0.1}
-logic_combinator.flags = {'player-creation','hidden'}
-data:extend{logic_combinator}
+-- create spritesheet for dummy combinator
+local sprite_files = {
+    {base_loader_path..'underground-belt-structure-back-patch.png', base_loader_path..'hr-underground-belt-structure-back-patch.png'},
+    {'__InfinityMode__/graphics/entity/infinity-loader.png', '__InfinityMode__/graphics/entity/hr-infinity-loader.png'},
+    {base_loader_path..'underground-belt-structure-front-patch.png', base_loader_path..'hr-underground-belt-structure-front-patch.png'},
+}
+local sprite_x = {south=96*0, west=96*1, north=96*2, east=96*3}
+local sprites = {}
+for k,x in pairs(sprite_x) do
+    sprites[k] = {}
+    sprites[k].layers = {}
+    for i,t in pairs(sprite_files) do
+        sprites[k].layers[i] = apply_infinity_tint{
+            filename = t[1],
+            x = x,
+            width = 96,
+            height = 96,
+            hr_version = apply_infinity_tint{
+                filename = t[2],
+                x = x * 2,
+                width = 192,
+                height = 192,
+                scale = 0.5
+            }
+        }
+    end
+end
+
+-- dummy combinator (for placement and blueprints)
+local dummy_combinator = table.deepcopy(data.raw['constant-combinator']['infinity-loader-logic-combinator'])
+dummy_combinator.name = 'infinity-loader-dummy-combinator'
+dummy_combinator.selection_box = nil
+dummy_combinator.minable = nil
+dummy_combinator.flags = {'player-creation'}
+dummy_combinator.icons = loader_base.icons
+dummy_combinator.sprites = sprites
+data:extend{dummy_combinator}
 
 -- inserter
 local filter_inserter = data.raw['inserter']['stack-filter-inserter']
