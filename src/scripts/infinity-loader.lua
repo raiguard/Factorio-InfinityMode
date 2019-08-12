@@ -430,9 +430,16 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
         update_inserters(loader)
         update_filters(combinator)
 		snap_update_placed_loader(loader)
-    elseif entity.type == 'transport-belt' or entity.type == 'underground-belt'  then
+    elseif entity.type == 'transport-belt' then
 		snap_to_belt(entity)
-		belt_update_loader_types(entity)
+        belt_update_loader_types(entity)
+    elseif entity.type == 'underground-belt' then
+        snap_to_belt(entity)
+        belt_update_loader_types(entity)
+        if entity.neighbours then
+            snap_to_belt(entity.neighbours)
+            belt_update_loader_types(entity.neighbours)
+        end
 	elseif entity.type == 'splitter' or entity.type == 'loader' then
 		snap_to_splitter(entity)
 		splitter_update_loader_types(entity)
@@ -449,8 +456,11 @@ on_event(defines.events.on_player_rotated_entity, function(e)
         loader.rotate()
         update_inserters(loader)
         update_filters(entity)
-    elseif entity.type == 'transport-belt' or entity.type == 'underground-belt' then
+    elseif entity.type == 'transport-belt' then
         snap_to_belt(entity)
+    elseif entity.type == 'underground-belt' then
+        snap_to_belt(entity)
+        if entity.neighbours then snap_to_belt(entity.neighbours) end
 	elseif entity.type == 'splitter' or entity.type == 'loader' then
 		snap_to_splitter(entity)
     end
