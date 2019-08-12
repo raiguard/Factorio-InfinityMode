@@ -49,10 +49,11 @@ end
 event.on_init(function()
     global.mod_enabled = false
     global.prompt_shown = false
+    global.lite_mode = false
     cheats.create()
     -- on_player_joined_game does not fire when loading singleplayer worlds that
     -- have been played before, so we must show the dialog here in that case
-    if not game.is_multiplayer() and #game.players > 0 then
+    if not game.is_multiplayer() and #game.connected_players > 0 then
         global.prompt_shown = true
         cheats_gui.create_initial_dialog(game.connected_players[1])
     end
@@ -66,6 +67,10 @@ on_event(defines.events.on_player_joined_game, function(e)
             cheats_gui.create_initial_dialog(player)
         end
     end
+end)
+
+gui.on_click('im_enable_button_yes_lite', function(e)
+    global.lite_mode = true
 end)
 
 gui.on_click('im_enable_button_yes', function(e)

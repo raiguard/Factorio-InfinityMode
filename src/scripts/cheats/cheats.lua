@@ -23,19 +23,20 @@ function cheats.create()
     end
 end
 
-function cheats.apply_defaults(category, obj)
+function cheats.apply_defaults(category, obj, default_ref)
+    local default_ref = default_ref or global.lite_mode and 'lite' or 'full'
     for name,data in pairs(global.cheats[category]) do
         local def = defs.cheats[category][name]
         if def.type == 'action' then
             data[obj.index], data.global = def.functions.setup_global and def.functions.setup_global(obj) or nil
-            if def.default then cheats.trigger_action(obj, {category,name}) end
+            if def.defaults and def.defaults[default_ref] then cheats.trigger_action(obj, {category,name}) end
         else
-            if def.default ~= nil then
-                data[obj.index] = def.functions.setup_global and def.functions.setup_global(obj, def.default) or {cur_value=def.default}
+            if def.defaults and def.defaults[default_ref] ~= nil then
+                data[obj.index] = def.functions.setup_global and def.functions.setup_global(obj, def.defaults[default_ref]) or {cur_value=def.defaults[default_ref]}
                 if data.global == nil then
-                    data.global = def.functions.setup_global_global and def.functions.setup_global_global(obj, def.default) or {}
+                    data.global = def.functions.setup_global_global and def.functions.setup_global_global(obj, def.defaults[default_ref]) or {}
                 end
-                cheats.update(obj, {category,name}, def.default)
+                cheats.update(obj, {category,name}, def.defaults[default_ref])
             else
                 data[category == 'game' and 1 or obj.index] = {cur_value=def.functions.get_value(obj, def, data)}
             end

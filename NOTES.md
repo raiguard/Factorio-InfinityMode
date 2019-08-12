@@ -10,8 +10,8 @@ Each cheat in the cheat table has the following parameters:
 
 ### Defaults
 Each cheat has several defaults:
-- `on` - The cheat's value when set to _default on_.
-- `off` - The cheat's value when set to _default off_.
+- `on` (optional) - The cheat's value when set to _default on_. If left out, the value will not be changed.
+- `off` (optional) - The cheat's value when set to _default off_. If left out, the value will not be changed.
 - `lite` (optional) - The cheat's initial value when _Lite Mode_ is enabled. If left out, the cheat's **get_value()** function will be used to set the initial value.
 - `full` (optional) - The cheat's initial value when _Full Mode_ is enabled. If left out, the cheat's **get_value()** function will be used to set the initial value.
 

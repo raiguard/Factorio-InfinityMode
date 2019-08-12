@@ -77,6 +77,10 @@ local function create_tabbed_pane(player, window_frame)
     local player_table = util.player_table(player)
     local elems_def = defs.cheats_gui_elems
     local content_frame = window_frame.add{type='frame', name='im_cheats_content_frame', style='inside_deep_frame_for_tabs', direction='vertical'}
+    -- local toolbar = content_frame.add{type='frame', name='im_cheats_toolbar_frame', style='subheader_frame'}
+    -- toolbar.style.horizontally_stretchable = true
+    -- toolbar.add{type='empty-widget', name='im_cheats_toolbar_spacer', style='invisible_horizontal_filler'}
+    -- toolbar.add{type='switch', name='im_cheats_toolbar_defaults_switch', allow_none_state=true, switch_state='left', left_label_caption='On', right_label_caption='Off'}
     local tabbed_pane = content_frame.add{type='tabbed-pane', name='im_cheats_tabbed_pane'}
     for category,cheats in pairs(elems_def) do
         local tab = tabbed_pane.add{type='tab', name='im_cheats_'..category..'_tab', caption={'gui-cheats.tab-'..category..'-caption'}}
@@ -250,7 +254,8 @@ function cheats_gui.create_initial_dialog(player)
     window.style.bottom_padding = 4
     local titlebar = titlebar.create(window, 'im_enable_titlebar', {label={'gui-initial-dialog.titlebar-label-caption'}, draggable=true})
     local buttons_flow = window.add{type='flow', name='im_enable_buttons_flow', direction='horizontal'}
-    buttons_flow.add{type='button', name='im_enable_button_yes', style='stretchable_button', caption={'gui-initial-dialog.yes-button-caption'}}
+    buttons_flow.add{type='button', name='im_enable_button_yes_lite', style='stretchable_button', caption={'', {'gui-initial-dialog.yes-lite-button-caption'}, ' [img=im-info-black-inline]'}, tooltip={'gui-initial-dialog.yes-lite-button-tooltip'}}
+    buttons_flow.add{type='button', name='im_enable_button_yes_full', style='stretchable_button', caption={'', {'gui-initial-dialog.yes-full-button-caption'}, ' [img=im-info-black-inline]'}, tooltip={'gui-initial-dialog.yes-full-button-tooltip'}}
     buttons_flow.add{type='button', name='im_enable_button_no', style='stretchable_button', caption={'', {'gui-initial-dialog.no-button-caption'}, ' [img=im-info-black-inline]'}, tooltip={'gui-initial-dialog.no-button-tooltip'}}
     window.force_auto_center()
 end
