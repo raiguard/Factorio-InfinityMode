@@ -1,8 +1,12 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.3.0
-Date: 2019.8.11
+Date: 2019.8.12
   Features:
-    - Added tesseract chests, which contain every item in the game
+    - Added tesseract chests, which contain every item in the game (can cause performance issues if abused!)
+  Changes:
+    - Improved infinity loader belt direction and type snapping logic
+  Bugfixes:
+    - Fixed using pipette on infinity loader returning a loader facing the opposite direction
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.2
