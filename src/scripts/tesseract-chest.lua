@@ -7,11 +7,6 @@ local on_event = event.register
 -- ----------------------------------------------------------------------------------------------------
 -- UTILITIES
 
--- check if the given entity is a tesseract chest
-local function check_is_chest(entity)
-    return entity.name:find('tesseract') and true or false
-end
-
 -- set the filters for the given tesseract chest
 local function update_chest_filters(entity)
     local i = 0
@@ -19,6 +14,7 @@ local function update_chest_filters(entity)
     entity.remove_unfiltered_items = true
     -- set infinity filters
     for n,p in pairs(game.item_prototypes) do
+        -- even though a mining-tool item exists, trying to add it will throw an error
         if p.type ~= 'mining-tool' then
             if include_hidden or not p.has_flag('hidden') then
                 i = i + 1
@@ -56,7 +52,7 @@ end)
 -- when an entity is built
 on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built}, function(e)
     local entity = e.created_entity or e.entity
-    if check_is_chest(entity) then
+    if entity.name:find('tesseract') then
         entity.operable = false
         update_chest_filters(entity)
     end
