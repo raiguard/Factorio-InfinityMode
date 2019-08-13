@@ -23,13 +23,21 @@ local events_def = {
                     local global_table = util.cheat_table('player', 'instant_blueprint', 'global')
                     if util.is_ghost(entity) then
                         -- attempt to revive the ghost
-                        if not entity.revive{raise_revive=true} then
+                        local success, revived, proxy = entity.revive{raise_revive=true, return_item_request_proxy=true}
+                        if not success then
                             -- if the table is empty, register the on_tick event
                             if #global_table.next_tick_entities == 0 then
                                 conditional_event.register('cheats.player.instant_blueprint.next_tick')
                             end
                             -- add the entity to the table
                             table.insert(global_table.next_tick_entities, {tries=1, entity=entity})
+                        elseif revived and proxy then
+                            -- auto-fulfill the item request proxy, then destroy it
+                            local mod_inv = revived.get_module_inventory()
+                            for n,c in pairs(proxy.item_requests) do
+                                mod_inv.insert{name=n, count=c}
+                            end
+                            proxy.destroy()
                         end
                     end
                 end},
