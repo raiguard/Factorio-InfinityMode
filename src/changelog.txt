@@ -5,8 +5,10 @@ Date: 2019.8.12
     - Added tesseract chests, which contain every item in the game (can cause performance issues if abused!)
   Changes:
     - Improved infinity loader belt direction and type snapping logic
+    - Infinity labs will now attempt to automatically support all science packs
   Bugfixes:
     - Fixed using pipette on infinity loader returning a loader facing the opposite direction
+    - Fixed a startup crash when using the ScienceCostTweaker mod
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.2

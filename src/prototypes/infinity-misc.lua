@@ -153,9 +153,15 @@ lab_entity.energy_usage = '1W'
 lab_entity.researching_speed = 100
 lab_entity.module_specification = {module_slots=12}
 for _,k in pairs{'on_animation', 'off_animation'} do
-    for i=1,2 do
-        apply_infinity_tint(lab_entity[k].layers[i])
-        apply_infinity_tint(lab_entity[k].layers[i].hr_version)
+    -- ScienceCostTweaker mod removes the layers, so check for that
+    if lab_entity[k].layers then
+        for i=1,2 do
+            apply_infinity_tint(lab_entity[k].layers[i])
+            apply_infinity_tint(lab_entity[k].layers[i].hr_version)
+        end
+    else
+        apply_infinity_tint(lab_entity[k])
+        if lab_entity[k].hr_version then apply_infinity_tint(lab_entity[k].hr_version) end
     end
 end
 
