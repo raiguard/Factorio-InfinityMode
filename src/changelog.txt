@@ -6,6 +6,7 @@ Date: 2019.8.12
   Changes:
     - Improved infinity loader belt direction and type snapping logic
     - Infinity labs will now attempt to automatically support all science packs
+    - Infinity personal fusion reactor no longer inherits changes from other mods
   Bugfixes:
     - Fixed using pipette on infinity loader returning a loader facing the opposite direction
     - Fixed a startup crash when using the ScienceCostTweaker mod

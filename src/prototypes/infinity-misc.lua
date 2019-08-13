@@ -204,11 +204,23 @@ data:extend{ir_entity, ib_entity, lab_entity, ii_entity, ip_entity}
 -- ------------------------------------------------------------------------------------------
 -- EQUIPMENT
 
-local pfr_equipment = table.deepcopy(data.raw['generator-equipment']['fusion-reactor-equipment'])
-pfr_equipment.name = 'infinity-fusion-reactor-equipment'
-pfr_equipment.sprite = apply_infinity_tint(pfr_equipment.sprite)
-pfr_equipment.shape = {width=1, height=1, type='full'}
-pfr_equipment.power = '1000YW'
+-- infinity personal fusion reactor
+data:extend{
+    {
+        type = 'generator-equipment',
+        name = 'infinity-fusion-reactor-equipment',
+        sprite = apply_infinity_tint{
+            filename = "__base__/graphics/equipment/fusion-reactor-equipment.png",
+            width = 128,
+            height = 128,
+            priority = "medium"
+        },
+        shape = {width=1, height=1, type='full'},
+        energy_source = {type='electric', usage_priority='primary-output'},
+        power = '1000YW',
+        categories = {'armor'}
+    }
+}
 
 local pr_equipment = table.deepcopy(data.raw['roboport-equipment']['personal-roboport-mk2-equipment'])
 pr_equipment.name = 'infinity-personal-roboport-equipment'
@@ -219,7 +231,7 @@ pr_equipment.charging_station_count = 1000
 pr_equipment.robot_limit = 1000
 pr_equipment.construction_radius = 100
 
-data:extend{pfr_equipment, pr_equipment}
+data:extend{pr_equipment}
 
 
 -- ------------------------------------------------------------------------------------------
