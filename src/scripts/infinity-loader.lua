@@ -10,6 +10,10 @@ local tile = require('__stdlib__/stdlib/area/tile')
 local on_event = event.register
 local util = require('scripts/util/util')
 
+-- gui elements
+local entity_camera = require('scripts/util/gui-elems/entity-camera')
+local titlebar = require('scripts/util/gui-elems/titlebar')
+
 -- ----------------------------------------------------------------------------------------------------
 -- UTILITIES
 
@@ -370,6 +374,49 @@ local function picker_dollies_move(e)
 end
 
 -- ----------------------------------------------------------------------------------------------------
+-- GUI
+
+-- create the GUI
+local function create_gui(player, combinator)
+    local window = player.gui.screen.add{type='frame', name='im_loader_window', style='dialog_frame', direction='vertical'}
+    local titlebar = titlebar.create(window, 'im_loader_titlebar', {
+        label=combinator.localised_name,
+        draggable = true,
+        buttons={
+            {
+                name = 'close',
+                sprite = 'utility/close_white',
+                hovered_sprite = 'utility/close_black',
+                clicked_sprite = 'utility/close_black'
+            }
+    }})
+    local lower_flow = window.add{type='flow', name='im_loader_lower_flow', direction='horizontal'}
+    lower_flow.style.horizontal_spacing = 12
+    entity_camera.create(lower_flow, 'im_loader_camera', 110, {player=player, entity=combinator, camera_zoom=1.25})
+    local page = lower_flow.add{type='frame', name='im_loader_page', style='entity_dialog_page_frame', direction='vertical'}
+    page.style.minimal_width = 200
+    page.style.vertically_stretchable = true
+
+    -- enabled/disabled
+    local state_flow = page.add{type='flow', name='im_loader_state_flow', direction='horizontal'}
+    state_flow.add{type='label', name='im_loader_state_label', caption={'', {'gui-infinity-loader.state-label-caption'}, ' [img=info]'}, tooltip={'gui-infinity-loader.state-label-tooltip'}}
+    -- currently crashes the game, wait for 0.17.65
+    -- state_flow.add{type='switch', name='im_loader_state_switch', left_label_caption={'gui-constant.on'}, right_label_caption={'gui-constant.off'}}
+    page.add{type='empty-widget', name='im_loader_page_filler', style='invisible_vertical_filler'}
+    -- filters
+    local filters_flow = page.add{type='flow', name='im_loader_filters_flow', direction='horizontal'}
+    filters_flow.style.vertical_align = 'center'
+    filters_flow.add{type='label', name='im_loader_filters_label', caption={'gui-infinity-loader.filters-label-caption'}}
+    filters_flow.add{type='empty-widget', name='im_loader_filters_filler', style='invisible_horizontal_filler'}
+    -- local buttons_flow = filters_flow.add{type='frame', name='im_loader_filters_frame', style='inside_deep_frame'}.add{type='flow', name='im_loader_filters_buttons_flow', direction='horizontal'}
+    filters_flow.style.horizontal_spacing = 0
+    filters_flow.add{type='choose-elem-button', name='im_loader_filters_button_left', style='quick_bar_slot_button', elem_type='item'}
+    filters_flow.add{type='choose-elem-button', name='im_loader_filters_button_right', style='quick_bar_slot_button', elem_type='item'}
+    window.force_auto_center()
+    util.set_open_gui(player, window, titlebar.children[3])
+end
+
+-- ----------------------------------------------------------------------------------------------------
 -- LISTENERS
 
 -- interface to allow conditional on_tick to update the filters
@@ -468,23 +515,20 @@ end)
 on_event(defines.events.on_gui_opened, function(e)
     local entity = e.entity
     if entity and entity.name == 'infinity-loader-logic-combinator' then
-        if #global.loaders == 0 then
-            conditional_event.register('infinity_loader.on_tick')
-        end
-        global.loaders[entity.unit_number] = entity
+        create_gui(util.get_player(e), entity)
     end
 end)
 
--- when a player closes a GUI
-on_event(defines.events.on_gui_closed, function(e)
-    local entity = e.entity
-    if entity and entity.name == 'infinity-loader-logic-combinator' then
-        global.loaders[entity.unit_number] = nil
-        if #global.loaders == 0 then
-            conditional_event.deregister('infinity_loader.on_tick')
-        end
-    end
-end)
+-- -- when a player closes a GUI
+-- on_event(defines.events.on_gui_closed, function(e)
+--     local entity = e.entity
+--     if entity and entity.name == 'infinity-loader-logic-combinator' then
+--         -- global.loaders[entity.unit_number] = nil
+--         -- if #global.loaders == 0 then
+--         --     conditional_event.deregister('infinity_loader.on_tick')
+--         -- end
+--     end
+-- end)
 
 -- when an entity settings copy/paste occurs
 on_event(defines.events.on_entity_settings_pasted, function(e)
