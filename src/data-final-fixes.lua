@@ -1,3 +1,4 @@
+-- TESSERACT CHEST
 local to_check = {
     'ammo',
     'armor',
@@ -32,3 +33,15 @@ for _,p in pairs(data.raw['infinity-container']) do
         p.inventory_size = slot_count
     end
 end
+
+-- INFINITY LAB
+local lab = data.raw['lab']['infinity-lab']
+-- fill this table with any future science pack names that don't match the pattern
+local pattern_overrides = {}
+local packs = {}
+for _,p in pairs(data.raw['tool']) do
+    if p.name:find('science%-pack') then
+        table.insert(packs, p.name)
+    end
+end
+lab.inputs = packs
