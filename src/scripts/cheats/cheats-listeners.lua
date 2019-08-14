@@ -45,7 +45,6 @@ local function enable_infinity_mode(default_ref)
     cheats.apply_defaults('game', game)
     global.mod_enabled = true
     game.print{'chat-message.mod-enabled-message'}
-    print(serpent.block(global))
 end
 
 event.on_init(function()
