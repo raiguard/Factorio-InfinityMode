@@ -81,7 +81,7 @@ end
 local function update_inserters(entity)
     local inserters = entity.surface.find_entities_filtered{name='infinity-loader-inserter', position=entity.position}
     local chest = entity.surface.find_entities_filtered{name='infinity-loader-chest', position=entity.position}[1]
-    local e_type = entity.belt_to_ground_type
+    local e_type = entity.loader_type
     local e_position = entity.position
     local e_direction = entity.direction
     for i=1,#inserters do
@@ -109,16 +109,16 @@ end
 
 -- update inserter and chest filters
 local function update_filters(entity)
-    local loader = entity.surface.find_entities_filtered{type='underground-belt', position=entity.position}[1]
+    local loader = entity.surface.find_entities_filtered{type='loader', position=entity.position}[1]
     local inserters = entity.surface.find_entities_filtered{name='infinity-loader-inserter', position=entity.position}
     local chest = entity.surface.find_entities_filtered{name='infinity-loader-chest', position=entity.position}[1]
     local control = entity.get_control_behavior()
     local enabled = control.enabled
     local filters = control.parameters.parameters
     local inserter_filter_mode
-    if filters[1].signal.name or filters[2].signal.name or loader.belt_to_ground_type == 'output' then
+    if filters[1].signal.name or filters[2].signal.name or loader.loader_type == 'output' then
         inserter_filter_mode = 'whitelist'
-    elseif loader.belt_to_ground_type == 'input' then
+    elseif loader.loader_type == 'input' then
         inserter_filter_mode = 'blacklist'
     end
     -- update inserter filter based on side
@@ -146,7 +146,7 @@ local facing_lib = {
 
 -- check if the given loader is facing the given belt
 local function loader_facing_belt(loader, belt)
-    local op = loader.belt_to_ground_type == 'output' and 'add' or 'subtract'
+    local op = loader.loader_type == 'output' and 'add' or 'subtract'
     if position.equals(position[op](loader.position, facing_lib[loader.direction]), belt.position) then
         return true
     end
@@ -204,11 +204,11 @@ end
 -- snap adjacent loaders to a belt entity
 local function snap_to_belt(entity, loader_unit_number)
     for _,pos in pairs(tile.adjacent(entity.surface, position.floor(entity.position))) do
-        local entities = entity.surface.find_entities_filtered{area=position.to_tile_area(pos), type='underground-belt'} or {}
+        local entities = entity.surface.find_entities_filtered{area=position.to_tile_area(pos), type='loader'} or {}
         for _,e in pairs(entities) do
             if check_is_loader(e) and (loader_unit_number == nil or (e.unit_number == loader_unit_number)) then
                 if loader_facing_belt(e, entity) then
-					if e.direction ~= entity.direction and e.belt_to_ground_type == 'input' then
+					if e.direction ~= entity.direction and e.loader_type == 'input' then
                         e.rotate()
                         update_inserters(e)
                         update_filters(e.surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=e.position}[1])
@@ -245,7 +245,7 @@ local function update_loader_type(belt_type, entity)
 	local position = entity.position
 	local force = entity.force
 	local direction = entity.direction
-	local mode = entity.belt_to_ground_type
+	local mode = entity.loader_type
 	local surface = entity.surface
 	local combinator = entity.surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=position}[1]
 	local control = combinator.get_control_behavior()
@@ -267,7 +267,7 @@ local function belt_update_loader_types(entity, loader_unit_number)
     local belt_type = get_belt_type(entity)
     for _,pos in pairs(tile.adjacent(entity.surface, position.floor(entity.position))) do
         -- find any underneathies
-        local entities = entity.surface.find_entities_filtered{area=position.to_tile_area(pos), type='underground-belt'} or {}
+        local entities = entity.surface.find_entities_filtered{area=position.to_tile_area(pos), type='loader'} or {}
         for _,e in pairs(entities) do
             -- if the underneathy is an infinity loader
             if check_is_loader(e) and (loader_unit_number == nil or (e.unit_number == loader_unit_number)) and loader_facing_belt(e, entity) then
@@ -319,13 +319,13 @@ local function snap_update_placed_loader(entity)
 				for j,neighbour_type in ipairs({"inputs", "outputs"}) do
 					for k,neighbour in ipairs(neighbours[neighbour_type]) do
 						if check_is_loader(neighbour) and (neighbour.unit_number == entity.unit_number) then
-							final_mode = entity.belt_to_ground_type
+							final_mode = entity.loader_type
 						end
 					end
 				end
 				entity.rotate()
 			end
-			if entity.belt_to_ground_type ~= final_mode then
+			if entity.loader_type ~= final_mode then
 				entity.rotate()
 			end
 			snap_to_splitter(connected_entity, entity.unit_number)
@@ -403,11 +403,13 @@ local function create_gui(player, combinator)
     -- enabled/disabled
     local state_flow = page.add{type='flow', name='im_loader_state_flow', direction='horizontal'}
     state_flow.style.vertical_align = 'center'
+    state_flow.style.right_margin = 4
     state_flow.add{type='label', name='im_loader_state_label', caption={'', {'gui-infinity-loader.state-label-caption'}, ' [img=info]'}, tooltip={'gui-infinity-loader.state-label-tooltip'}}
     state_flow.add{type='empty-widget', name='im_loader_state_filler', style='invisible_horizontal_filler'}
-    -- currently crashes the game, wait for 0.17.65
-    -- state_flow.add{type='switch', name='im_loader_state_switch', left_label_caption={'gui-constant.on'}, right_label_caption={'gui-constant.off'}}
-    state_flow.add{type='drop-down', name='im_loader_state_dropdown', items={'On', 'Off'}, selected_index=control.enabled and 1 or 2}.style.width = 63
+    state_flow.add{type='switch', name='im_loader_state_switch', left_label_caption={'gui-constant.on'}, right_label_caption={'gui-constant.off'}}
+    -- local margin = state_flow.add{type='empty-widget', name='im_loader_state_margin', style='invisible_horizontal_filler'}
+    -- margin.style.height = 10
+    -- margin.style.width = 1
     page.add{type='empty-widget', name='im_loader_page_filler', style='invisible_vertical_filler'}
     -- filters
     local filters_flow = page.add{type='flow', name='im_loader_filters_flow', direction='horizontal'}
@@ -431,9 +433,10 @@ gui.on_elem_changed('im_loader_filters_button_', function(e)
     update_filters(entity)
 end)
 
-gui.on_selection_state_changed('im_loader_state_dropdown', function(e)
+on_event(defines.events.on_gui_switch_state_changed, function(e)
+    if not e.element.name == 'im_loader_state_switch' then return end
     local entity = util.player_table(e.player_index).open_gui.entity
-    entity.get_or_create_control_behavior().enabled = e.element.selected_index == 1
+    entity.get_or_create_control_behavior().enabled = e.element.switch_state == 'left'
     update_filters(entity)
 end)
 
@@ -499,7 +502,7 @@ on_event(defines.events.on_player_rotated_entity, function(e)
     local surface = entity.surface
     if entity.name == 'infinity-loader-logic-combinator' then
         entity.direction = e.previous_direction
-        local loader = entity.surface.find_entities_filtered{type='underground-belt', position=entity.position}[1]
+        local loader = entity.surface.find_entities_filtered{type='loader', position=entity.position}[1]
         loader.rotate()
         update_inserters(loader)
         update_filters(entity)
@@ -539,17 +542,6 @@ on_event(defines.events.on_gui_opened, function(e)
         create_gui(util.get_player(e), entity)
     end
 end)
-
--- -- when a player closes a GUI
--- on_event(defines.events.on_gui_closed, function(e)
---     local entity = e.entity
---     if entity and entity.name == 'infinity-loader-logic-combinator' then
---         -- global.loaders[entity.unit_number] = nil
---         -- if #global.loaders == 0 then
---         --     conditional_event.deregister('infinity_loader.on_tick')
---         -- end
---     end
--- end)
 
 -- when an entity settings copy/paste occurs
 on_event(defines.events.on_entity_settings_pasted, function(e)

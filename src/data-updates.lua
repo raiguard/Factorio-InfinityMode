@@ -43,11 +43,16 @@ local function create_loader(base_underground)
     entity.icons = loader_base.icons
     -- basic data
     local suffix = entity.name:gsub('%-?underground%-belt', '')
+    entity.type = 'loader'
     entity.name = 'infinity-loader-loader' .. (suffix ~= '' and '-'..suffix or '')
     entity.next_upgrade = nil
     entity.max_distance = 0
     entity.order = 'a'
     entity.selectable_in_game = false
+    entity.filter_count = 0
+    entity.belt_distance = 0
+    entity.belt_length = 0.6
+    entity.container_distance = 0
     data:extend{entity}
 end
 
