@@ -32,6 +32,9 @@ local function player_setup(e)
 end
 
 local function enable_infinity_mode(default_ref)
+    if type(default_ref) == 'table' then
+        default_ref = default_ref.parameter or 'on'
+    end
     cheats.create(default_ref)
     for i,p in pairs(game.players) do
         player_setup{player_index=i}
@@ -50,6 +53,16 @@ end
 event.on_init(function()
     global.mod_enabled = false
     global.prompt_shown = false
+    -- skip prompt if set to do so
+    local dialog_behavior = settings.global['im-new-map-behavior'].value
+    if dialog_behavior ~= 'Ask' then
+        global.prompt_shown = true
+        if dialog_behavior ~= 'No' then
+            global.mod_enabled = true
+            enable_infinity_mode(dialog_behavior:gsub('Yes, cheats ', ''))
+        end
+        return
+    end
     -- on_player_joined_game does not fire when loading singleplayer worlds that
     -- have been played before, so we must show the dialog here in that case
     if not game.is_multiplayer() and #game.connected_players > 0 then

@@ -4,6 +4,8 @@ Date: 2019.8.12
   Features:
     - Added tesseract chests, which contain every item in the game (can cause performance issues if abused!)
     - Added automatic module insertion to instant blueprint cheat
+    - Added ability to enable the mod with all cheats set to their 'off' values
+    - Added option to skip the initial dialog
   Changes:
     - Improved infinity loader belt direction and type snapping logic
     - Infinity labs will now attempt to automatically support all science packs

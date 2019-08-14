@@ -26,7 +26,6 @@ end
 
 function cheats.apply_defaults(category, obj)
     local default_ref = global.cheats[category].default_ref
-    log(category .. ': ' .. default_ref)
     for name,data in pairs(global.cheats[category]) do
         if name ~= 'default_ref' then
             local def = defs.cheats[category][name]
