@@ -3,7 +3,7 @@ Version: 0.3.0
 Date: 2019.8.12
   Features:
     - Added tesseract chests, which contain every item in the game (can cause performance issues if abused!)
-    - Instant blueprinting will now auto-insert modules into entities that have them
+    - Added automatic module insertion to instant blueprint cheat
   Changes:
     - Improved infinity loader belt direction and type snapping logic
     - Infinity labs will now attempt to automatically support all science packs

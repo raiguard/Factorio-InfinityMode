@@ -381,7 +381,6 @@ end
 local function create_gui(player, combinator)
     local control = combinator.get_or_create_control_behavior()
     local parameters = control.parameters.parameters
-    log(serpent.block(parameters))
     local window = player.gui.screen.add{type='frame', name='im_loader_window', style='dialog_frame', direction='vertical'}
     local titlebar = titlebar.create(window, 'im_loader_titlebar', {
         label=combinator.localised_name,
@@ -403,30 +402,38 @@ local function create_gui(player, combinator)
 
     -- enabled/disabled
     local state_flow = page.add{type='flow', name='im_loader_state_flow', direction='horizontal'}
+    state_flow.style.vertical_align = 'center'
     state_flow.add{type='label', name='im_loader_state_label', caption={'', {'gui-infinity-loader.state-label-caption'}, ' [img=info]'}, tooltip={'gui-infinity-loader.state-label-tooltip'}}
+    state_flow.add{type='empty-widget', name='im_loader_state_filler', style='invisible_horizontal_filler'}
     -- currently crashes the game, wait for 0.17.65
     -- state_flow.add{type='switch', name='im_loader_state_switch', left_label_caption={'gui-constant.on'}, right_label_caption={'gui-constant.off'}}
-    -- state_flow.add{type='drop-down', name='im_loader_state_dropdown', items={'On', 'Off'}, selected_index=control.enabled and 1 or 2}
+    state_flow.add{type='drop-down', name='im_loader_state_dropdown', items={'On', 'Off'}, selected_index=control.enabled and 1 or 2}.style.width = 63
     page.add{type='empty-widget', name='im_loader_page_filler', style='invisible_vertical_filler'}
     -- filters
     local filters_flow = page.add{type='flow', name='im_loader_filters_flow', direction='horizontal'}
     filters_flow.style.vertical_align = 'center'
     filters_flow.add{type='label', name='im_loader_filters_label', caption={'gui-infinity-loader.filters-label-caption'}}
     filters_flow.add{type='empty-widget', name='im_loader_filters_filler', style='invisible_horizontal_filler'}.style.minimal_width = 30
-    -- local buttons_flow = filters_flow.add{type='frame', name='im_loader_filters_frame', style='inside_deep_frame'}.add{type='flow', name='im_loader_filters_buttons_flow', direction='horizontal'}
-    filters_flow.style.horizontal_spacing = 0
-    filters_flow.add{type='choose-elem-button', name='im_loader_filters_button_1', style='quick_bar_slot_button', elem_type='item', item=parameters[1].signal.name}
-    filters_flow.add{type='choose-elem-button', name='im_loader_filters_button_2', style='quick_bar_slot_button', elem_type='item', item=parameters[2].signal.name}
+    local buttons_flow = filters_flow.add{type='frame', name='im_loader_filters_frame', style='shortcut_bar_inner_panel'}.add{type='flow', name='im_loader_filters_buttons_flow', direction='horizontal'}
+    buttons_flow.style.horizontal_spacing = 0
+    buttons_flow.add{type='choose-elem-button', name='im_loader_filters_button_1', style='quick_bar_slot_button', elem_type='item', item=parameters[1].signal.name}
+    buttons_flow.add{type='choose-elem-button', name='im_loader_filters_button_2', style='quick_bar_slot_button', elem_type='item', item=parameters[2].signal.name}
     window.force_auto_center()
     util.set_open_gui(player, window, titlebar.children[3])
     util.player_table(player).open_gui.entity = combinator
 end
 
 -- gui listeners
-gui.on_elem_changed('im_loader_filters_button', function(e)
-    local index = e.element.name:gsub(e.match..'_', '')
+gui.on_elem_changed('im_loader_filters_button_', function(e)
+    local index = e.element.name:gsub(e.match, '')
     local entity = util.player_table(e.player_index).open_gui.entity
     entity.get_or_create_control_behavior().set_signal(index, e.element.elem_value and {signal={type='item', name=e.element.elem_value}, count=1} or nil)
+    update_filters(entity)
+end)
+
+gui.on_selection_state_changed('im_loader_state_dropdown', function(e)
+    local entity = util.player_table(e.player_index).open_gui.entity
+    entity.get_or_create_control_behavior().enabled = e.element.selected_index == 1
     update_filters(entity)
 end)
 
