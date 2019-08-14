@@ -20,7 +20,7 @@ local vanilla_loaders_recipes = {
 -- cheat data and functions
 defs.cheats = {
     player = {
-        god_mode = {type='toggle', defaults={full=false, lite=false, on=false, off=false}, in_god_mode=true, in_editor=false, functions={
+        god_mode = {type='toggle', defaults={on=false, off=false}, in_god_mode=true, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 local player_table = util.player_table(player)
                 local character = player.character
@@ -57,7 +57,7 @@ defs.cheats = {
                 return player.controller_type == defines.controllers.god
             end
         }},
-        invincible_character = {type='toggle', defaults={full=true, lite=true, on=true, off=false}, in_god_mode=false, in_editor=false, functions={
+        invincible_character = {type='toggle', defaults={on=true, off=false}, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then
                     player.character.destructible = not new_value
@@ -67,7 +67,7 @@ defs.cheats = {
                 return player.character and not player.character.destructible or false
             end
         }},
-        instant_blueprint = {type='toggle', defaults={full=true, lite=false, on=true, off=false}, in_god_mode=true, in_editor=false, functions={
+        instant_blueprint = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=false, functions={
             setup_global_global = function(player, default)
                 return {next_tick_entities={}}
             end,
@@ -82,7 +82,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        instant_upgrade = {type='toggle', defaults={full=true, lite=false, on=true, off=false}, in_god_mode=true, in_editor=false, functions={
+        instant_upgrade = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.instant_upgrade.on_marked_for_upgrade')
@@ -94,7 +94,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        instant_deconstruction = {type='toggle', defaults={full=true, lite=false, on=true, off=false}, in_god_mode=true, in_editor=false, functions={
+        instant_deconstruction = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=false, functions={
             setup_global_global = function(player, default)
                 return {next_tick_entities={}}
             end,
@@ -109,7 +109,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        cheat_mode = {type='toggle', defaults={full=true, lite=true, on=true, off=false}, in_god_mode=true, in_editor=false, functions={
+        cheat_mode = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 player.cheat_mode = new_value
             end,
@@ -117,7 +117,7 @@ defs.cheats = {
                 return player.cheat_mode
             end
         }},
-        keep_last_item = {type='toggle', defaults={full=true, lite=false, on=true, off=false}, in_god_mode=true, in_editor=true, functions={
+        keep_last_item = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=true, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.keep_last_item.on_put_item')
@@ -129,7 +129,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        repair_used_item = {type='toggle', defaults={full=true, lite=false, on=true, off=false}, in_god_mode=true, in_editor=true, functions={
+        repair_used_item = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=true, functions={
             setup_global_global = function(player, default)
                 return {cur_players={}}
             end,
@@ -146,7 +146,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        instant_request = {type='toggle', defaults={full=true, lite=false, on=true, off=false}, in_god_mode=false, in_editor=false, functions={
+        instant_request = {type='toggle', defaults={on=true, off=false}, in_god_mode=false, in_editor=false, functions={
             setup_global = function(player, default)
                 return {cur_value=default}
             end,
@@ -167,7 +167,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        instant_trash = {type='toggle', defaults={full=true, lite=false, on=true, off=false}, in_god_mode=false, in_editor=false, functions={
+        instant_trash = {type='toggle', defaults={on=true, off=false}, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.instant_trash.on_trash_inventory_changed')
@@ -180,7 +180,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        character_reach_distance_bonus = {type='number', defaults={full=1000000, lite=1000000, on=1000000, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_reach_distance_bonus = {type='number', defaults={on=1000000, off=0}, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_reach_distance_bonus = new_value end
             end,
@@ -188,7 +188,7 @@ defs.cheats = {
                 return player.character and player.character_reach_distance_bonus
             end
         }},
-        character_build_distance_bonus = {type='number', defaults={full=1000000, lite=1000000, on=1000000, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_build_distance_bonus = {type='number', defaults={on=1000000, off=0}, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_build_distance_bonus = new_value end
             end,
@@ -196,7 +196,7 @@ defs.cheats = {
                 return player.character and player.character_build_distance_bonus
             end
         }},
-        character_resource_reach_distance_bonus = {type='number', defaults={full=1000000, lite=1000000, on=1000000, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_resource_reach_distance_bonus = {type='number', defaults={on=1000000, off=0}, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_resource_reach_distance_bonus = new_value end
             end,
@@ -204,7 +204,7 @@ defs.cheats = {
                 return player.character and player.character_resource_reach_distance_bonus
             end
         }},
-        character_item_drop_distance_bonus = {type='number', defaults={full=1000000, lite=1000000, on=1000000, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_item_drop_distance_bonus = {type='number', defaults={on=1000000, off=0}, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_item_drop_distance_bonus = new_value end
             end,
@@ -212,7 +212,7 @@ defs.cheats = {
                 return player.character and player.character_item_drop_distance_bonus
             end
         }},
-        character_item_pickup_distance_bonus = {type='number', defaults={full=0, lite=0, on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_item_pickup_distance_bonus = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_item_pickup_distance_bonus = new_value end
             end,
@@ -220,7 +220,7 @@ defs.cheats = {
                 return player.character and player.character_item_pickup_distance_bonus
             end
         }},
-        character_loot_pickup_distance_bonus = {type='number', defaults={full=0, lite=0, on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_loot_pickup_distance_bonus = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_loot_pickup_distance_bonus = new_value end
             end,
@@ -228,7 +228,7 @@ defs.cheats = {
                 return player.character and player.character_loot_pickup_distance_bonus
             end
         }},
-        character_mining_speed_modifier = {type='number', defaults={full=1000, lite=0, on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_mining_speed_modifier = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_mining_speed_modifier = new_value end
             end,
@@ -236,7 +236,7 @@ defs.cheats = {
                 return player.character and player.character_mining_speed_modifier
             end
         }},
-        character_running_speed_modifier = {type='number', defaults={full=2, lite=0, on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_running_speed_modifier = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_running_speed_modifier = new_value end
             end,
@@ -244,7 +244,7 @@ defs.cheats = {
                 return player.character and player.character_running_speed_modifier
             end
         }},
-        character_crafting_speed_modifier = {type='number', defaults={full=0, lite=0, on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_crafting_speed_modifier = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_crafting_speed_modifier = new_value end
             end,
@@ -252,7 +252,7 @@ defs.cheats = {
                 return player.character and player.character_crafting_speed_modifier
             end
         }},
-        character_inventory_slots_bonus = {type='number', defaults={full=0, lite=0, on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_inventory_slots_bonus = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_inventory_slots_bonus = new_value end
             end,
@@ -260,7 +260,7 @@ defs.cheats = {
                 return player.character and player.character_inventory_slots_bonus
             end
         }},
-        character_health_bonus = {type='number', defaults={full=0, lite=0, on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_health_bonus = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_health_bonus = new_value end
             end,
@@ -275,7 +275,7 @@ defs.cheats = {
         }}
     },
     force = {
-        instant_research = {type='toggle', defaults={full=true, lite=false, on=true, off=false}, functions={
+        instant_research = {type='toggle', defaults={on=true, off=false}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(force, cheat, 'cheats.force.instant_research.on_research_started')
@@ -287,7 +287,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        infinity_tools_recipes = {type='toggle', defaults={full=true, lite=true, on=true, off=false}, functions={
+        infinity_tools_recipes = {type='toggle', defaults={on=true, off=true}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 for n,r in pairs(game.recipe_prototypes) do
                     if string.find(n, 'im_tool_') and force.recipes[n] then force.recipes[n].enabled = new_value end
@@ -297,7 +297,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        free_resource_recipes = {type='toggle', defaults={full=true, lite=true, on=true, off=false}, functions={
+        free_resource_recipes = {type='toggle', defaults={on=true, off=false}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 for n,r in pairs(game.recipe_prototypes) do
                     if string.find(n, 'im_free_resource_') and force.recipes[n] then force.recipes[n].enabled = new_value end
@@ -307,7 +307,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        vanilla_loaders_recipes = {type='toggle', defaults={full=true, lite=true, on=true, off=false}, functions={
+        vanilla_loaders_recipes = {type='toggle', defaults={on=true, off=false}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 for _,n in pairs(vanilla_loaders_recipes) do
                     if force.recipes[n] then force.recipes[n].enabled = new_value end
@@ -317,7 +317,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        misc_vanilla_recipes = {type='toggle', defaults={full=true, lite=true, on=true, off=false}, functions={
+        misc_vanilla_recipes = {type='toggle', defaults={on=true, off=false}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.recipes['player-port'].enabled = new_value
                 force.recipes['railgun'].enabled = new_value
@@ -327,7 +327,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        character_reach_distance_bonus = {type='number', defaults={full=0, lite=0, on=0, off=0}, functions={
+        character_reach_distance_bonus = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_reach_distance_bonus = new_value
             end,
@@ -335,7 +335,7 @@ defs.cheats = {
                 return force.character_reach_distance_bonus
             end
         }},
-        character_build_distance_bonus = {type='number', defaults={full=0, lite=0, on=0, off=0}, functions={
+        character_build_distance_bonus = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_build_distance_bonus = new_value
             end,
@@ -343,7 +343,7 @@ defs.cheats = {
                 return force.character_build_distance_bonus
             end
         }},
-        character_resource_reach_distance_bonus = {type='number', defaults={full=0, lite=0, on=0, off=0}, functions={
+        character_resource_reach_distance_bonus = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_resource_reach_distance_bonus = new_value
             end,
@@ -351,7 +351,7 @@ defs.cheats = {
                 return force.character_resource_reach_distance_bonus
             end
         }},
-        character_item_drop_distance_bonus = {type='number', defaults={full=0, lite=0, on=0, off=0}, functions={
+        character_item_drop_distance_bonus = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_item_drop_distance_bonus = new_value
             end,
@@ -359,7 +359,7 @@ defs.cheats = {
                 return force.character_item_drop_distance_bonus
             end
         }},
-        character_item_pickup_distance_bonus = {type='number', defaults={full=0, lite=0, on=0, off=0}, functions={
+        character_item_pickup_distance_bonus = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_item_pickup_distance_bonus = new_value
             end,
@@ -367,7 +367,7 @@ defs.cheats = {
                 return force.character_item_pickup_distance_bonus
             end
         }},
-        character_loot_pickup_distance_bonus = {type='number', defaults={full=0, lite=0, on=0, off=0}, functions={
+        character_loot_pickup_distance_bonus = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_loot_pickup_distance_bonus = new_value
             end,
@@ -375,7 +375,7 @@ defs.cheats = {
                 return force.character_loot_pickup_distance_bonus
             end
         }},
-        character_running_speed_modifier = {type='number', defaults={full=0, lite=0, on=0, off=0}, functions={
+        character_running_speed_modifier = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_running_speed_modifier = new_value
             end,
@@ -383,7 +383,7 @@ defs.cheats = {
                 return force.character_running_speed_modifier
             end
         }},
-        character_inventory_slots_bonus = {type='number', defaults={full=0, lite=0, on=0, off=0}, functions={
+        character_inventory_slots_bonus = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_inventory_slots_bonus = new_value
             end,
@@ -391,7 +391,7 @@ defs.cheats = {
                 return force.character_inventory_slots_bonus
             end
         }},
-        character_health_bonus = {type='number', defaults={full=0, lite=0, on=0, off=0}, functions={
+        character_health_bonus = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_health_bonus = new_value
             end,
@@ -423,17 +423,17 @@ defs.cheats = {
                 return force.evolution_factor
             end
         }},
-        chart_all = {type='action', defaults={full=true, lite=false, on=true, off=false}, functions={
+        chart_all = {type='action', defaults={on=true}, functions={
             action = function(force, cheat, cheat_global)
                 force.chart_all()
             end
         }},
-        kill_all_units = {type='action', defaults={full=false, lite=false}, functions={
+        kill_all_units = {type='action', functions={
             action = function(force, cheat, cheat_global)
                 force.kill_all_units()
             end
         }},
-        research_all_technologies = {type='action', defaults={full=true, lite=false}, functions={
+        research_all_technologies = {type='action', defaults={on=true}, functions={
             action = function(force, cheat, cheat_global)
                 force.research_all_technologies()
             end,
@@ -459,7 +459,7 @@ defs.cheats = {
                 return surface.peaceful_mode
             end
         }},
-        dont_generate_biters = {type='toggle', defaults={full=false, lite=false}, functions={
+        dont_generate_biters = {type='toggle', functions={
             value_changed = function(surface, cheat, cheat_global, new_value)
                 if not surface.map_gen_settings.autoplace_controls then return end
                 if new_value then
@@ -474,10 +474,10 @@ defs.cheats = {
                 end
             end,
             get_value = function(surface, cheat, cheat_global)
-                return cheat_global.cur_value
+                return cheat_global.cur_value or false
             end
         }},
-        freeze_time = {type='toggle', defaults={full=true, lite=false}, functions={
+        freeze_time = {type='toggle', defaults={on=true, off=false}, functions={
             value_changed = function(surface, cheat, cheat_global, new_value)
                 surface.freeze_daytime = new_value
             end,
@@ -485,7 +485,7 @@ defs.cheats = {
                 return surface.freeze_daytime
             end 
         }},
-        time_of_day = {type='number', max_value=1, functions={
+        time_of_day = {type='number', defaults={on=0}, max_value=1, functions={
             value_changed = function(surface, cheat, cheat_global, new_value)
                 surface.daytime = new_value
             end,
@@ -507,7 +507,7 @@ defs.cheats = {
                 end
             end
         }},
-        auto_clear_all_entities = {type='toggle', defaults={full=false, lite=false}, functions={
+        auto_clear_all_entities = {type='toggle', functions={
             value_changed = function(surface, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(surface, cheat, 'cheats.surface.auto_clear_all_entities.on_chunk_generated')
@@ -516,7 +516,7 @@ defs.cheats = {
                 end
             end,
             get_value = function(surface, cheat, cheat_global)
-                return cheat_global.cur_value
+                return cheat_global.cur_value or false
             end
         }},
         fill_with_lab_tiles = {type='action', functions={
@@ -534,7 +534,7 @@ defs.cheats = {
                 end
             end
         }},
-        auto_fill_with_lab_tiles = {type='toggle', defaults={full=false, lite=false}, functions={
+        auto_fill_with_lab_tiles = {type='toggle', functions={
             value_changed = function(surface, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(surface, cheat, 'cheats.surface.auto_fill_with_lab_tiles.on_chunk_generated')
@@ -543,7 +543,7 @@ defs.cheats = {
                 end
             end,
             get_value = function(surface, cheat, cheat_global)
-                return cheat_global.cur_value
+                return cheat_global.cur_value or false
             end
         }},
     },

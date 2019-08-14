@@ -254,8 +254,8 @@ function cheats_gui.create_initial_dialog(player)
     window.style.bottom_padding = 4
     local titlebar = titlebar.create(window, 'im_enable_titlebar', {label={'gui-initial-dialog.titlebar-label-caption'}, draggable=true})
     local buttons_flow = window.add{type='flow', name='im_enable_buttons_flow', direction='horizontal'}
-    buttons_flow.add{type='button', name='im_enable_button_yes_lite', style='stretchable_button', caption={'', {'gui-initial-dialog.yes-lite-button-caption'}, ' [img=im-info-black-inline]'}, tooltip={'gui-initial-dialog.yes-lite-button-tooltip'}}
-    buttons_flow.add{type='button', name='im_enable_button_yes_full', style='stretchable_button', caption={'', {'gui-initial-dialog.yes-full-button-caption'}, ' [img=im-info-black-inline]'}, tooltip={'gui-initial-dialog.yes-full-button-tooltip'}}
+    buttons_flow.add{type='button', name='im_enable_button_yes_off', style='stretchable_button', caption={'', {'gui-initial-dialog.yes-off-button-caption'}, ' [img=im-info-black-inline]'}, tooltip={'gui-initial-dialog.yes-off-button-tooltip'}}
+    buttons_flow.add{type='button', name='im_enable_button_yes_on', style='stretchable_button', caption={'', {'gui-initial-dialog.yes-on-button-caption'}, ' [img=im-info-black-inline]'}, tooltip={'gui-initial-dialog.yes-on-button-tooltip'}}
     buttons_flow.add{type='button', name='im_enable_button_no', style='stretchable_button', caption={'', {'gui-initial-dialog.no-button-caption'}, ' [img=im-info-black-inline]'}, tooltip={'gui-initial-dialog.no-button-tooltip'}}
     window.force_auto_center()
 end

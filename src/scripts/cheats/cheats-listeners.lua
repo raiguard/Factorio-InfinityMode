@@ -31,7 +31,8 @@ local function player_setup(e)
     }
 end
 
-local function enable_infinity_mode()
+local function enable_infinity_mode(default_ref)
+    cheats.create(default_ref)
     for i,p in pairs(game.players) do
         player_setup{player_index=i}
     end
@@ -44,13 +45,12 @@ local function enable_infinity_mode()
     cheats.apply_defaults('game', game)
     global.mod_enabled = true
     game.print{'chat-message.mod-enabled-message'}
+    print(serpent.block(global))
 end
 
 event.on_init(function()
     global.mod_enabled = false
     global.prompt_shown = false
-    global.lite_mode = false
-    cheats.create()
     -- on_player_joined_game does not fire when loading singleplayer worlds that
     -- have been played before, so we must show the dialog here in that case
     if not game.is_multiplayer() and #game.connected_players > 0 then
@@ -69,13 +69,9 @@ on_event(defines.events.on_player_joined_game, function(e)
     end
 end)
 
-gui.on_click('im_enable_button_yes_lite', function(e)
-    global.lite_mode = true
-end)
-
-gui.on_click('im_enable_button_yes', function(e)
+gui.on_click('im_enable_button_yes_', function(e)
+    enable_infinity_mode(e.element.name:gsub(e.match, ''))
     e.element.parent.parent.destroy()
-    enable_infinity_mode()
 end)
 
 gui.on_click('im_enable_button_no', function(e)
