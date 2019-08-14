@@ -375,7 +375,7 @@ defs.cheats = {
                 return force.character_loot_pickup_distance_bonus
             end
         }},
-        character_running_speed_modifier = {type='number', defaults={on=0, off=0}, functions={
+        character_running_speed_modifier = {type='number', defaults={on=2, off=0}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_running_speed_modifier = new_value
             end,
