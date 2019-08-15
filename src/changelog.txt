@@ -6,6 +6,7 @@ Date: 2019.8.12
     - Added automatic module insertion to instant blueprint cheat
     - Added ability to enable the mod with all cheats set to their 'off' values
     - Added option to skip the initial dialog
+    - Added custom GUI for infinity loader
   Changes:
     - Improved infinity loader belt direction and type snapping logic
     - Infinity labs will now attempt to automatically support all science packs
@@ -13,6 +14,7 @@ Date: 2019.8.12
   Bugfixes:
     - Fixed using pipette on infinity loader returning a loader facing the opposite direction
     - Fixed a startup crash when using the ScienceCostTweaker mod
+    - Fixed being able to set non-items as filters for infinity loader, which would cause a crash
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.2

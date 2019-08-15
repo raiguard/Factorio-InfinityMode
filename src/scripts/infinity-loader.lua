@@ -403,17 +403,16 @@ local function create_gui(player, combinator)
     -- enabled/disabled
     local state_flow = page.add{type='flow', name='im_loader_state_flow', direction='horizontal'}
     state_flow.style.vertical_align = 'center'
+    state_flow.style.vertically_stretchable = true
     state_flow.style.right_margin = 4
-    state_flow.add{type='label', name='im_loader_state_label', caption={'', {'gui-infinity-loader.state-label-caption'}, ' [img=info]'}, tooltip={'gui-infinity-loader.state-label-tooltip'}}
+    state_flow.add{type='label', name='im_loader_state_label', caption={'gui-infinity-loader.state-label-caption'}}
     state_flow.add{type='empty-widget', name='im_loader_state_filler', style='invisible_horizontal_filler'}
     state_flow.add{type='switch', name='im_loader_state_switch', left_label_caption={'gui-constant.on'}, right_label_caption={'gui-constant.off'}}
-    -- local margin = state_flow.add{type='empty-widget', name='im_loader_state_margin', style='invisible_horizontal_filler'}
-    -- margin.style.height = 10
-    -- margin.style.width = 1
-    page.add{type='empty-widget', name='im_loader_page_filler', style='invisible_vertical_filler'}
     -- filters
     local filters_flow = page.add{type='flow', name='im_loader_filters_flow', direction='horizontal'}
     filters_flow.style.vertical_align = 'center'
+    filters_flow.style.right_margin = 4
+    filters_flow.style.bottom_margin = 3
     filters_flow.add{type='label', name='im_loader_filters_label', caption={'gui-infinity-loader.filters-label-caption'}}
     filters_flow.add{type='empty-widget', name='im_loader_filters_filler', style='invisible_horizontal_filler'}.style.minimal_width = 30
     local buttons_flow = filters_flow.add{type='frame', name='im_loader_filters_frame', style='shortcut_bar_inner_panel'}.add{type='flow', name='im_loader_filters_buttons_flow', direction='horizontal'}
@@ -429,8 +428,15 @@ end
 gui.on_elem_changed('im_loader_filters_button_', function(e)
     local index = e.element.name:gsub(e.match, '')
     local entity = util.player_table(e.player_index).open_gui.entity
-    entity.get_or_create_control_behavior().set_signal(index, e.element.elem_value and {signal={type='item', name=e.element.elem_value}, count=1} or nil)
+    local control = entity.get_or_create_control_behavior()
+    control.set_signal(index, e.element.elem_value and {signal={type='item', name=e.element.elem_value}, count=1} or nil)
     update_filters(entity)
+    -- local loader = entity.surface.find_entities_filtered{type='loader', position=entity.position}[1]
+    -- for i=1,loader.get_max_transport_line_index() do
+    --     local line = loader.get_transport_line(i)
+    --     local name = control.parameters.parameters[i].signal.name
+    --     if name then line.clear() end
+    -- end
 end)
 
 on_event(defines.events.on_gui_switch_state_changed, function(e)
