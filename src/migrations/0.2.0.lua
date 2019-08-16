@@ -1,5 +1,5 @@
 -- ----------------------------------------------------------------------------------------------------
--- INFINITY MODE 0.1.1 MIGRATIONS
+-- INFINITY MODE 0.2.0 MIGRATIONS
 
 for _,t in pairs(global.wagons) do
     -- change global naming scheme from 'ref' to 'proxy'

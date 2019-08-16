@@ -36,10 +36,6 @@ local function create_loader(base_underground)
     local entity = table.deepcopy(data.raw['underground-belt'][base_underground])
     -- adjust pictures and icon
     entity.structure = loader_base.structure
-    -- entity.structure = {
-    --     direction_in = empty_sheet,
-    --     direction_out = empty_sheet
-    -- }
     entity.icons = loader_base.icons
     -- basic data
     local suffix = entity.name:gsub('%-?underground%-belt', '')
