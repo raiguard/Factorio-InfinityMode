@@ -407,9 +407,6 @@ local function create_gui(player, combinator)
     state_flow.add{type='label', name='im_loader_state_label', caption={'', {'gui-infinity-loader.state-label-caption'}, ' [img=info]'}, tooltip={'gui-infinity-loader.state-label-tooltip'}}
     state_flow.add{type='empty-widget', name='im_loader_state_filler', style='invisible_horizontal_filler'}
     state_flow.add{type='switch', name='im_loader_state_switch', left_label_caption={'gui-constant.on'}, right_label_caption={'gui-constant.off'}}
-    -- local margin = state_flow.add{type='empty-widget', name='im_loader_state_margin', style='invisible_horizontal_filler'}
-    -- margin.style.height = 10
-    -- margin.style.width = 1
     page.add{type='empty-widget', name='im_loader_page_filler', style='invisible_vertical_filler'}
     -- filters
     local filters_flow = page.add{type='flow', name='im_loader_filters_flow', direction='horizontal'}
@@ -444,7 +441,13 @@ end)
 -- LISTENERS
 
 -- interface to allow conditional on_tick to update the filters
-remote.add_interface('infinity_mode', {update_loader_filters=update_filters})
+remote.add_interface('InfinityMode', {
+    create_loader = create_loader,
+    update_loader_filters = update_filters,
+    snap_update_placed_loader = snap_update_placed_loader,
+    update_loader_inserters = update_inserters,
+    update_loader_filters = update_filters
+})
 
 event.on_init(function()
     global.loaders = {}
@@ -458,6 +461,38 @@ event.on_load(function()
     -- picker dollies
     if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
         on_event(remote.call("PickerDollies", "dolly_moved_entity_id"), picker_dollies_move)
+    end
+end)
+
+local version = require('__stdlib__/stdlib/vendor/version')
+
+event.on_configuration_changed(function(e)
+    if e.mod_changes['InfinityMode'] then
+        local t = e.mod_changes['InfinityMode']
+        local v = version('0.3.0')
+        if version(t.old_version) < v then
+            -- rebuild all loaders
+            for _,s in pairs(game.surfaces) do
+                for _,e in pairs(s.find_entities_filtered{name='infinity-loader-logic-combinator'}) do
+                    local control = e.get_or_create_control_behavior()
+                    local parameters = control.parameters
+                    local enabled = control.enabled
+                    local position = e.position
+                    local direction = e.direction
+                    local force = e.force
+                    for _,en in pairs(s.find_entities_filtered{position=e.position}) do
+                        en.destroy{}
+                    end
+                    local loader, inserters, chest, combinator = create_loader('express', 'output', s, position, direction, force)
+                    local new_control = combinator.get_or_create_control_behavior()
+                    new_control.parameters = parameters
+                    new_control.enabled = enabled
+                    update_inserters(loader)
+                    update_filters(combinator)
+                    snap_update_placed_loader(loader)
+                end
+            end
+        end
     end
 end)
 
