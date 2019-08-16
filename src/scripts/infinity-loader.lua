@@ -10,6 +10,7 @@ local table = require('__stdlib__/stdlib/utils/table')
 local tile = require('__stdlib__/stdlib/area/tile')
 local on_event = event.register
 local util = require('scripts/util/util')
+local version = require('__stdlib__/stdlib/vendor/version')
 
 -- gui elements
 local entity_camera = require('scripts/util/gui-elems/entity-camera')
@@ -407,7 +408,7 @@ local function create_gui(player, combinator)
     state_flow.style.right_margin = 4
     state_flow.add{type='label', name='im_loader_state_label', caption={'gui-infinity-loader.state-label-caption'}}
     state_flow.add{type='empty-widget', name='im_loader_state_filler', style='invisible_horizontal_filler'}
-    state_flow.add{type='switch', name='im_loader_state_switch', left_label_caption={'gui-constant.on'}, right_label_caption={'gui-constant.off'}}
+    state_flow.add{type='switch', name='im_loader_state_switch', left_label_caption={'gui-constant.on'}, right_label_caption={'gui-constant.off'}, switch_state=control.enabled and 'left' or 'right'}
     -- filters
     local filters_flow = page.add{type='flow', name='im_loader_filters_flow', direction='horizontal'}
     filters_flow.style.vertical_align = 'center'
@@ -472,8 +473,6 @@ event.on_load(function()
         on_event(remote.call("PickerDollies", "dolly_moved_entity_id"), picker_dollies_move)
     end
 end)
-
-local version = require('__stdlib__/stdlib/vendor/version')
 
 event.on_configuration_changed(function(e)
     if e.mod_changes['InfinityMode'] then
@@ -564,6 +563,12 @@ end)
 on_event({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity, defines.events.on_entity_died, defines.events.script_raised_destroy}, function(e)
     local entity = e.entity
     if entity.name == 'infinity-loader-logic-combinator' then
+        if e.player_index then
+            local t = util.player_table(e.player_index)
+            if t.open_gui.entity == entity then
+                event.dispatch{name=defines.events.on_gui_click, element=t.open_gui.close_button, player_index=e.player_index, button=defines.mouse_button_type.left, alt=false, control=false, shift=false}
+            end
+        end
         local entities = entity.surface.find_entities_filtered{position=entity.position}
         for _,e in pairs(entities) do e.destroy() end
     end
