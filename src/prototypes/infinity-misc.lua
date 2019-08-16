@@ -44,7 +44,7 @@ lab_item.subgroup = 'im-misc'
 lab_item.order = 'ea'
 
 -- infinity inserter
-local ii_item = table.deepcopy(data.raw['item']['filter-inserter'])
+local ii_item = table.deepcopy(data.raw['item']['stack-filter-inserter'])
 ii_item.name = 'infinity-inserter'
 ii_item.icons = {apply_infinity_tint{icon=ii_item.icon, icon_size=ii_item.icon_size, icon_mipmaps=ii_item.icon_mipmaps}}
 ii_item.place_result = 'infinity-inserter'
@@ -166,7 +166,7 @@ for _,k in pairs{'on_animation', 'off_animation'} do
 end
 
 -- infinity inserter
-local ii_entity = table.deepcopy(data.raw['inserter']['filter-inserter'])
+local ii_entity = table.deepcopy(data.raw['inserter']['stack-filter-inserter'])
 ii_entity.name = 'infinity-inserter'
 ii_entity.icons = ii_item.icons
 ii_entity.placeable_by = {item='infinity-inserter', count=1}
