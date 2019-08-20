@@ -596,7 +596,7 @@ end)
 -- when an entity settings copy/paste occurs
 on_event(defines.events.on_entity_settings_pasted, function(e)
     if e.destination.name == 'infinity-loader-logic-combinator' then
-        -- sanitize filters to remove any fluids
+        -- sanitize filters to remove any non-ttems
         local parameters = {parameters={}}
         local items = 0
         for i,p in pairs(table.deepcopy(e.source.get_control_behavior().parameters.parameters)) do
