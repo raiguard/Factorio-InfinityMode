@@ -302,6 +302,8 @@ local events_def = {
                     -- check if the player has a character
                     if not player.character then return end
                     player.character.get_inventory(defines.inventory.character_trash).clear()
+                    -- update player requests in case the item was manually transferred
+                    conditional_event.dispatch('cheats.player.instant_request.on_main_inventory_changed', {player_index=e.player_index})
                 end}
             }
         },
@@ -424,6 +426,12 @@ function conditional_event.deregister(def)
         if table_size(events[e]) == 0 then events[e] = nil end
         event.remove(e, object[2])
     end
+end
+
+-- dispatch a conditional event function as if the event was actually fired
+function conditional_event.dispatch(def, args)
+    local object = get_object(def)
+    object[2](args)
 end
 
 -- only register if nobody else has the cheat active
