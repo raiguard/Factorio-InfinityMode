@@ -68,6 +68,7 @@ l_entity.energy_source = {type='void'}
 l_entity.max_speed = 10
 l_entity.reversing_power_modifier = 1
 l_entity.braking_force = 100
+l_entity.minable.result = 'infinity-locomotive'
 l_entity.allow_manual_color = false
 l_entity.color = {r=0, g=0, b=0, a=0.5}
 for i=1,2 do
