@@ -1,10 +1,10 @@
 {
     "name": "InfinityMode",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "title": "Infinity Mode",
     "author": "raiguard",
     "homepage": "https://github.com/raiguard/InfinityMode",
     "factorio_version": "0.17",
-    "dependencies": ["base >= 0.17.60", "stdlib >= 1.2.0"],
+    "dependencies": ["base >= 0.17.65", "stdlib >= 1.2.0"],
     "description": "Inspired by the antiquated Creative Mode mod, Infinity Mode grants access to various items and cheats to make testing easier. Generate or destroy infinite items and fluids, use energy-free and hyperquick versions of many vanilla entities, modify personal, force, surface, and game settings, and more!\n\nUsers of the Creative Mode mod will note vastly improved performance, streamlined tools, and additional features in comparison."
 }
