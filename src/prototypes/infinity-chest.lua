@@ -29,7 +29,7 @@ for lm,d in pairs(chest_data) do
     local chest = table.deepcopy(ic_item)
     chest.name = 'infinity-chest-' .. lm
     chest.localised_description = {'item-description.infinity-chest'}
-    chest.icons = {{icon=chest.icon, tint = d.t}}
+    chest.icons = {{icon=chest.icon, icon_size=chest.icon_size, icon_mipmaps=chest.icon_mipmaps, tint=d.t}}
     chest.place_result = 'infinity-chest-' .. lm
     chest.order = d.o
     chest.flags = {}
@@ -37,8 +37,7 @@ for lm,d in pairs(chest_data) do
     register_recipes{'infinity-chest-'..lm}
 end
 
--- compilatron chest does not have an item, so we must define our own icon here
-local comp_chest_icon = '__base__/graphics/icons/compilatron-chest.png'
+local base_comp_chest = data.raw['container']['compilatron-chest']
 
 -- create tesseract chest items
 for lm,d in pairs(tess_chest_data) do
@@ -46,7 +45,7 @@ for lm,d in pairs(tess_chest_data) do
     local chest = table.deepcopy(ic_item)
     chest.name = 'tesseract-chest'..suffix
     chest.localised_description = {'', '[img=utility/danger_icon] [color=255,57,48]', {'item-description.tesseract-chest-warning'}, '[/color]\n', {'item-description.tesseract-chest'}}
-    chest.icons = {{icon=comp_chest_icon, tint=d.t}}
+    chest.icons = {{icon=base_comp_chest.icon, icon_size=base_comp_chest.icon_size, icon_mipmaps=base_comp_chest.icon_mipmaps, tint=d.t}}
     chest.place_result = 'tesseract-chest'..suffix
     chest.order = d.o
     data:extend{chest}
@@ -61,7 +60,6 @@ data.raw['infinity-container']['infinity-chest'].gui_mode = 'all'
 
 local ic_entity = table.deepcopy(data.raw['infinity-container']['infinity-chest'])
 local inf_chest_picture = table.deepcopy(ic_entity.picture)
-local inf_chest_icon = table.deepcopy(ic_entity.icon)
 
 for lm,d in pairs(chest_data) do
     local chest = table.deepcopy(data.raw['logistic-container']['logistic-chest-' .. lm])
@@ -69,7 +67,7 @@ for lm,d in pairs(chest_data) do
     chest.name = 'infinity-chest-' .. lm
     chest.order = d.o
     chest.subgroup = 'im-inventories'
-    chest.icons = {{icon=inf_chest_icon, tint=d.t}}
+    chest.icons = {{icon=ic_entity.icon, icon_size=ic_entity.icon_size, icon_mipmaps=ic_entity.icon_mipmaps, tint=d.t}}
     chest.erase_contents_when_mined = true
     chest.picture = table.deepcopy(inf_chest_picture)
     chest.picture.layers[1].tint = d.t
@@ -93,7 +91,7 @@ for lm,d in pairs(tess_chest_data) do
     local chest = table.deepcopy(data.raw['infinity-container']['infinity-chest'..suffix])
     chest.name = 'tesseract-chest'..suffix
     chest.order = d.o
-    chest.icons = {{icon=comp_chest_icon, tint=d.t}}
+    chest.icons = {{icon=base_comp_chest.icon, icon_size=base_comp_chest.icon_size, icon_mipmaps=base_comp_chest.icon_mipmaps, tint=d.t}}
     chest.picture = table.deepcopy(comp_chest_picture)
     chest.picture.layers[1].tint = d.t
     chest.picture.layers[1].hr_version.tint = d.t

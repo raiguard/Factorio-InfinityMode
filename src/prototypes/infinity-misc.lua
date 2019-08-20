@@ -12,17 +12,18 @@ ip_item.stack_size = 50
 ip_item.flags = {}
 
 -- heat interface
+local hp_base = data.raw['item']['heat-pipe']
 local hi_item = data.raw['item']['heat-interface']
 hi_item.subgroup = 'im-misc'
 hi_item.order = 'ca'
 hi_item.stack_size = 50
-hi_item.icons = {apply_infinity_tint{icon=data.raw['item']['heat-pipe'].icon, icon_size=data.raw['item']['heat-pipe'].icon_size}}
+hi_item.icons = {apply_infinity_tint{icon=hp_base.icon, icon_size=hp_base.icon_size, icon_mipmaps=hp_base.icon_mipmaps}}
 hi_item.flags = {}
 
 -- infinity radar
 local ir_item = table.deepcopy(data.raw['item']['radar'])
 ir_item.name = 'infinity-radar'
-ir_item.icons = {apply_infinity_tint{icon=ir_item.icon}}
+ir_item.icons = {apply_infinity_tint{icon=ir_item.icon, icon_size=ir_item.icon_size, icon_mipmaps=ir_item.icon_mipmaps}}
 ir_item.place_result = 'infinity-radar'
 ir_item.subgroup = 'im-misc'
 ir_item.order = 'da'
@@ -30,7 +31,7 @@ ir_item.order = 'da'
 -- infinity beacon
 local ib_item = table.deepcopy(data.raw['item']['beacon'])
 ib_item.name = 'infinity-beacon'
-ib_item.icons = {apply_infinity_tint{icon=ib_item.icon}}
+ib_item.icons = {apply_infinity_tint{icon=ib_item.icon, icon_size=ib_item.icon_size, icon_mipmaps=ib_item.icon_mipmaps}}
 ib_item.place_result = 'infinity-beacon'
 ib_item.subgroup='im-modules'
 ib_item.order = 'aa'
@@ -38,7 +39,7 @@ ib_item.order = 'aa'
 -- infinity lab
 local lab_item = table.deepcopy(data.raw['item']['lab'])
 lab_item.name = 'infinity-lab'
-lab_item.icons = {apply_infinity_tint{icon=lab_item.icon}}
+lab_item.icons = {apply_infinity_tint{icon=lab_item.icon, icon_size=lab_item.icon_size, icon_mipmaps=lab_item.icon_mipmaps}}
 lab_item.place_result = 'infinity-lab'
 lab_item.subgroup = 'im-misc'
 lab_item.order = 'ea'
@@ -52,14 +53,17 @@ ii_item.subgroup = 'im-misc'
 ii_item.order = 'ab'
 
 -- infinity pump
-local ip_item = table.deepcopy(data.raw['item']['pump'])
-ip_item.name = 'infinity-pump'
-ip_item.icons = {apply_infinity_tint{icon=ip_item.icon, icon_size=ip_item.icon_size, icon_mipmaps=ip_item.icon_mipmaps}}
-ip_item.place_result = 'infinity-pump'
-ip_item.subgroup = 'im-misc'
-ip_item.order = 'bb'
+local p_item = table.deepcopy(data.raw['item']['pump'])
+p_item.name = 'infinity-pump'
+p_item.icons = {apply_infinity_tint{icon=p_item.icon, icon_size=p_item.icon_size, icon_mipmaps=p_item.icon_mipmaps}}
+p_item.place_result = 'infinity-pump'
+p_item.subgroup = 'im-misc'
+p_item.order = 'bb'
 
-data:extend{ip_item, hi_item, ir_item, ib_item, lab_item, ii_item, ip_item}
+data:extend{ip_item, hi_item, ir_item, ib_item, lab_item, ii_item, p_item}
+
+local reactor_base = data.raw['item']['fusion-reactor-equipment']
+local roboport_base = data.raw['item']['personal-roboport-equipment']
 
 data:extend{
     {
@@ -67,7 +71,7 @@ data:extend{
         type = 'item',
         name = 'infinity-fusion-reactor-equipment',
         icon_size = 32,
-        icons = {apply_infinity_tint{icon=data.raw['item']['fusion-reactor-equipment'].icon}},
+        icons = {apply_infinity_tint{icon=reactor_base.icon, icon_size=reactor_base.icon_size, icon_mipmaps=reactor_base.icon_mipmaps}},
         subgroup = 'im-equipment',
         order = 'aa',
         placed_as_equipment_result = 'infinity-fusion-reactor-equipment',
@@ -78,7 +82,7 @@ data:extend{
         type = 'item',
         name = 'infinity-personal-roboport-equipment',
         icon_size = 32,
-        icons = {apply_infinity_tint{icon=data.raw['item']['personal-roboport-equipment'].icon}},
+        icons = {apply_infinity_tint{icon=roboport_base.icon, icon_size=roboport_base.icon_size, icon_mipmaps=roboport_base.icon_mipmaps}},
         subgroup = 'im-equipment',
         order = 'ab',
         placed_as_equipment_result = 'infinity-personal-roboport-equipment',
@@ -94,8 +98,10 @@ register_recipes{'infinity-pipe', 'heat-interface', 'infinity-radar', 'infinity-
 -- ENTITIES
 
 -- infinity pipe
-data.raw['infinity-pipe']['infinity-pipe'].gui_mode = 'all'
-for name, picture in pairs(data.raw['infinity-pipe']['infinity-pipe'].pictures) do
+local ip_entity = data.raw['infinity-pipe']['infinity-pipe']
+ip_entity.gui_mode = 'all'
+ip_entity.icons = ip_item.icons
+for name, picture in pairs(ip_entity.pictures) do
     if name ~= 'high_temperature_flow' and name ~= 'middle_temperature_flow' and name ~= 'low_temperature_flow' and name ~= 'gas_flow' then
         apply_infinity_tint(picture)
         if picture.hr_version then
@@ -107,16 +113,16 @@ end
 -- heat interface
 local hi_entity = data.raw['heat-interface']['heat-interface']
 hi_entity.gui_mode = 'all'
+hi_entity.icons = hi_item.icons
 hi_entity.picture.filename = '__base__/graphics/entity/heat-pipe/heat-pipe-t-1.png'
 apply_infinity_tint(hi_entity.picture)
-hi_entity.picture.hr_version = {
+hi_entity.picture.hr_version = apply_infinity_tint{
     filename = '__base__/graphics/entity/heat-pipe/hr-heat-pipe-t-1.png',
     width = 64,
     height = 64,
     scale = 0.5,
     flags = {'no-crop'}
 }
-apply_infinity_tint(hi_entity.picture.hr_version)
 
 -- infinity radar
 local ir_entity = table.deepcopy(data.raw['radar']['radar'])
@@ -185,20 +191,20 @@ apply_infinity_tint(ii_entity.platform_picture.sheet)
 apply_infinity_tint(ii_entity.platform_picture.sheet.hr_version)
 
 -- infinity pump
-local ip_entity = table.deepcopy(data.raw['pump']['pump'])
-ip_entity.name = 'infinity-pump'
-ip_entity.icons = ip_item.icons
-ip_entity.placeable_by = {item='infinity-pump', count=1}
-ip_entity.minable = {result='infinity-pump', mining_time=0.1}
-ip_entity.energy_source = {type='void'}
-ip_entity.energy_usage = '1W'
-ip_entity.pumping_speed = 1000
-for k,t in pairs(ip_entity.animations) do
+local p_entity = table.deepcopy(data.raw['pump']['pump'])
+p_entity.name = 'infinity-pump'
+p_entity.icons = ip_item.icons
+p_entity.placeable_by = {item='infinity-pump', count=1}
+p_entity.minable = {result='infinity-pump', mining_time=0.1}
+p_entity.energy_source = {type='void'}
+p_entity.energy_usage = '1W'
+p_entity.pumping_speed = 1000
+for k,t in pairs(p_entity.animations) do
     apply_infinity_tint(t)
     apply_infinity_tint(t.hr_version)
 end
 
-data:extend{ir_entity, ib_entity, lab_entity, ii_entity, ip_entity}
+data:extend{ir_entity, ib_entity, lab_entity, ii_entity, p_entity}
 
 
 -- ------------------------------------------------------------------------------------------

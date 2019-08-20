@@ -6,7 +6,7 @@ data:extend{
         type = 'item',
         name = 'infinity-loader',
         localised_name = {'entity-name.infinity-loader'},
-        icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32}},
+        icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32, icon_mipmaps=0}},
         stack_size = 50,
         place_result = 'infinity-loader-dummy-combinator',
         subgroup = 'im-misc',
@@ -28,7 +28,7 @@ local empty_sheet = {
 }
 
 local loader_base = table.deepcopy(data.raw['underground-belt']['underground-belt'])
-loader_base.icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32}}
+loader_base.icons = {apply_infinity_tint{icon='__InfinityMode__/graphics/item/infinity-loader.png', icon_size=32, icon_mipmaps=0}}
 
 local base_loader_path = '__base__/graphics/entity/underground-belt/'
 

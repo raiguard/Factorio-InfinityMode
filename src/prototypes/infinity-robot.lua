@@ -3,7 +3,7 @@
 
 local cr_item = table.deepcopy(data.raw['item']['construction-robot'])
 cr_item.name = 'infinity-construction-robot'
-cr_item.icons = { apply_infinity_tint{icon=cr_item.icon} }
+cr_item.icons = {apply_infinity_tint{icon=cr_item.icon, icon_size=cr_item.icon_size, icon_mipmaps=cr_item.icon_mipmaps}}
 cr_item.place_result = 'infinity-construction-robot'
 cr_item.subgroup = 'im-robots'
 cr_item.order = 'ba'
@@ -11,7 +11,7 @@ cr_item.stack_size = 100
 
 local lr_item = table.deepcopy(data.raw['item']['logistic-robot'])
 lr_item.name = 'infinity-logistic-robot'
-lr_item.icons = { apply_infinity_tint{icon=lr_item.icon} }
+lr_item.icons = {apply_infinity_tint{icon=lr_item.icon, icon_size=lr_item.icon_size, icon_mipmaps=lr_item.icon_mipmaps}}
 lr_item.place_result = 'infinity-logistic-robot'
 lr_item.subgroup = 'im-robots'
 lr_item.order = 'bb'
@@ -19,7 +19,7 @@ lr_item.stack_size = 100
 
 local ir_item = table.deepcopy(data.raw['item']['roboport'])
 ir_item.name = 'infinity-roboport'
-ir_item.icons = { apply_infinity_tint{icon=ir_item.icon} }
+ir_item.icons = {apply_infinity_tint{icon=ir_item.icon, icon_size=ir_item.icon_size, icon_mipmaps=ir_item.icon_mipmaps}}
 ir_item.place_result = 'infinity-roboport'
 ir_item.subgroup = 'im-robots'
 ir_item.order = 'a'
@@ -27,6 +27,7 @@ ir_item.stack_size = 50
 
 data:extend{cr_item, lr_item, ir_item}
 
+register_recipes{'infinity-construction-robot', 'infinity-logistic-robot', 'infinity-roboport'}
 
 -- ------------------------------------------------------------------------------------------
 -- ENTITIES
@@ -53,15 +54,18 @@ end
 
 local cr_entity = table.deepcopy(data.raw['construction-robot']['construction-robot'])
 cr_entity.name = 'infinity-construction-robot'
+cr_entity.icons = cr_item.icons
 set_params(cr_entity)
 
 local lr_entity = table.deepcopy(data.raw['logistic-robot']['logistic-robot'])
 lr_entity.name = 'infinity-logistic-robot'
+lr_entity.icons = lr_item.icons
 set_params(lr_entity)
 
 local ir_tint_keys = {'base', 'base_patch', 'base_animation', 'door_animation_up', 'door_animation_down', 'recharging_animation'}
 local ir_entity = table.deepcopy(data.raw['roboport']['roboport'])
 ir_entity.name = 'infinity-roboport'
+ir_entity.icons = ir_item.icons
 ir_entity.logistics_radius = 200
 ir_entity.construction_radius = 400
 ir_entity.energy_source = {type='void'}
@@ -81,9 +85,3 @@ for _,k in pairs(ir_tint_keys) do
 end
 
 data:extend{cr_entity, lr_entity, ir_entity}
-
-
--- ------------------------------------------------------------------------------------------
--- RECIPES
-
-register_recipes{'infinity-construction-robot', 'infinity-logistic-robot', 'infinity-roboport'}

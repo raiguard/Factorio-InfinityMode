@@ -4,33 +4,31 @@ local sprites = require('__stdlib__/stdlib/data/modules/sprites')
 -- ITEMS
 
 local cw_item = table.deepcopy(data.raw['item-with-entity-data']['cargo-wagon'])
-
 cw_item.name = 'infinity-cargo-wagon'
-cw_item.icons = {apply_infinity_tint{icon = cw_item.icon}}
+cw_item.icons = {apply_infinity_tint{icon=cw_item.icon, icon_size=cw_item.icon_size, icon_mipmaps=cw_item.icon_mipmaps}}
 cw_item.place_result = 'infinity-cargo-wagon'
 cw_item.subgroup = 'im-trains'
 cw_item.order = 'ba'
 cw_item.stack_size = 50
 
 local fw_item = table.deepcopy(data.raw['item-with-entity-data']['fluid-wagon'])
-
 fw_item.name = 'infinity-fluid-wagon'
-fw_item.icons = {apply_infinity_tint{icon = fw_item.icon}}
+fw_item.icons = {apply_infinity_tint{icon=fw_item.icon, icon_size=fw_item.icon_size, icon_mipmaps=fw_item.icon_mipmaps}}
 fw_item.place_result = 'infinity-fluid-wagon'
 fw_item.subgroup = 'im-trains'
 fw_item.order = 'bb'
 fw_item.stack_size = 50
 
 local l_item = table.deepcopy(data.raw['item-with-entity-data']['locomotive'])
-
 l_item.name = 'infinity-locomotive'
-l_item.icons = {apply_infinity_tint{icon = l_item.icon}}
+l_item.icons = {apply_infinity_tint{icon=l_item.icon, icon_size=l_item.icon_size, icon_mipmaps=l_item.icon_mipmaps}}
 l_item.place_result = 'infinity-locomotive'
 l_item.subgroup = 'im-trains'
 l_item.order = 'aa'
 l_item.stack_size = 50
 
 data:extend{cw_item, fw_item, l_item}
+
 register_recipes{'infinity-cargo-wagon', 'infinity-fluid-wagon', 'infinity-locomotive'}
 
 -- ------------------------------------------------------------------------------------------
@@ -38,6 +36,7 @@ register_recipes{'infinity-cargo-wagon', 'infinity-fluid-wagon', 'infinity-locom
 
 local cw_entity = table.deepcopy(data.raw['cargo-wagon']['cargo-wagon'])
 cw_entity.name = 'infinity-cargo-wagon'
+cw_entity.icons = cw_item.icons
 cw_entity.inventory_size = 100
 cw_entity.minable.result = 'infinity-cargo-wagon'
 for _,t in pairs(cw_entity.pictures.layers) do
@@ -55,6 +54,7 @@ end
 
 local fw_entity = table.deepcopy(data.raw['fluid-wagon']['fluid-wagon'])
 fw_entity.name = 'infinity-fluid-wagon'
+cw_entity.icons = fw_item.icons
 fw_entity.minable.result = 'infinity-fluid-wagon'
 for _,t in pairs(fw_entity.pictures.layers) do
     apply_infinity_tint(t)
@@ -63,6 +63,7 @@ end
 
 local l_entity = table.deepcopy(data.raw['locomotive']['locomotive'])
 l_entity.name = 'infinity-locomotive'
+cw_entity.icons = l_item.icons
 l_entity.max_power = '10MW'
 l_entity.energy_source = {type='void'}
 l_entity.max_speed = 10
