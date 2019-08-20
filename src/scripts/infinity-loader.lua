@@ -606,7 +606,6 @@ on_event(defines.events.on_entity_settings_pasted, function(e)
                 table.insert(parameters.parameters, p)
             end
         end
-        print(serpent.block(parameters))
         e.destination.get_control_behavior().parameters = parameters
         -- update filters
         update_filters(e.destination)
