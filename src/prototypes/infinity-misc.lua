@@ -180,7 +180,7 @@ ii_entity.minable.result = 'infinity-inserter'
 ii_entity.energy_source = {type='void'}
 ii_entity.energy_usage = '1W'
 ii_entity.stack = true
-ii_entity.filter_count = 0
+ii_entity.filter_count = 5
 ii_entity.extension_speed = 1
 ii_entity.rotation_speed = 0.5
 for _,k in pairs{'hand_base_picture', 'hand_closed_picture', 'hand_open_picture'} do

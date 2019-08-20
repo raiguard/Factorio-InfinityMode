@@ -1,5 +1,13 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.3.1
+Date: 2019.??.??
+  Features:
+    - Added filters support to infinity inserters
+  Changes:
+    - Placing a new infinity inserter will automatically set it to blacklist mode, to behave like a non-filter inserter by default
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.1
 Date: 2019.8.20
   Changes:
     - Instant blueprint and instant deconstruction cheats now revive/destroy from back-to-front to improve compatibility with other mods
