@@ -33,7 +33,8 @@ local belt_type_patterns = {
     '%-?underground',
     '%-?splitter',
     'infinity%-loader%-loader%-?',
-    '%-?loader'
+    '%-?loader',
+    'layer%-connector'
 }
 
 local function get_belt_type(entity)
