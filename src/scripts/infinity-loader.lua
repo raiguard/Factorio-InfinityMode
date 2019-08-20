@@ -476,7 +476,7 @@ event.on_load(function()
 end)
 
 event.on_configuration_changed(function(e)
-    if e.mod_changes['InfinityMode'] then
+    if e.mod_changes['InfinityMode'] and e.mod_changes['InfinityMode'].old_version then
         local t = e.mod_changes['InfinityMode']
         local v = version('0.3.0')
         if version(t.old_version) < v then
