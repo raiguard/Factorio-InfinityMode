@@ -1,6 +1,18 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.1
+Date: 2019.8.20
+  Changes:
+    - Instant blueprint and instant deconstruction cheats now revive/destroy from back-to-front to improve compatibility with other mods
+  Bugfixes:
+    - Fixed infinity loader not detecting belt type for Beltlayer connectors
+    - Fixed a crash when loading the mod into a save that did not previously have it
+    - Fixed instant request not updating when an item is manually dragged to the trash (#7)
+    - Fixed broken infinity personal roboport icon when Bob's Equipment is enabled (#8)
+    - Fixed deconstructing infinity locomotives giving a regular locomotive item (#9)
+
+---------------------------------------------------------------------------------------------------
 Version: 0.3.0
-Date: 2019.8.12
+Date: 2019.8.16
   Features:
     - Added tesseract chests, which contain every item in the game (can cause performance issues if abused!)
     - Added automatic module insertion to instant blueprint cheat
