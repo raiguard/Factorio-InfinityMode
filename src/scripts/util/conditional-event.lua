@@ -22,23 +22,12 @@ local events_def = {
                     local entity = e.created_entity or e.entity
                     local global_table = util.cheat_table('player', 'instant_blueprint', 'global')
                     if util.is_ghost(entity) then
-                        -- attempt to revive the ghost
-                        local success, revived, proxy = entity.revive{raise_revive=true, return_item_request_proxy=true}
-                        if not success then
-                            -- if the table is empty, register the on_tick event
-                            if #global_table.next_tick_entities == 0 then
-                                conditional_event.register('cheats.player.instant_blueprint.next_tick')
-                            end
-                            -- add the entity to the table
-                            table.insert(global_table.next_tick_entities, {tries=1, entity=entity})
-                        elseif revived and proxy then
-                            -- auto-fulfill the item request proxy, then destroy it
-                            local mod_inv = revived.get_module_inventory()
-                            for n,c in pairs(proxy.item_requests) do
-                                mod_inv.insert{name=n, count=c}
-                            end
-                            proxy.destroy()
+                        -- if the table is empty, register the on_tick event
+                        if #global_table.next_tick_entities == 0 then
+                            conditional_event.register('cheats.player.instant_blueprint.next_tick')
                         end
+                        -- add the entity to the table
+                        table.insert(global_table.next_tick_entities, {tries=0, entity=entity})
                     end
                 end},
                 next_tick = {{defines.events.on_tick}, function(e)
@@ -46,25 +35,42 @@ local events_def = {
                     local deregister = true
                     -- check if the table has contents
                     if #global_table.next_tick_entities > 0 then
-                        -- for each entity in the table
-                        for i,t in pairs(global_table.next_tick_entities) do
-                            -- try to revive the entity and act on the result
-                            if t.entity.revive{raise_revive=true} then
-                                global_table.next_tick_entities[i] = nil
-                            else
-                                t.tries = t.tries + 1
-                                -- after ten tries, remove the entity from the table
-                                if t.tries >= 10 then
-                                    log('Unable to revive entity at position '..serpent.line(t.entity.position)..', deregistering')
-                                    global_table.next_tick_entities[i] = nil
+                        -- iterate back to front to emulate bot place order
+                        for i=#global_table.next_tick_entities,1,-1 do
+                            local t = global_table.next_tick_entities[i]
+                            if t then
+                                local entity = t.entity
+                                if entity.valid then
+                                    -- attempt to revive the ghost
+                                    local _, revived, proxy = entity.revive{raise_revive=true, return_item_request_proxy=true}
+                                    if revived then
+                                        -- remove from the global table
+                                        table.remove(global_table.next_tick_entities, i)
+                                        -- handle item request proxy 
+                                        if proxy then
+                                            -- auto-fulfill the item request proxy, then destroy it
+                                            local inventory = revived.get_module_inventory() or revived.get_inventory(defines.inventory.fuel)
+                                            if inventory then
+                                                for n,c in pairs(proxy.item_requests) do
+                                                    inventory.insert{name=n, count=c}
+                                                end
+                                                proxy.destroy()
+                                            end
+                                        end
+                                    else
+                                        t.tries = t.tries + 1
+                                        if t.tries == 11 then
+                                            -- remove from the global table
+                                            table.remove(global_table.next_tick_entities, i)
+                                        end
+                                    end
                                 else
-                                    deregister = false
+                                    -- remove from the global table
+                                    table.remove(global_table.next_tick_entities, i)
                                 end
                             end
                         end     
-                    end
-                    -- if all entites have been revived or deregistered, deregister this event
-                    if deregister then
+                    else
                         conditional_event.deregister('cheats.player.instant_blueprint.next_tick')
                     end
                 end}
@@ -96,14 +102,13 @@ local events_def = {
                     if not util.cheat_enabled('player', 'instant_deconstruction', e.player_index) then return end
                     local entity = e.entity
                     local global_table = util.cheat_table('player', 'instant_deconstruction', 'global')
-                    -- attempt to destroy the entity
-                    if not entity.destroy{do_cliff_correction=true, raise_destroy=true} then
+                    if entity.valid then
                         -- if the table is empty, register the on_tick event
                         if #global_table.next_tick_entities == 0 then
                             conditional_event.register('cheats.player.instant_deconstruction.next_tick')
                         end
                         -- add the entity to the table
-                        table.insert(global_table.next_tick_entities, {tries=1, entity=entity})
+                        table.insert(global_table.next_tick_entities, {tries=0, entity=entity})
                     end
                 end},
                 next_tick = {{defines.events.on_tick}, function(e)
@@ -111,25 +116,30 @@ local events_def = {
                     local deregister = true
                     -- check if the table has contents
                     if #global_table.next_tick_entities > 0 then
-                        -- for each entity in the table
-                        for i,t in pairs(global_table.next_tick_entities) do
-                            -- try to revive the entity and act on the result
-                            if t.entity.destroy{do_cliff_correction=true, raise_destroy=true} then
-                                global_table.next_tick_entities[i] = nil
-                            else
-                                t.tries = t.tries + 1
-                                -- after ten tries, remove the entity from the table
-                                if t.tries >= 10 then
-                                    log('Unable to destroy entity at position '..serpent.line(t.entity.position)..', deregistering')
-                                    global_table.next_tick_entities[i] = nil
+                        -- iterate back to front to emulate bot deconstruction order
+                        for i=#global_table.next_tick_entities,1,-1 do
+                            local t = global_table.next_tick_entities[i]
+                            if t then
+                                local entity = t.entity
+                                if entity.valid then
+                                    -- attempt to destroy the entity
+                                    if entity.destroy{raise_destroy=true, do_cliff_correction=true} then
+                                        -- remove from the global table
+                                        table.remove(global_table.next_tick_entities, i)
+                                    else
+                                        t.tries = t.tries + 1
+                                        if t.tries == 11 then
+                                            -- remove from the global table
+                                            table.remove(global_table.next_tick_entities, i)
+                                        end
+                                    end
                                 else
-                                    deregister = false
+                                    -- remove from the global table
+                                    table.remove(global_table.next_tick_entities, i)
                                 end
                             end
                         end     
-                    end
-                    -- if all entites have been revived or deregistered, deregister this event
-                    if deregister then
+                    else
                         conditional_event.deregister('cheats.player.instant_deconstruction.next_tick')
                     end
                 end}
