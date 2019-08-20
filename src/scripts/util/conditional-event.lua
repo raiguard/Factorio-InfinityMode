@@ -288,8 +288,10 @@ local events_def = {
                             end
                             -- check if current status of requests has changed
                             if not table.deep_compare(requests,t) then
+                                -- update requests table
                                 active_players[i] = requests
-                                event.dispatch{name=defines.events.on_player_main_inventory_changed, player_index=i}
+                                -- fulfill requests
+                                conditional_event.dispatch('cheats.player.instant_request.on_main_inventory_changed', {player_index=i})
                             end
                         end
                     end
