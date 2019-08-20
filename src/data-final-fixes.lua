@@ -45,3 +45,12 @@ for _,p in pairs(data.raw['tool']) do
     end
 end
 lab.inputs = packs
+
+-- INFINITY EQUIPMENT
+-- allow equipment to be placed in all existing grid categories
+local categories = {}
+for _,t in pairs(data.raw['equipment-category']) do
+    table.insert(categories, t.name)
+end
+data.raw['generator-equipment']['infinity-fusion-reactor-equipment'].categories = categories
+data.raw['roboport-equipment']['infinity-personal-roboport-equipment'].categories = categories
