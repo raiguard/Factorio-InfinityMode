@@ -1,10 +1,13 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.3.1
+Version: 0.4.0
 Date: 2019.??.??
   Features:
     - Added filters support to infinity inserters
   Changes:
     - Placing a new infinity inserter will automatically set it to blacklist mode, to behave like a non-filter inserter by default
+    - Reverted instant blueprint/deconstruction to pre-0.3.1 logic due to abysmal performance
+  Bugfixes:
+    - Fixed a crash when literally any switch except for the infinity loader state switch was toggled
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.3.1
