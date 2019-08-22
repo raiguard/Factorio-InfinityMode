@@ -442,7 +442,7 @@ gui.on_elem_changed('im_loader_filters_button_', function(e)
 end)
 
 on_event(defines.events.on_gui_switch_state_changed, function(e)
-    if not e.element.name == 'im_loader_state_switch' then return end
+    if e.element.name ~= 'im_loader_state_switch' then return end
     local entity = util.player_table(e.player_index).open_gui.entity
     entity.get_or_create_control_behavior().enabled = e.element.switch_state == 'left'
     update_filters(entity)
