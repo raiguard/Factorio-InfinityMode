@@ -113,7 +113,7 @@ local function create_tabbed_pane(player, window_frame)
         pane.add{type='line', name='im_cheats_player_switcher_line', direction='horizontal'}.style.horizontally_stretchable = true
     end
     -- toggles
-    local toggles_flow_table = pane.add{type='table', name='im_cheats_player_toggles_table', column_count=2}
+    local toggles_flow_table = pane.add{type='table', name='im_cheats_player_toggles_table', column_count=2, vertical_centering=false}
     toggles_flow_table.style.horizontally_stretchable = true
     for group,cheats in pairs(elems_def.player.toggles) do
         local flow = toggles_flow_table.add{type='flow', name='im_cheats_player_toggles_'..group..'_flow', direction='vertical'}

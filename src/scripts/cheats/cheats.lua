@@ -24,25 +24,29 @@ function cheats.create(default_ref)
     end
 end
 
+local function apply_default(category, name, data, obj, default_ref)
+    local def = defs.cheats[category][name]
+    if def.type == 'action' then
+        data[obj.index], data.global = def.functions.setup_global and def.functions.setup_global(obj) or nil
+        if def.defaults and def.defaults[default_ref] then cheats.trigger_action(obj, {category,name}) end
+    else
+        if def.defaults and def.defaults[default_ref] ~= nil then
+            data[obj.index] = def.functions.setup_global and def.functions.setup_global(obj, def.defaults[default_ref]) or {cur_value=def.defaults[default_ref]}
+            if data.global == nil then
+                data.global = def.functions.setup_global_global and def.functions.setup_global_global(obj, def.defaults[default_ref]) or {}
+            end
+            cheats.update(obj, {category,name}, def.defaults[default_ref])
+        else
+            data[category == 'game' and 1 or obj.index] = {cur_value=def.functions.get_value(obj, def, data)}
+        end
+    end
+end
+
 function cheats.apply_defaults(category, obj)
     local default_ref = global.cheats[category].default_ref
     for name,data in pairs(global.cheats[category]) do
         if name ~= 'default_ref' then
-            local def = defs.cheats[category][name]
-            if def.type == 'action' then
-                data[obj.index], data.global = def.functions.setup_global and def.functions.setup_global(obj) or nil
-                if def.defaults and def.defaults[default_ref] then cheats.trigger_action(obj, {category,name}) end
-            else
-                if def.defaults and def.defaults[default_ref] ~= nil then
-                    data[obj.index] = def.functions.setup_global and def.functions.setup_global(obj, def.defaults[default_ref]) or {cur_value=def.defaults[default_ref]}
-                    if data.global == nil then
-                        data.global = def.functions.setup_global_global and def.functions.setup_global_global(obj, def.defaults[default_ref]) or {}
-                    end
-                    cheats.update(obj, {category,name}, def.defaults[default_ref])
-                else
-                    data[category == 'game' and 1 or obj.index] = {cur_value=def.functions.get_value(obj, def, data)}
-                end
-            end
+            apply_default(category, name, data, obj, default_ref)
         end
     end
 end
@@ -67,6 +71,26 @@ end
 
 function cheats.is_valid(category, name)
     return type(defs.cheats[category][name]) == 'table'
+end
+
+-- reiterate over all cheats for all objects and set up any new ones that have been added
+function cheats.migrate()
+    local function apply_all_missing_defaults(category, obj, missing_cheats)
+        for _,name in pairs(missing_cheats) do
+            global.cheats[category][name] = {}
+            apply_default(category, name, global.cheats[category][name], obj, global.cheats[category].default_ref)
+        end
+    end
+    for _,category in pairs{'player','force','surface','game'} do
+        local missing_cheats = table.keys(table.remove_keys(table.deepcopy(defs.cheats[category]), table.deepcopy(table.keys(global.cheats[category]))))
+        if category ~= 'game' then
+            for _,obj in pairs(game[category..'s']) do
+                apply_all_missing_defaults(category, obj, missing_cheats)
+            end
+        else
+            apply_all_missing_defaults(category, game, missing_cheats)
+        end
+    end
 end
 
 return cheats

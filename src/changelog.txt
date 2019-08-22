@@ -3,6 +3,19 @@ Version: 0.4.0
 Date: 2019.??.??
   Features:
     - Added filters support to infinity inserters
+    - A dozen new cheats:
+      - Player cheats:
+        - True zoom to world
+      - Force cheats:
+        - Manual mining speed modifier
+        - Manual crafting speed modifier
+        - Mining drill productivity bonus
+        - Laboratory speed modifier, productivity bonus
+        - Worker robot speed modifier, battery modifier, storage bonus
+        - Train braking force bonus
+      - Surface cheats:
+        - Minimum brightness
+        - Solar power multiplier
   Changes:
     - Placing a new infinity inserter will automatically set it to blacklist mode, to behave like a non-filter inserter by default
     - Reverted instant blueprint/deconstruction to pre-0.3.1 logic due to abysmal performance

@@ -260,5 +260,10 @@ event.on_configuration_changed(function(e)
                 cheats.update(f, {'force','infinity_tools_recipes'}, true)
             end
         end
+        cheats.migrate()
+        -- refresh all open player cheat GUIs
+        for _,p in pairs(game.players) do
+            cheats_gui.refresh(p, p.gui.screen)
+        end
     end
 end)

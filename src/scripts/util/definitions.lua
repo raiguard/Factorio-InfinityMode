@@ -109,6 +109,14 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
+        true_zoom_to_world = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=false, functions={
+            value_changed = function(player, cheat, cheat_global, new_value)
+                player.spectator = new_value
+            end,
+            get_value = function(player, cheat, cheat_global)
+                return player.spectator
+            end
+        }},
         cheat_mode = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 player.cheat_mode = new_value
@@ -287,6 +295,14 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
+        research_queue = {type='toggle', functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.research_queue_enabled = new_value
+            end,
+            get_value = function(force, cheat, cheat_global)
+                return force.research_queue_enabled
+            end
+        }},
         infinity_tools_recipes = {type='toggle', defaults={on=true, off=true}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 for n,r in pairs(game.recipe_prototypes) do
@@ -375,12 +391,28 @@ defs.cheats = {
                 return force.character_loot_pickup_distance_bonus
             end
         }},
+        manual_mining_speed_modifier = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.manual_mining_speed_modifier = new_value
+            end,
+            get_value = function(force, cheat, cheat_global)
+                return force.manual_mining_speed_modifier
+            end
+        }},
         character_running_speed_modifier = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.character_running_speed_modifier = new_value
             end,
             get_value = function(force, cheat, cheat_global)
                 return force.character_running_speed_modifier
+            end
+        }},
+        manual_crafting_speed_modifier = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.manual_crafting_speed_modifier = new_value
+            end,
+            get_value = function(force, cheat, cheat_global)
+                return force.manual_crafting_speed_modifier
             end
         }},
         character_inventory_slots_bonus = {type='number', defaults={on=10, off=0}, functions={
@@ -413,6 +445,62 @@ defs.cheats = {
             end,
             get_value = function(force, cheat, cheat_global)
                 return force.stack_inserter_capacity_bonus
+            end
+        }},
+        mining_drill_productivity_bonus = {type='number', functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.mining_drill_productivity_bonus = new_value
+            end,
+            get_value = function(force, cheat, cheat_global)
+                return force.mining_drill_productivity_bonus
+            end
+        }},
+        laboratory_speed_modifier = {type='number', functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.laboratory_speed_modifier = new_value
+            end,
+            get_value = function(force, cheat, cheat_global)
+                return force.laboratory_speed_modifier
+            end
+        }},
+        laboratory_productivity_bonus = {type='number', functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.laboratory_productivity_bonus = new_value
+            end,
+            get_value = function(force, cheat, cheat_global)
+                return force.laboratory_productivity_bonus
+            end
+        }},
+        worker_robots_speed_modifier = {type='number', functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.worker_robots_speed_modifier = new_value
+            end,
+            get_value = function(force, cheat, cheat_global)
+                return force.worker_robots_speed_modifier
+            end
+        }},
+        worker_robots_battery_modifier = {type='number', functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.worker_robots_battery_modifier = new_value
+            end,
+            get_value = function(force, cheat, cheat_global)
+                return force.worker_robots_battery_modifier
+            end
+        }},
+        worker_robots_storage_bonus = {type='number', functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.worker_robots_storage_bonus = new_value
+            end,
+            get_value = function(force, cheat, cheat_global)
+                return force.worker_robots_storage_bonus
+            end
+        }},
+        train_braking_force_bonus = {type='number', functions={
+            value_changed = function(force, cheat, cheat_global, new_value)
+                force.train_braking_force_bonus = new_value
+            end,
+            get_value = function(force, cheat, cheat_global)
+                return force.train_braking_force_bonus
             end
         }},
         evolution_factor = {type='number', max_value=1, functions={
@@ -493,6 +581,22 @@ defs.cheats = {
                 return surface.daytime
             end
         }},
+        solar_power_multiplier = {type='number', functions={
+            value_changed = function(surface, cheat, cheat_global, new_value)
+                surface.solar_power_multiplier = new_value
+            end,
+            get_value = function(surface, cheat, cheat_global)
+                return surface.solar_power_multiplier
+            end
+        }},
+        min_brightness = {type='number', functions={
+            value_changed = function(surface, cheat, cheat_global, new_value)
+                surface.min_brightness = new_value
+            end,
+            get_value = function(surface, cheat, cheat_global)
+                return surface.min_brightness
+            end
+        }},
         clear_pollution = {type='action', functions={
             action = function(surface, cheat, cheat_global)
                 surface.clear_pollution()
@@ -545,7 +649,7 @@ defs.cheats = {
             get_value = function(surface, cheat, cheat_global)
                 return cheat_global.cur_value or false
             end
-        }},
+        }}
     },
     game = {
         pollution = {type='toggle', functions={
@@ -608,7 +712,8 @@ defs.cheats_gui_elems = {
                 invincible_character = {},
                 instant_blueprint = {},
                 instant_upgrade = {},
-                instant_deconstruction = {}
+                instant_deconstruction = {},
+                true_zoom_to_world = {tooltip=true}
             },
             inventory = {
                 cheat_mode = {},
@@ -638,6 +743,7 @@ defs.cheats_gui_elems = {
     force = {
         toggles = {
             instant_research = {},
+            research_queue = {},
             infinity_tools_recipes = {},
             free_resource_recipes = {tooltip=true},
             vanilla_loaders_recipes = {},
@@ -650,11 +756,20 @@ defs.cheats_gui_elems = {
             character_item_drop_distance_bonus = {},
             character_item_pickup_distance_bonus = {},
             character_loot_pickup_distance_bonus = {},
+            manual_mining_speed_modifier = {},
             character_running_speed_modifier = {},
+            manual_crafting_speed_modifier = {},
             character_inventory_slots_bonus = {},
             character_health_bonus = {},
             inserter_stack_size_bonus = {},
             stack_inserter_capacity_bonus = {},
+            mining_drill_productivity_bonus = {},
+            laboratory_speed_modifier = {},
+            laboratory_productivity_bonus = {},
+            worker_robots_speed_modifier = {},
+            worker_robots_battery_modifier = {},
+            worker_robots_storage_bonus = {},
+            train_braking_force_bonus = {},
             evolution_factor = {textfield={allow_decimal=true}}
         },
         actions = {
@@ -673,7 +788,9 @@ defs.cheats_gui_elems = {
             time_of_day = {
                 slider = {min_value=0, max_value=1, value_step=0.1},
                 textfield = {allow_decimal=true, width=42}
-            }
+            },
+            min_brightness = {tooltip=true, textfield={allow_decimal=true, width=50}},
+            solar_power_multiplier = {tooltip=true, textfield={allow_decimal=true, width=50}}
         },
         clear_entities = {
             auto_clear_all_entities = {tooltip=true},
