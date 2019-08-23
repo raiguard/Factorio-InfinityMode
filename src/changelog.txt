@@ -6,6 +6,7 @@ Date: 2019.??.??
     - Over a dozen new cheats:
       - Player cheats:
         - True zoom to world
+        - Single-stack limit
       - Force cheats:
         - Research queue
         - Manual mining speed modifier
@@ -22,6 +23,7 @@ Date: 2019.??.??
     - Reverted instant blueprint/deconstruction to pre-0.3.1 logic due to abysmal performance
   Bugfixes:
     - Fixed a crash when literally any switch except for the infinity loader state switch was toggled
+    - Fixed default 'on' mining speed modifier being zero
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.3.1
