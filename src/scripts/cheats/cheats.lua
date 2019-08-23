@@ -57,7 +57,6 @@ function cheats.update(obj, cheat, value)
     local cheat_def = defs.cheats[cheat[1]][cheat[2]]
     local cheat_global = util.cheat_table(cheat[1], cheat[2], obj)
     cheat_global.cur_value = value
-    -- log(cheat[1]..'.'..cheat[2]..': '..cheat_global.cur_value)
     cheat_def.functions.value_changed(obj, cheat_def, cheat_global, value)
 end
 
@@ -88,7 +87,6 @@ function cheats.migrate()
             end
         end
     end
-    print(serpent.block(global.cheats))
 end
 
 return cheats

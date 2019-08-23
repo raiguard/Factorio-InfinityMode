@@ -55,7 +55,6 @@ local events_def = {
                                 t.tries = t.tries + 1
                                 -- after ten tries, remove the entity from the table
                                 if t.tries >= 10 then
-                                    log('Unable to revive entity at position '..serpent.line(t.entity.position)..', deregistering')
                                     global_table.next_tick_entities[i] = nil
                                 else
                                     deregister = false
@@ -120,7 +119,6 @@ local events_def = {
                                 t.tries = t.tries + 1
                                 -- after ten tries, remove the entity from the table
                                 if t.tries >= 10 then
-                                    log('Unable to destroy entity at position '..serpent.line(t.entity.position)..', deregistering')
                                     global_table.next_tick_entities[i] = nil
                                 else
                                     deregister = false
