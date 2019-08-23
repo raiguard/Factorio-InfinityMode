@@ -1,9 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.4.0
-Date: 2019.??.??
+Date: 2019.8.23
   Features:
     - Added filters support to infinity inserters
-    - Over a dozen new cheats:
+    - Added new cheats:
       - Player cheats:
         - True zoom to world
         - Single-stack limit

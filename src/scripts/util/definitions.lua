@@ -404,7 +404,7 @@ defs.cheats = {
                 return force.character_loot_pickup_distance_bonus
             end
         }},
-        manual_mining_speed_modifier = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+        manual_mining_speed_modifier = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.manual_mining_speed_modifier = new_value
             end,
@@ -420,7 +420,7 @@ defs.cheats = {
                 return force.character_running_speed_modifier
             end
         }},
-        manual_crafting_speed_modifier = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+        manual_crafting_speed_modifier = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(force, cheat, cheat_global, new_value)
                 force.manual_crafting_speed_modifier = new_value
             end,
