@@ -83,6 +83,7 @@ function util.player_table(player)
 end
 
 function util.cheat_table(category, name, obj)
+    if not name then return global.cheats[category] end
     if category == 'game' then return global.cheats[category][name][1] end
     if type(obj) == 'string' and obj == 'global' then
         return global.cheats[category][name].global

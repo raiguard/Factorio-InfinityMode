@@ -57,6 +57,7 @@ function cheats.update(obj, cheat, value)
     local cheat_def = defs.cheats[cheat[1]][cheat[2]]
     local cheat_global = util.cheat_table(cheat[1], cheat[2], obj)
     cheat_global.cur_value = value
+    -- log(cheat[1]..'.'..cheat[2]..': '..cheat_global.cur_value)
     cheat_def.functions.value_changed(obj, cheat_def, cheat_global, value)
 end
 
@@ -75,22 +76,19 @@ end
 
 -- reiterate over all cheats for all objects and set up any new ones that have been added
 function cheats.migrate()
-    local function apply_all_missing_defaults(category, obj, missing_cheats)
-        for _,name in pairs(missing_cheats) do
-            global.cheats[category][name] = {}
-            apply_default(category, name, global.cheats[category][name], obj, global.cheats[category].default_ref)
-        end
-    end
     for _,category in pairs{'player','force','surface','game'} do
-        local missing_cheats = table.keys(table.remove_keys(table.deepcopy(defs.cheats[category]), table.deepcopy(table.keys(global.cheats[category]))))
-        if category ~= 'game' then
-            for _,obj in pairs(game[category..'s']) do
-                apply_all_missing_defaults(category, obj, missing_cheats)
+        local objects = category == 'game' and {game} or game[category..'s']
+        local global_cheats = util.cheat_table(category)
+        for name,def in pairs(defs.cheats[category]) do
+            if not global_cheats[name] then
+                global_cheats[name] = {}
+                for _,obj in pairs(objects) do
+                    apply_default(category, name, global_cheats[name], category == 'game' and game or obj, global_cheats.default_ref)
+                end
             end
-        else
-            apply_all_missing_defaults(category, game, missing_cheats)
         end
     end
+    print(serpent.block(global.cheats))
 end
 
 return cheats
