@@ -249,7 +249,7 @@ defs.cheats = {
                 return player.character and player.character_loot_pickup_distance_bonus
             end
         }},
-        character_mining_speed_modifier = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_mining_speed_modifier = {type='number', defaults={on=100, off=0}, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_mining_speed_modifier = new_value end
             end,
