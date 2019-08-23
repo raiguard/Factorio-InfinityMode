@@ -3,10 +3,11 @@ Version: 0.4.0
 Date: 2019.??.??
   Features:
     - Added filters support to infinity inserters
-    - A dozen new cheats:
+    - Over a dozen new cheats:
       - Player cheats:
         - True zoom to world
       - Force cheats:
+        - Research queue
         - Manual mining speed modifier
         - Manual crafting speed modifier
         - Mining drill productivity bonus

@@ -144,6 +144,20 @@ local events_def = {
                     end
                 end}
             },
+            single_stack_limit = {
+                on_main_inventory_changed = {{defines.events.on_player_main_inventory_changed}, function(e)
+                    local player = util.get_player(e)
+                    if not util.cheat_enabled('player', 'single_stack_limit', player.index) then return end
+                    local inventory = player.get_main_inventory()
+                    local prototypes = game.item_prototypes
+                    for name,count in pairs(inventory.get_contents()) do
+                        local stack_size = prototypes[name].stack_size
+                        if stack_size > 1 and count > stack_size then
+                            inventory.remove{name=name, count=count-stack_size}
+                        end
+                    end
+                end}
+            },
             repair_used_item = {
                 on_main_inventory_changed = {{defines.events.on_player_main_inventory_changed}, function(e)
                     if not util.cheat_enabled('player', 'repair_used_item', e.player_index) then return end

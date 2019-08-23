@@ -57,6 +57,14 @@ defs.cheats = {
                 return player.controller_type == defines.controllers.god
             end
         }},
+        true_zoom_to_world = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=false, functions={
+            value_changed = function(player, cheat, cheat_global, new_value)
+                player.spectator = new_value
+            end,
+            get_value = function(player, cheat, cheat_global)
+                return player.spectator
+            end
+        }},
         invincible_character = {type='toggle', defaults={on=true, off=false}, in_god_mode=false, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then
@@ -109,14 +117,6 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        true_zoom_to_world = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=false, functions={
-            value_changed = function(player, cheat, cheat_global, new_value)
-                player.spectator = new_value
-            end,
-            get_value = function(player, cheat, cheat_global)
-                return player.spectator
-            end
-        }},
         cheat_mode = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=false, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 player.cheat_mode = new_value
@@ -131,6 +131,19 @@ defs.cheats = {
                     conditional_event.cheat_register(player, cheat, 'cheats.player.keep_last_item.on_put_item')
                 else
                     conditional_event.cheat_deregister(player, cheat, 'cheats.player.keep_last_item.on_put_item')
+                end
+            end,
+            get_value = function(player, cheat, cheat_global)
+                return cheat_global.cur_value
+            end
+        }},
+        single_stack_limit = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=true, functions={
+            value_changed = function(player, cheat, cheat_global, new_value)
+                if new_value then
+                    conditional_event.cheat_register(player, cheat, 'cheats.player.single_stack_limit.on_main_inventory_changed')
+                    conditional_event.dispatch('cheats.player.single_stack_limit.on_main_inventory_changed', {player_index=player.index})
+                else
+                    conditional_event.cheat_deregister(player, cheat, 'cheats.player.single_stack_limit.on_main_inventory_changed')
                 end
             end,
             get_value = function(player, cheat, cheat_global)
@@ -709,15 +722,16 @@ defs.cheats_gui_elems = {
         toggles = {
             interaction = {
                 god_mode = {},
+                true_zoom_to_world = {tooltip=true},
                 invincible_character = {},
                 instant_blueprint = {},
                 instant_upgrade = {},
-                instant_deconstruction = {},
-                true_zoom_to_world = {tooltip=true}
+                instant_deconstruction = {}
             },
             inventory = {
                 cheat_mode = {},
                 keep_last_item = {tooltip=true},
+                single_stack_limit = {tooltip=true},
                 repair_used_item = {tooltip=true},
                 instant_request = {tooltip=true},
                 instant_trash = {}
