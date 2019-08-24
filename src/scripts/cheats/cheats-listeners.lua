@@ -50,35 +50,34 @@ local function enable_infinity_mode(default_ref)
     game.print{'chat-message.mod-enabled-message'}
 end
 
+local function show_dialog()
+    -- check if the prompt was already shown
+    if game.ticks_played > 0 and #game.connected_players > 0 and global.prompt_shown == false then
+        global.prompt_shown = true
+        event.remove(defines.events.on_tick, show_dialog)
+        -- skip prompt if set to do so
+        local dialog_behavior = settings.global['im-new-map-behavior'].value
+        if dialog_behavior == 'Ask' then
+            cheats_gui.create_initial_dialog(game.connected_players[1])
+        else
+            if dialog_behavior ~= 'No' then
+                global.mod_enabled = true
+                enable_infinity_mode(dialog_behavior:gsub('Yes, cheats ', ''))
+            end
+        end
+    elseif game.ticks_played > 0 and #game.connected_players > 0 then
+        event.remove(defines.events.on_tick, show_dialog)
+    end
+end
+
 event.on_init(function()
     global.mod_enabled = false
     global.prompt_shown = false
-    -- skip prompt if set to do so
-    local dialog_behavior = settings.global['im-new-map-behavior'].value
-    if dialog_behavior ~= 'Ask' then
-        global.prompt_shown = true
-        if dialog_behavior ~= 'No' then
-            global.mod_enabled = true
-            enable_infinity_mode(dialog_behavior:gsub('Yes, cheats ', ''))
-        end
-        return
-    end
-    -- on_player_joined_game does not fire when loading singleplayer worlds that
-    -- have been played before, so we must show the dialog here in that case
-    if not game.is_multiplayer() and #game.connected_players > 0 then
-        global.prompt_shown = true
-        cheats_gui.create_initial_dialog(game.connected_players[1])
-    end
+    event.register(defines.events.on_tick, show_dialog)
 end)
 
-on_event(defines.events.on_player_joined_game, function(e)
-    if global.mod_enabled == false then
-        if global.prompt_shown == false then
-            global.prompt_shown = true
-            local player = util.get_player(e)
-            cheats_gui.create_initial_dialog(player)
-        end
-    end
+event.on_load(function()
+    event.register(defines.events.on_tick, show_dialog)
 end)
 
 gui.on_click('im_enable_button_yes_', function(e)
