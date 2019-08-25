@@ -9,6 +9,10 @@ function titlebar.create(parent, name, data)
         style = 'titlebar_flow'
     }
 
+    if data.adjust_for_border ~= false then
+        titlebar_flow.style.top_margin = -3
+    end
+
     if data.label then
         titlebar_flow.add {
             type = 'label',
@@ -38,6 +42,7 @@ function titlebar.create(parent, name, data)
                 type = 'sprite-button',
                 name = prefix .. 'button_' .. buttons[i].name,
                 style = 'close_button',
+                tooltip = buttons[i].tooltip or nil,
                 sprite = buttons[i].sprite,
                 hovered_sprite = buttons[i].hovered_sprite or nil,
                 clicked_sprite = buttons[i].clicked_sprite or nil
