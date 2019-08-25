@@ -1,7 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.5.0
 Date: 2019.8.24
+  Features:
+    - You can now dock/undock the cheats window to/from the mod GUI
   Changes:
+    - The cheats window will now remember its position if you move it (reset by docking to the mod GUI)
     - /enable-infinity-mode command is now only usable by admins
     - Darkened logo and crafting group icon
     - Enable dialog will now show up after freeplay/sandbox description boxes are dismissed

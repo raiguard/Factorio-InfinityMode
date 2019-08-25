@@ -101,7 +101,6 @@ commands.add_command('enable-infinity-mode', {'chat-message.enable-command-help'
 local function toggle_cheats_gui(e)
     local player = util.get_player(e)
     local parent = util.player_table(player).cheats_gui.docked and mod_gui.get_frame_flow(player) or player.gui.screen
-    log(parent.name)
     if not parent.im_cheats_window then
         cheats_gui.create(player, parent)
     else
@@ -252,6 +251,7 @@ gui.on_click('im_cheats_titlebar_button_pin', function(e)
         e.element.style = 'close_button'
         player_table.cheats_gui.docked = false
     end
+    player_table.cheats_gui.location = {x=0, y=(44*player.display_scale)}
     e.element.parent.parent.destroy()
     toggle_cheats_gui{player_index=player.index}
 end)
@@ -259,15 +259,6 @@ end)
 on_event(defines.events.on_gui_location_changed, function(e)
     if e.element.name ~= 'im_cheats_window' then return end
     util.player_table(e.player_index).cheats_gui.location = e.element.location
-end)
-
-on_event(defines.events.on_player_display_scale_changed, function(e)
-    if not global.mod_enabled then return end
-    local player = util.get_player(e)
-    local player_table = util.player_table(player)
-    if not player_table.cheats_gui.location and player_table.cheats_gui.window then
-        player_table.cheats_gui.window.location = {0,(44*player.display_scale)}
-    end
 end)
 
 -- ----------------------------------------------------------------------------------------------------
