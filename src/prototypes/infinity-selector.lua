@@ -33,7 +33,7 @@ data:extend{
         icon = shortcut_sprite('x32.png', 32),
         disabled_icon = shortcut_sprite('x32-white.png', 32),
         small_icon = shortcut_sprite('x24.png', 24),
-        small_disabled_icon = shortcut_sprite('x24-white.png', 24),
+        disabled_small_icon = shortcut_sprite('x24-white.png', 24),
         action = 'create-blueprint-item',
         item_to_create = 'infinity-selector',
         associated_control_input = 'im-give-infinity-selector',

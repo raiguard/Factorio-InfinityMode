@@ -32,9 +32,6 @@ local function player_setup(e)
 end
 
 local function enable_infinity_mode(default_ref)
-    if type(default_ref) == 'table' then
-        default_ref = default_ref.parameter or 'on'
-    end
     cheats.create(default_ref)
     for i,p in pairs(game.players) do
         player_setup{player_index=i}
@@ -48,6 +45,12 @@ local function enable_infinity_mode(default_ref)
     cheats.apply_defaults('game', game)
     global.mod_enabled = true
     game.print{'chat-message.mod-enabled-message'}
+end
+
+local function process_enable_command(e)
+    if util.get_player(e).admin then
+        enable_infinity_mode(e.parameter or 'on')
+    end
 end
 
 local function show_dialog()
@@ -89,7 +92,7 @@ gui.on_click('im_enable_button_no', function(e)
     e.element.parent.parent.destroy()
 end)
 
-commands.add_command('enable-infinity-mode', {'chat-message.enable-command-help'}, enable_infinity_mode)
+commands.add_command('enable-infinity-mode', {'chat-message.enable-command-help'}, process_enable_command)
 
 -- ----------------------------------------------------------------------------------------------------
 -- MOD GUI
