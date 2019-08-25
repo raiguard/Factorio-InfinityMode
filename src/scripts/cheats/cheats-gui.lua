@@ -73,8 +73,7 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, player_is_god, pl
     end
 end
 
-local function create_tabbed_pane(player, window_frame)
-    local player_table = util.player_table(player)
+local function create_tabbed_pane(player, player_table, window_frame)
     local elems_def = defs.cheats_gui_elems
     local content_frame = window_frame.add{type='frame', name='im_cheats_content_frame', style='inside_deep_frame_for_tabs', direction='vertical'}
     -- local toolbar = content_frame.add{type='frame', name='im_cheats_toolbar_frame', style='subheader_frame'}
@@ -222,14 +221,23 @@ local function create_tabbed_pane(player, window_frame)
 end
 
 function cheats_gui.create(player, parent)
+    local player_table = util.player_table(player)
     local window_frame = parent.add{type='frame', name='im_cheats_window', style='dialog_frame', direction='vertical'}
+    -- if parent.name == 'mod_gui_frame_flow' then window_frame.style = mod_gui.frame_style end
     -- window_frame.style.height=530
-    window_frame.location = {0,(44*player.display_scale)}
+    window_frame.location = player_table.cheats_gui.location and player_table.cheats_gui.location or {0,(44*player.display_scale)}
     -- window_frame.location = {1998,363}
     local titlebar = titlebar.create(window_frame, 'im_cheats_titlebar', {
         label = {'gui-cheats.window-caption'},
-        draggable = true,
+        draggable = parent.name == 'screen' and true or false,
         buttons = {
+            {
+                name = 'pin',
+                tooltip = {'gui-cheats.pin-button-tooltip'},
+                sprite = 'im_pin',
+                hovered_sprite = 'im_pin_black',
+                clicked_sprite = 'im_pin_black'
+            },
             {
                 name = 'close',
                 sprite = 'utility/close_white',
@@ -238,13 +246,15 @@ function cheats_gui.create(player, parent)
             }
         }
     })
-    create_tabbed_pane(player, window_frame)
+    if parent.name == 'mod_gui_frame_flow' then titlebar.children[3].style = 'close_button_active' end
+    create_tabbed_pane(player, player_table, window_frame)
+    player_table.cheats_gui.window = window_frame
 end
 
 function cheats_gui.refresh(player, parent)
     if parent.im_cheats_window then
         parent.im_cheats_window.im_cheats_content_frame.destroy()
-        create_tabbed_pane(player, parent.im_cheats_window)
+        create_tabbed_pane(player, util.player_table(player), parent.im_cheats_window)
     end
 end
 

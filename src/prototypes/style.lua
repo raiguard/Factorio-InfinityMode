@@ -115,6 +115,23 @@ styles['invalid_short_number_textfield'] = {
     }
 }
 
+styles['close_button_active'] = {
+    type = 'button_style',
+    parent = 'close_button',
+    default_graphical_set = {
+        base = {position = {272, 169}, corner_size = 8},
+        shadow = {position = {440, 24}, corner_size = 8, draw_type = "outer"}
+    },
+    hovered_graphical_set = {
+        base = {position={369,17}, corner_size=8},
+        shadow = {position = {440, 24}, corner_size = 8, draw_type = "outer"}
+    },
+    clicked_graphical_set = {
+        base = {position={352,17}, corner_size=8},
+        shadow = {position = {440, 24}, corner_size = 8, draw_type = "outer"}
+    }
+}
+
 -- ----------------------------------------------------------------------------------------------------
 -- SPRITES
 
@@ -131,6 +148,20 @@ data:extend{
         name = 'im-info-black-inline',
         filename = '__InfinityMode__/graphics/gui/info-black-inline.png',
         size = {16,40},
+        flags = {'icon'}
+    },
+    {
+        type = 'sprite',
+        name = 'im_pin',
+        filename = '__InfinityMode__/graphics/gui/pin.png',
+        size = 32,
+        flags = {'icon'}
+    },
+    {
+        type = 'sprite',
+        name = 'im_pin_black',
+        filename = '__InfinityMode__/graphics/gui/pin-black.png',
+        size = 32,
         flags = {'icon'}
     }
 }

@@ -27,7 +27,8 @@ local function player_setup(e)
         cur_player = player,
         cur_force = player.force,
         cur_surface = player.surface,
-        cur_tab = 1
+        cur_tab = 1,
+        docked = true
     }
 end
 
@@ -97,22 +98,23 @@ commands.add_command('enable-infinity-mode', {'chat-message.enable-command-help'
 -- ----------------------------------------------------------------------------------------------------
 -- MOD GUI
 
-local function toggle_gui(e)
+local function toggle_cheats_gui(e)
     local player = util.get_player(e)
-    local screen = player.gui.screen
-    if not screen.im_cheats_window then
-        cheats_gui.create(player, screen)
+    local parent = util.player_table(player).cheats_gui.docked and mod_gui.get_frame_flow(player) or player.gui.screen
+    log(parent.name)
+    if not parent.im_cheats_window then
+        cheats_gui.create(player, parent)
     else
-        screen.im_cheats_window.destroy()
+        parent.im_cheats_window.destroy()
     end
 end
 
 gui.on_click('im_button', function(e)
-    toggle_gui(e)
+    toggle_cheats_gui(e)
 end)
 
 on_event('im-toggle-cheats-gui', function(e)
-    toggle_gui(e)
+    toggle_cheats_gui(e)
 end)
 
 -- ----------------------------------------------------------------------------------------------------
@@ -237,6 +239,35 @@ end)
 
 gui.on_click('im_cheats_titlebar_button_close', function(e)
     e.element.parent.parent.destroy()
+end)
+
+gui.on_click('im_cheats_titlebar_button_pin', function(e)
+    local player = util.get_player(e)
+    local player_table = util.player_table(player)
+    if e.element.style.name == 'close_button' then
+        e.element.style = 'close_button_active'
+        player_table.cheats_gui.docked = true
+        player_table.cheats_gui.location = nil
+    else
+        e.element.style = 'close_button'
+        player_table.cheats_gui.docked = false
+    end
+    e.element.parent.parent.destroy()
+    toggle_cheats_gui{player_index=player.index}
+end)
+
+on_event(defines.events.on_gui_location_changed, function(e)
+    if e.element.name ~= 'im_cheats_window' then return end
+    util.player_table(e.player_index).cheats_gui.location = e.element.location
+end)
+
+on_event(defines.events.on_player_display_scale_changed, function(e)
+    if not global.mod_enabled then return end
+    local player = util.get_player(e)
+    local player_table = util.player_table(player)
+    if not player_table.cheats_gui.location and player_table.cheats_gui.window then
+        player_table.cheats_gui.window.location = {0,(44*player.display_scale)}
+    end
 end)
 
 -- ----------------------------------------------------------------------------------------------------
