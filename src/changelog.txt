@@ -4,6 +4,7 @@ Date: 2019.8.24
   Changes:
     - /enable-infinity-mode command is now only usable by admins
     - Darkened logo and crafting group icon
+    - Enable dialog will now show up after freeplay/sandbox description boxes are dismissed
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.4.0
