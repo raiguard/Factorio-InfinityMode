@@ -76,8 +76,8 @@ end
 local function add_defaults_gui(pane, category)
     pane.add{type='line', name='im_cheats_'..category..'_defaults_line', direction=horizontal}.style.top_margin = 2
     local buttons_flow = pane.add{type='flow', name='im_cheats_'..category..'_defaults_flow', direction='horizontal'}
-    buttons_flow.add{type='button', name='im-cheats_'..category..'_defaults-button_on', style='stretchable_button', caption='Enable all'}
-    buttons_flow.add{type='button', name='im-cheats_'..category..'_defaults-button_off', style='stretchable_button', caption='Disable all'}
+    buttons_flow.add{type='button', name='im_cheats-'..category..'-defaults_button-on', style='stretchable_button', caption='Enable all'}
+    buttons_flow.add{type='button', name='im_cheats-'..category..'-defaults_button-off', style='stretchable_button', caption='Disable all'}
 end
 
 local function create_tabbed_pane(player, player_table, window_frame)
@@ -179,7 +179,7 @@ local function create_tabbed_pane(player, player_table, window_frame)
     reset_button.style.width = 28
     reset_button.style.left_padding = 2
     reset_button.style.right_padding = 2
-    add_defaults_gui(pane, 'player')
+    add_defaults_gui(pane, 'force')
 
     -- SURFACE
     pane = tabs[3].content
@@ -216,7 +216,7 @@ local function create_tabbed_pane(player, player_table, window_frame)
     for n,t in pairs(elems_def.surface.fill) do
         create_cheat_ui(fill_flow, cur_surface, {'surface',n}, t)
     end
-    add_defaults_gui(pane, 'player')
+    add_defaults_gui(pane, 'surface')
 
     -- GAME
     pane = tabs[4].content

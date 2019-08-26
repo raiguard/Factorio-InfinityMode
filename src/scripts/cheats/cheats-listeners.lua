@@ -200,6 +200,11 @@ on_event(defines.events.on_gui_click, function(e)
     if params[1] == 'im_cheats' and params[4] == 'button' and cheats.is_valid(params[2], params[3]) then
         local obj = util.player_table(player).cheats_gui['cur_'..params[2]] or game
         cheats.trigger_action(obj, {params[2], params[3]})
+    elseif params[1] == 'im_cheats' and params[3] == 'defaults_button' then
+        local player_table = util.player_table(player)
+        util.cheat_table(params[2]).default_ref = params[4]
+        cheats.apply_defaults(params[2], player_table.cheats_gui['cur_'..params[2]])
+        cheats_gui.refresh(player, player_table.cheats_gui.window.parent)
     end
 end)
 
@@ -287,7 +292,10 @@ event.on_configuration_changed(function(e)
         cheats.migrate()
         -- refresh all open player cheat GUIs
         for _,p in pairs(game.players) do
-            cheats_gui.refresh(p, p.gui.screen)
+            if p.gui.screen.im_cheats_window then
+                toggle_cheats_gui{player_index=p.index}
+                toggle_cheats_gui{player_index=p.index}
+            end
         end
     end
 end)
