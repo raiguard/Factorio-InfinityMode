@@ -73,13 +73,16 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, player_is_god, pl
     end
 end
 
+local function add_defaults_gui(pane, category)
+    pane.add{type='line', name='im_cheats_'..category..'_defaults_line', direction=horizontal}.style.top_margin = 2
+    local buttons_flow = pane.add{type='flow', name='im_cheats_'..category..'_defaults_flow', direction='horizontal'}
+    buttons_flow.add{type='button', name='im-cheats_'..category..'_defaults-button_on', style='stretchable_button', caption='Enable all'}
+    buttons_flow.add{type='button', name='im-cheats_'..category..'_defaults-button_off', style='stretchable_button', caption='Disable all'}
+end
+
 local function create_tabbed_pane(player, player_table, window_frame)
     local elems_def = defs.cheats_gui_elems
     local content_frame = window_frame.add{type='frame', name='im_cheats_content_frame', style='inside_deep_frame_for_tabs', direction='vertical'}
-    -- local toolbar = content_frame.add{type='frame', name='im_cheats_toolbar_frame', style='subheader_frame'}
-    -- toolbar.style.horizontally_stretchable = true
-    -- toolbar.add{type='empty-widget', name='im_cheats_toolbar_spacer', style='invisible_horizontal_filler'}
-    -- toolbar.add{type='switch', name='im_cheats_toolbar_defaults_switch', allow_none_state=true, switch_state='left', left_label_caption='On', right_label_caption='Off'}
     local tabbed_pane = content_frame.add{type='tabbed-pane', name='im_cheats_tabbed_pane'}
     for category,cheats in pairs(elems_def) do
         local tab = tabbed_pane.add{type='tab', name='im_cheats_'..category..'_tab', caption={'gui-cheats.tab-'..category..'-caption'}}
@@ -135,7 +138,8 @@ local function create_tabbed_pane(player, player_table, window_frame)
     for n,t in pairs(elems_def.player.actions) do
         create_cheat_ui(pane, cur_player, {'player',n}, t, player_is_god, player_is_editor)
     end
-
+    add_defaults_gui(pane, 'player')
+    
     -- FORCE
     pane = tabs[2].content
     local cur_force = player_table.cheats_gui.cur_force
@@ -175,6 +179,7 @@ local function create_tabbed_pane(player, player_table, window_frame)
     reset_button.style.width = 28
     reset_button.style.left_padding = 2
     reset_button.style.right_padding = 2
+    add_defaults_gui(pane, 'player')
 
     -- SURFACE
     pane = tabs[3].content
@@ -211,6 +216,7 @@ local function create_tabbed_pane(player, player_table, window_frame)
     for n,t in pairs(elems_def.surface.fill) do
         create_cheat_ui(fill_flow, cur_surface, {'surface',n}, t)
     end
+    add_defaults_gui(pane, 'player')
 
     -- GAME
     pane = tabs[4].content
