@@ -131,9 +131,7 @@ on_event(defines.events.on_gui_checked_state_changed, function(e)
     if params[1] == 'im_cheats' and params[4] == 'checkbox' and cheats.is_valid(params[2], params[3]) then
         local obj = util.player_table(player).cheats_gui['cur_'..params[2]] or game
         cheats.update(obj, {params[2], params[3]}, e.element.state)
-        if params[3] == 'god_mode' then
-            cheats_gui.refresh(player, player.gui.screen)
-        end
+        cheats_gui.update(player, params[2])
     end
 end)
 
@@ -150,7 +148,7 @@ on_event(defines.events.on_gui_confirmed, function(e)
         util.player_table(player).cheats_gui.prev_value = nil
         local obj = util.player_table(player).cheats_gui['cur_'..params[2]] or game
         cheats.update(obj, {params[2], params[3]}, e.element.text)
-        -- cheats_gui.refresh(player, player.gui.screen)
+        cheats_gui.update(player, params[2])
     end
 end)
 
@@ -214,7 +212,7 @@ on_event(defines.events.on_gui_selection_state_changed, function(e)
     if params[1] == 'im_cheats' and params[4] == 'dropdown' and cheats.is_valid(params[2], params[3]) then
         local obj = util.player_table(player).cheats_gui['cur_'..params[2]] or game
         cheats.update(obj, {params[2], params[3]}, e.element.selected_index)
-        -- cheats_gui.refresh(player, player.gui.screen)
+        
     end
 end)
 
