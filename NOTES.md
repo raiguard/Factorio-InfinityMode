@@ -34,6 +34,9 @@ Each cheat has a `functions` parameter that contains a table of functions:
         - cur_force (LuaForce)
         - cur_surface (LuaSurface)
         - cur_tab (int)
+        - window (LuaGuiElement)
+        - cheat_elems (table)
+            - (category) (string)
     - ia_gui
         - entity (LuaEntity)
         - mode_dropdown (LuaGuiElement)

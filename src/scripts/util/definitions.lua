@@ -20,7 +20,7 @@ local vanilla_loaders_recipes = {
 -- cheat data and functions
 defs.cheats = {
     player = {
-        god_mode = {type='toggle', defaults={on=false, off=false}, in_god_mode=true, in_editor=false, functions={
+        god_mode = {type='toggle', defaults={on=false, off=false}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 local player_table = util.player_table(player)
                 local character = player.character
@@ -55,17 +55,23 @@ defs.cheats = {
             end,
             get_value = function(player, cheat, cheat_global)
                 return player.controller_type == defines.controllers.god
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type ~= defines.controllers.editor
             end
         }},
-        true_zoom_to_world = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=false, functions={
+        true_zoom_to_world = {type='toggle', defaults={on=true, off=false}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 player.spectator = new_value
             end,
             get_value = function(player, cheat, cheat_global)
                 return player.spectator
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type ~= defines.controllers.god
             end
         }},
-        invincible_character = {type='toggle', defaults={on=true, off=false}, in_god_mode=false, in_editor=false, functions={
+        invincible_character = {type='toggle', defaults={on=true, off=false}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then
                     player.character.destructible = not new_value
@@ -73,9 +79,12 @@ defs.cheats = {
             end,
             get_value = function(player, cheat, cheat_global)
                 return player.character and not player.character.destructible or false
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type == defines.controllers.character
             end
         }},
-        instant_blueprint = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=false, functions={
+        instant_blueprint = {type='toggle', defaults={on=true, off=false}, functions={
             setup_global_global = function(player, default)
                 return {next_tick_entities={}}
             end,
@@ -88,9 +97,12 @@ defs.cheats = {
             end,
             get_value = function(player, cheat, cheat_global)
                 return cheat_global.cur_value
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type ~= defines.controllers.god
             end
         }},
-        instant_upgrade = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=false, functions={
+        instant_upgrade = {type='toggle', defaults={on=true, off=false}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.instant_upgrade.on_marked_for_upgrade')
@@ -100,9 +112,12 @@ defs.cheats = {
             end,
             get_value = function(player, cheat, cheat_global)
                 return cheat_global.cur_value
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type ~= defines.controllers.god
             end
         }},
-        instant_deconstruction = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=false, functions={
+        instant_deconstruction = {type='toggle', defaults={on=true, off=false}, functions={
             setup_global_global = function(player, default)
                 return {next_tick_entities={}}
             end,
@@ -115,17 +130,23 @@ defs.cheats = {
             end,
             get_value = function(player, cheat, cheat_global)
                 return cheat_global.cur_value
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type ~= defines.controllers.god
             end
         }},
-        cheat_mode = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=false, functions={
+        cheat_mode = {type='toggle', defaults={on=true, off=false}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 player.cheat_mode = new_value
             end,
             get_value = function(player, cheat, cheat_global)
                 return player.cheat_mode
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type ~= defines.controllers.god
             end
         }},
-        keep_last_item = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=true, functions={
+        keep_last_item = {type='toggle', defaults={on=true, off=false}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.keep_last_item.on_put_item')
@@ -137,7 +158,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        single_stack_limit = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=true, functions={
+        single_stack_limit = {type='toggle', defaults={on=true, off=false}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.single_stack_limit.on_main_inventory_changed')
@@ -150,7 +171,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        repair_used_item = {type='toggle', defaults={on=true, off=false}, in_god_mode=true, in_editor=true, functions={
+        repair_used_item = {type='toggle', defaults={on=true, off=false}, functions={
             setup_global_global = function(player, default)
                 return {cur_players={}}
             end,
@@ -167,7 +188,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end
         }},
-        instant_request = {type='toggle', defaults={on=true, off=false}, in_god_mode=false, in_editor=false, functions={
+        instant_request = {type='toggle', defaults={on=true, off=false}, functions={
             setup_global = function(player, default)
                 return {cur_value=default}
             end,
@@ -186,9 +207,12 @@ defs.cheats = {
             end,
             get_value = function(player, cheat, cheat_global)
                 return cheat_global.cur_value
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type == defines.controllers.character
             end
         }},
-        instant_trash = {type='toggle', defaults={on=true, off=false}, in_god_mode=false, in_editor=false, functions={
+        instant_trash = {type='toggle', defaults={on=true, off=false}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if new_value then
                     conditional_event.cheat_register(player, cheat, 'cheats.player.instant_trash.on_trash_inventory_changed')
@@ -199,97 +223,133 @@ defs.cheats = {
             end,
             get_value = function(player, cheat, cheat_global)
                 return cheat_global.cur_value
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type == defines.controllers.character
             end
         }},
-        character_reach_distance_bonus = {type='number', defaults={on=1000000, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_reach_distance_bonus = {type='number', defaults={on=1000000, off=0}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_reach_distance_bonus = new_value end
             end,
             get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_reach_distance_bonus
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type == defines.controllers.character
             end
         }},
-        character_build_distance_bonus = {type='number', defaults={on=1000000, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_build_distance_bonus = {type='number', defaults={on=1000000, off=0}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_build_distance_bonus = new_value end
             end,
             get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_build_distance_bonus
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type == defines.controllers.character
             end
         }},
-        character_resource_reach_distance_bonus = {type='number', defaults={on=1000000, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_resource_reach_distance_bonus = {type='number', defaults={on=1000000, off=0}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_resource_reach_distance_bonus = new_value end
             end,
             get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_resource_reach_distance_bonus
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type == defines.controllers.character
             end
         }},
-        character_item_drop_distance_bonus = {type='number', defaults={on=1000000, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_item_drop_distance_bonus = {type='number', defaults={on=1000000, off=0}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_item_drop_distance_bonus = new_value end
             end,
             get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_item_drop_distance_bonus
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type == defines.controllers.character
             end
         }},
-        character_item_pickup_distance_bonus = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_item_pickup_distance_bonus = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_item_pickup_distance_bonus = new_value end
             end,
             get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_item_pickup_distance_bonus
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type == defines.controllers.character
             end
         }},
-        character_loot_pickup_distance_bonus = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_loot_pickup_distance_bonus = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_loot_pickup_distance_bonus = new_value end
             end,
             get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_loot_pickup_distance_bonus
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type == defines.controllers.character
             end
         }},
-        character_mining_speed_modifier = {type='number', defaults={on=100, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_mining_speed_modifier = {type='number', defaults={on=100, off=0}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_mining_speed_modifier = new_value end
             end,
             get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_mining_speed_modifier
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type == defines.controllers.character
             end
         }},
-        character_running_speed_modifier = {type='number', defaults={on=2, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_running_speed_modifier = {type='number', defaults={on=2, off=0}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_running_speed_modifier = new_value end
             end,
             get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_running_speed_modifier
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type == defines.controllers.character
             end
         }},
-        character_crafting_speed_modifier = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_crafting_speed_modifier = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_crafting_speed_modifier = new_value end
             end,
             get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_crafting_speed_modifier
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type == defines.controllers.character
             end
         }},
-        character_inventory_slots_bonus = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_inventory_slots_bonus = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_inventory_slots_bonus = new_value end
             end,
             get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_inventory_slots_bonus
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type == defines.controllers.character
             end
         }},
-        character_health_bonus = {type='number', defaults={on=0, off=0}, in_god_mode=false, in_editor=false, functions={
+        character_health_bonus = {type='number', defaults={on=0, off=0}, functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 if player.character then player.character_health_bonus = new_value end
             end,
             get_value = function(player, cheat, cheat_global)
                 return player.character and player.character_health_bonus
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type == defines.controllers.character
             end
         }},
-        clear_inventory = {type='action', in_god_mode=true, in_editor=true, functions={
+        clear_inventory = {type='action', functions={
             action = function(player, cheat, cheat_table)
                 player.get_main_inventory().clear()
             end

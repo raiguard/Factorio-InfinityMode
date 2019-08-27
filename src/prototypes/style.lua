@@ -163,5 +163,23 @@ data:extend{
         filename = '__InfinityMode__/graphics/gui/pin-black.png',
         size = 32,
         flags = {'icon'}
+    },
+    {
+        type = 'sprite',
+        name = 'im_no_default_on',
+        filename = '__InfinityMode__/graphics/gui/needs-restart-white.png',
+        size = {16,40},
+        scale = 0.5,
+        flags = {'icon'},
+        tint = green_arrow_button_glow_color
+    },
+    {
+        type = 'sprite',
+        name = 'im_no_default_off',
+        filename = '__InfinityMode__/graphics/gui/needs-restart-white.png',
+        size = {16,40},
+        scale = 0.5,
+        flags = {'icon'},
+        tint = red_arrow_button_glow_color
     }
 }

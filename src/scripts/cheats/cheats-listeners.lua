@@ -204,7 +204,7 @@ on_event(defines.events.on_gui_click, function(e)
         local player_table = util.player_table(player)
         util.cheat_table(params[2]).default_ref = params[4]
         cheats.apply_defaults(params[2], player_table.cheats_gui['cur_'..params[2]])
-        cheats_gui.refresh(player, player_table.cheats_gui.window.parent)
+        cheats_gui.update(player, params[2])
     end
 end)
 
@@ -220,25 +220,25 @@ end)
 
 on_event(defines.events.on_player_toggled_map_editor, function(e)
     local player = util.get_player(e)
-    cheats_gui.refresh(player, player.gui.screen)
+    cheats_gui.update(player)
 end)
 
 gui.on_selection_state_changed('im_cheats_player_switcher_dropdown', function(e)
     local player = util.get_player(e)
     util.player_table(player).cheats_gui.cur_player = game.players[e.element.selected_index]
-    cheats_gui.refresh(player, player.gui.screen)
+    cheats_gui.update(player, 'player')
 end)
 
 gui.on_selection_state_changed('im_cheats_force_listbox', function(e)
     local player = util.get_player(e)
     util.player_table(player).cheats_gui.cur_force = game.forces[e.element.selected_index]
-    cheats_gui.refresh(player, player.gui.screen)
+    cheats_gui.update(player, 'force')
 end)
 
 gui.on_selection_state_changed('im_cheats_surface_listbox', function(e)
     local player = util.get_player(e)
     util.player_table(player).cheats_gui.cur_surface = game.surfaces[e.element.selected_index]
-    cheats_gui.refresh(player, player.gui.screen)
+    cheats_gui.update(player, 'surface')
 end)
 
 gui.on_click('im_cheats_titlebar_button_close', function(e)

@@ -1,6 +1,7 @@
 -- INFINITY CHEATS GUI MANAGEMENT
 -- Manages all of the GUI elements for the cheats interface
 
+local string = require('__stdlib__/stdlib/utils/string')
 local table = require('__stdlib__/stdlib/utils/table')
 
 -- GUI ELEMENTS
@@ -19,15 +20,28 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, player_is_god, pl
     local locale_name = cheat[1]..'.setting-'..cheat[2]
     local element
     if cheat_def.type == 'toggle' then
-        element = parent.add{type='checkbox', name='im_cheats-'..cheat_name..'-checkbox', state=cheat_def.functions.get_value(obj, cheat_def, cheat_table),
+        local setting_flow = parent.add{type='flow', name='im_cheats-'..cheat_name..'-flow', direction='horizontal'}
+        element = setting_flow.add{type='checkbox', name='im_cheats-'..cheat_name..'-checkbox', state=false,
             caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
             tooltip=elem_table.tooltip and {'gui-cheats-'..locale_name..'-tooltip'} or nil}
+        if cheat_def.defaults == nil or cheat_def.defaults.on == nil then
+            setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_on_icon', caption='[img=im_no_default_on]', tooltip={'gui-cheats.no-default-on-tooltip'}}
+        end
+        if cheat_def.defaults == nil or cheat_def.defaults.off == nil then
+            setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_off_icon', caption='[img=im_no_default_off]', tooltip={'gui-cheats.no-default-off-tooltip'}}
+        end
     elseif cheat_def.type == 'number' then
         local setting_flow = parent.add{type='flow', name='im_cheats-'..cheat_name..'-flow', direction='horizontal'}
         setting_flow.style.vertical_align = 'center'
         setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-label',
             caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
             tooltip=elem_table.tooltip and {'gui-cheats-'..locale_name..'-tooltip'} or nil}
+        if cheat_def.defaults == nil or cheat_def.defaults.on == nil then
+            setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_on_icon', caption='[img=im_no_default_on]', tooltip={'gui-cheats.no-default-on-tooltip'}}
+        end
+        if cheat_def.defaults == nil or cheat_def.defaults.off == nil then
+            setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_off_icon', caption='[img=im_no_default_off]', tooltip={'gui-cheats.no-default-off-tooltip'}}
+        end
         setting_flow.add{type='empty-widget', name='im_cheats-'..cheat_name..'-filler', style='invisible_horizontal_filler'}
         if elem_table.slider then
             local slider = setting_flow.add{type='slider', name='im_cheats-'..cheat_name..'-slider', style=elem_table.slider.value_step and 'notched_slider' or nil,
@@ -35,11 +49,10 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, player_is_god, pl
                 maximum_value=elem_table.slider.max_value or cheat_def.max_value or 10,
                 value_step=elem_table.slider.value_step or nil, discrete_slider=elem_table.slider.value_step and true or nil,
                 discrete_values=elem_table.slider.value_step and true or nil}
-            slider.slider_value = cheat_def.functions.get_value(obj, cheat_def, cheat_table)
             slider.style.right_margin = 5
         end
         element = setting_flow.add{type='textfield', name='im_cheats-'..cheat_name..'-textfield', style='short_number_textfield',
-            text=cheat_def.functions.get_value(obj, cheat_def, cheat_table), numeric=true, lose_focus_on_confirm=true,
+            text='---', numeric=true, lose_focus_on_confirm=true,
             allow_decimal=elem_table.textfield and elem_table.textfield.allow_decimal or false}
         if elem_table.textfield and elem_table.textfield.width then
             element.style.width = elem_table.textfield.width
@@ -57,31 +70,33 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, player_is_god, pl
         setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-label',
             caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
             tooltip=elem_table.tooltip and {'gui-cheats-'..locale_name..'-tooltip'} or nil}
+        if cheat_def.defaults == nil or cheat_def.defaults.on == nil then
+            setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_on_icon', caption='[img=im_no_default_on]', tooltip={'gui-cheats.no-default-on-tooltip'}}
+        end
+        if cheat_def.defaults == nil or cheat_def.defaults.off == nil then
+            setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_off_icon', caption='[img=im_no_default_off]', tooltip={'gui-cheats.no-default-off-tooltip'}}
+        end
         setting_flow.add{type='empty-widget', name='im_cheats-'..cheat_name..'-filler', style='invisible_horizontal_filler'}
         element = setting_flow.add{type='drop-down', name='im_cheats-'..cheat_name..'-dropdown'}
         for i,n in pairs(cheat_def.items) do
             element.add_item({'gui-cheats-'..locale_name..'-item-'..i..'-caption'})
         end
-        element.selected_index = cheat_def.functions.get_value(obj, cheat_def, cheat_table)
+        element.selected_index = 1
     end
-    if player_is_god and cheat_def.in_god_mode == false then
-        element.enabled = false
-        element.tooltip = {'gui-cheats.disabled-in-god-mode-tooltip'}
-    elseif player_is_editor and cheat_def.in_editor == false then
-        element.enabled = false
-        element.tooltip = {'gui-cheats.disabled-in-editor-tooltip'}
-    end
+    return element
 end
 
 local function add_defaults_gui(pane, category)
     pane.add{type='line', name='im_cheats_'..category..'_defaults_line', direction=horizontal}.style.top_margin = 2
     local buttons_flow = pane.add{type='flow', name='im_cheats_'..category..'_defaults_flow', direction='horizontal'}
-    buttons_flow.add{type='button', name='im_cheats-'..category..'-defaults_button-on', style='stretchable_button', caption='Enable all'}
-    buttons_flow.add{type='button', name='im_cheats-'..category..'-defaults_button-off', style='stretchable_button', caption='Disable all'}
+    buttons_flow.add{type='button', name='im_cheats-'..category..'-defaults_button-on', style='green_button', caption='Enable all'}.style.horizontally_stretchable = true
+    buttons_flow.add{type='button', name='im_cheats-'..category..'-defaults_button-off', style='red_button', caption='Disable all'}.style.horizontally_stretchable = true
 end
 
 local function create_tabbed_pane(player, player_table, window_frame)
     local elems_def = defs.cheats_gui_elems
+    player_table.cheats_gui.cheat_elems = {}
+    local elems_list = player_table.cheats_gui.cheat_elems
     local content_frame = window_frame.add{type='frame', name='im_cheats_content_frame', style='inside_deep_frame_for_tabs', direction='vertical'}
     local tabbed_pane = content_frame.add{type='tabbed-pane', name='im_cheats_tabbed_pane'}
     for category,cheats in pairs(elems_def) do
@@ -96,6 +111,7 @@ local function create_tabbed_pane(player, player_table, window_frame)
     local pane
     
     -- PLAYER
+    elems_list.player = {}
     pane = tabs[1].content
     local cur_player = player_table.cheats_gui.cur_player
     local player_is_god = cur_player.controller_type == defines.controllers.god
@@ -122,13 +138,13 @@ local function create_tabbed_pane(player, player_table, window_frame)
         flow.style.horizontally_stretchable = true
         flow.add{type='label', name='im_cheats_player_toggles_'..group..'_label', style='caption_label', caption={'gui-cheats-player.group-'..group..'-caption'}}
         for n,t in pairs(cheats) do
-            create_cheat_ui(flow, cur_player, {'player',n}, t, player_is_god, player_is_editor)
+            table.insert(elems_list.player, create_cheat_ui(flow, cur_player, {'player',n}, t, player_is_god, player_is_editor))
         end
     end
     -- bonuses
     pane.add{type='label', name='im_cheats_player_bonuses_label', style='caption_label', caption={'gui-cheats-player.group-bonuses-caption'}}.style.top_margin = 2
     for n,t in pairs(elems_def.player.bonuses) do
-        create_cheat_ui(pane, cur_player, {'player',n}, t, player_is_god, player_is_editor)
+        table.insert(elems_list.player, create_cheat_ui(pane, cur_player, {'player',n}, t, player_is_god, player_is_editor))
     end
     -- actions
     local player_actions_label = pane.add{type='label', name='im_cheats_player_actions_label', style='caption_label', caption={'gui-cheats-player.group-actions-caption'}}
@@ -136,34 +152,34 @@ local function create_tabbed_pane(player, player_table, window_frame)
     player_actions_label.style.bottom_margin = 6
     local action_flow = pane.add{type='flow', name='im_cheats_player_actions_flow', direction='horizontal'}
     for n,t in pairs(elems_def.player.actions) do
-        create_cheat_ui(pane, cur_player, {'player',n}, t, player_is_god, player_is_editor)
+        table.insert(elems_list.player, create_cheat_ui(pane, cur_player, {'player',n}, t, player_is_god, player_is_editor))
     end
     add_defaults_gui(pane, 'player')
     
     -- FORCE
-    pane = tabs[2].content
+    elems_list.force = {}
+    pane = tabs[2].content    
     local cur_force = player_table.cheats_gui.cur_force
-    local upper_flow = pane.add{type='flow', name='im_cheats_force_upper_flow', direction='horizontal'}
-    upper_flow.style.horizontal_spacing = 10
-    upper_flow.style.horizontally_stretchable = true
-    -- force selector
+    -- force switcher
+    local switcher_flow = pane.add{type='flow', name='im_cheats_force_switcher_flow', style='vertically_centered_flow', direction='horizontal'}
+    switcher_flow.style.horizontally_stretchable = true
+    switcher_flow.add{type='label', name='im_cheats_force_switcher_label', style='caption_label', caption={'gui-cheats-force.switcher-label-caption'}}
+    switcher_flow.add{type='empty-widget', name='im_cheats_force_switcher_filler', style='invisible_horizontal_filler'}
     local forces = {}
     for i,force in pairs(game.forces) do
         forces[i] = force.name
     end
-    local forces_list = upper_flow.add{type='list-box', name='im_cheats_force_listbox', style='list_box_in_tabbed_pane', items=forces, selected_index=cur_force.index}
-    forces_list.style.minimal_width = 140
-    forces_list.style.height = 140
-    local toggles_flow = upper_flow.add{type='flow', name='im_cheats_force_toggles_flow', direction='vertical'}
-    toggles_flow.style.horizontally_stretchable = true
+    switcher_flow.add{type='drop-down', name='im_cheats_force_switcher_dropdown', items=forces, selected_index=player_table.cheats_gui.cur_force.index}
+    switcher_flow.style.bottom_margin = 4
+    pane.add{type='line', name='im_cheats_force_switcher_line', direction='horizontal'}.style.horizontally_stretchable = true
     -- toggles
     for n,t in pairs(elems_def.force.toggles) do
-        create_cheat_ui(toggles_flow, cur_force, {'force',n}, t)
+        table.insert(elems_list.force, create_cheat_ui(pane, cur_force, {'force',n}, t))
     end
     -- bonuses
     pane.add{type='label', name='im_cheats_force_bonuses_label', style='caption_label', caption={'gui-cheats-force.group-bonuses-caption'}}.style.top_margin = 2
     for n,t in pairs(elems_def.force.bonuses) do
-        create_cheat_ui(pane, cur_force, {'force',n}, t, player_is_god, player_is_editor)
+        table.insert(elems_list.force, create_cheat_ui(pane, cur_force, {'force',n}, t, player_is_god, player_is_editor))
     end
     -- actions
     local force_actions_label = pane.add{type='label', name='im_cheats_force_actions_label', style='caption_label', caption={'gui-cheats-force.group-actions-caption'}}
@@ -171,7 +187,7 @@ local function create_tabbed_pane(player, player_table, window_frame)
     force_actions_label.style.bottom_margin = 6
     local action_flow = pane.add{type='flow', name='im_cheats_force_actions_flow', direction='horizontal'}
     for n,t in pairs(elems_def.force.actions) do
-        create_cheat_ui(action_flow, cur_force, {'force',n}, t)
+        table.insert(elems_list.force, create_cheat_ui(action_flow, cur_force, {'force',n}, t))
     end
     local technology_flow = pane.add{type='flow', name='im_cheats_force_technology_flow', direction='horizontal'}
     technology_flow.add{type='button', name='im_cheats-force-research_all_technologies-button', caption={'gui-cheats-force.setting-research_all_technologies-caption'}}.style.horizontally_stretchable = true
@@ -182,48 +198,55 @@ local function create_tabbed_pane(player, player_table, window_frame)
     add_defaults_gui(pane, 'force')
 
     -- SURFACE
+    elems_list.surface = {}
     pane = tabs[3].content
     local cur_surface = player_table.cheats_gui.cur_surface
-    local upper_flow = pane.add{type='flow', name='im_cheats_surface_upper_flow', direction='horizontal'}
-    upper_flow.style.horizontal_spacing = 10
-    upper_flow.style.horizontally_stretchable = true
     -- surface selector
+    local switcher_flow = pane.add{type='flow', name='im_cheats_surface_switcher_flow', style='vertically_centered_flow', direction='horizontal'}
+    switcher_flow.style.horizontally_stretchable = true
+    switcher_flow.add{type='label', name='im_cheats_surface_switcher_label', style='caption_label', caption={'gui-cheats-surface.switcher-label-caption'}}
+    switcher_flow.add{type='empty-widget', name='im_cheats_surface_switcher_filler', style='invisible_horizontal_filler'}
     local surfaces = {}
     for i,surface in pairs(game.surfaces) do
         surfaces[i] = surface.name
     end
-    local surfaces_list = upper_flow.add{type='list-box', name='im_cheats_surface_listbox', style='list_box_in_tabbed_pane', items=surfaces, selected_index=cur_surface.index}
-    surfaces_list.style.minimal_width = 140
-    surfaces_list.style.height = 140
+    switcher_flow.add{type='drop-down', name='im_cheats_surface_switcher_dropdown', items=surfaces, selected_index=player_table.cheats_gui.cur_surface.index}
+    switcher_flow.style.bottom_margin = 4
+    pane.add{type='line', name='im_cheats_surface_switcher_line', direction='horizontal'}.style.horizontally_stretchable = true
     -- toggles
-    local toggles_flow = upper_flow.add{type='flow', name='im_cheats_surface_toggles_flow', direction='vertical'}
+    local toggles_flow = pane.add{type='flow', name='im_cheats_surface_toggles_flow', direction='vertical'}
     toggles_flow.style.horizontally_stretchable = true
     for n,t in pairs(elems_def.surface.toggles) do
-        create_cheat_ui(toggles_flow, cur_surface, {'surface',n}, t)
+        table.insert(elems_list.surface, create_cheat_ui(toggles_flow, cur_surface, {'surface',n}, t))
     end
     -- table
     local surface_table = pane.add{type='table', name='im_cheats_surface_table', style='bordered_table', column_count=1}
     surface_table.style.top_margin = 5
     local time_flow = surface_table.add{type='flow', name='im_cheats_surface_time_flow', direction='vertical'}
     for n,t in pairs(elems_def.surface.time) do
-        create_cheat_ui(time_flow, cur_surface, {'surface',n}, t)
+        table.insert(elems_list.surface, create_cheat_ui(time_flow, cur_surface, {'surface',n}, t))
     end
     local clear_flow = surface_table.add{type='flow', name='im_cheats_surface_clear_flow', direction='vertical'}
     for n,t in pairs(elems_def.surface.clear_entities) do
-        create_cheat_ui(clear_flow, cur_surface, {'surface',n}, t)
+        table.insert(elems_list.surface, create_cheat_ui(clear_flow, cur_surface, {'surface',n}, t))
     end
     local fill_flow = surface_table.add{type='flow', name='im_cheats_surface_fill_flow', direction='vertical'}
     for n,t in pairs(elems_def.surface.fill) do
-        create_cheat_ui(fill_flow, cur_surface, {'surface',n}, t)
+        table.insert(elems_list.surface, create_cheat_ui(fill_flow, cur_surface, {'surface',n}, t))
     end
     add_defaults_gui(pane, 'surface')
 
     -- GAME
+    elems_list.game = {}
     pane = tabs[4].content
     local toggles_flow = pane.add{type='flow', name='im_cheats_game_toggle_flow', direction='vertical'}
     for n,t in pairs(elems_def.game.toggles) do
-        create_cheat_ui(toggles_flow, game, {'game',n}, t)
+        table.insert(elems_list.game, create_cheat_ui(toggles_flow, game, {'game',n}, t))
     end
+end
+
+local function set_cheat_gui_state(obj, cheat, cheat_table, elem)
+    
 end
 
 function cheats_gui.create(player, parent)
@@ -254,13 +277,51 @@ function cheats_gui.create(player, parent)
     })
     if parent.name == 'mod_gui_frame_flow' then titlebar.children[3].style = 'close_button_active' end
     create_tabbed_pane(player, player_table, window_frame)
+    cheats_gui.update(player)
     player_table.cheats_gui.window = window_frame
 end
 
+-- update the values/states of cheat GUIs
+function cheats_gui.update(player, category)
+    local player_table = util.player_table(player)
+    local function iterate_category(category, elems)
+        local obj = category == 'game' and game or player_table.cheats_gui['cur_'..category]
+        for _,elem in pairs(elems or player_table.cheats_gui.cheat_elems[category]) do
+            local name = string.split(elem.name, '-')[3]
+            local cheat_def = defs.cheats[category][name]
+            if cheat_def.type ~= 'action' then
+                local cheat_table = util.cheat_table(category, name, obj)
+                local cur_value = cheat_def.functions.get_value(obj, cheat_def, cheat_table)
+                -- disable if needed
+                if cheat_def.functions.get_enabled then
+                    elem.enabled = cheat_def.functions.get_enabled(obj, cheat_def, cheat_table)
+                end
+                -- set value
+                if elem.type == 'checkbox' then
+                    elem.state = elem.enabled and cur_value or false
+                elseif elem.type == 'textfield' then
+                    elem.text = elem.enabled and cur_value or '---'
+                elseif elem.type == 'drop-down' then
+                    elem.selected_index = cur_value
+                end
+            end
+        end
+    end
+    if category then
+        iterate_category(category)
+    else
+        for category,elems in pairs(player_table.cheats_gui.cheat_elems) do
+            iterate_category(category, elems)
+        end
+    end 
+end
+
+-- destroys and recreates the GUI
 function cheats_gui.refresh(player, parent)
     if parent.im_cheats_window then
-        parent.im_cheats_window.im_cheats_content_frame.destroy()
-        create_tabbed_pane(player, util.player_table(player), parent.im_cheats_window)
+        parent.im_cheats_window.destroy()
+        cheats_gui.create(player, parent)
+        cheats_gui.update(player)
     end
 end
 
