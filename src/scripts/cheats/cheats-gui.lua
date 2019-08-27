@@ -13,77 +13,85 @@ local util = require('scripts/util/util')
 
 local cheats_gui = {}
 
-local function create_cheat_ui(parent, obj, cheat, elem_table, player_is_god, player_is_editor)
-    local cheat_def = defs.cheats[cheat[1]][cheat[2]]
-    local cheat_table = util.cheat_table(cheat[1], cheat[2], obj)
-    local cheat_name = cheat[1]..'-'..cheat[2]
-    local locale_name = cheat[1]..'.setting-'..cheat[2]
-    local element
-    if cheat_def.type == 'toggle' then
-        local setting_flow = parent.add{type='flow', name='im_cheats-'..cheat_name..'-flow', direction='horizontal'}
-        element = setting_flow.add{type='checkbox', name='im_cheats-'..cheat_name..'-checkbox', state=false,
-            caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
-            tooltip=elem_table.tooltip and {'gui-cheats-'..locale_name..'-tooltip'} or nil}
-        if cheat_def.defaults == nil or cheat_def.defaults.on == nil then
-            setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_on_icon', caption='[img=im_no_default_on]', tooltip={'gui-cheats.no-default-on-tooltip'}}
+-- only create elements here, do not set their proper values yet
+local function create_cheat_ui(parent, obj, cheat, elem_table, add_to_table)
+    local function create_elems(parent, obj, cheat, elem_table)
+        local cheat_def = defs.cheats[cheat[1]][cheat[2]]
+        local cheat_table = util.cheat_table(cheat[1], cheat[2], obj)
+        local cheat_name = cheat[1]..'-'..cheat[2]
+        local locale_name = cheat[1]..'.setting-'..cheat[2]
+        if cheat_def.type == 'toggle' then
+            local setting_flow = parent.add{type='flow', name='im_cheats-'..cheat_name..'-flow', direction='horizontal'}
+            local checkbox = setting_flow.add{type='checkbox', name='im_cheats-'..cheat_name..'-checkbox', state=false,
+                caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
+                tooltip=elem_table.tooltip and {'gui-cheats-'..locale_name..'-tooltip'} or nil}
+            if defs.cheats_gui_elems[cheat[1]].has_defaults and (cheat_def.defaults == nil or cheat_def.defaults.on == nil) then
+                setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_on_icon', caption='[img=im_no_default_on]', tooltip={'gui-cheats.no-default-on-tooltip'}}
+            end
+            if defs.cheats_gui_elems[cheat[1]].has_defaults and (cheat_def.defaults == nil or cheat_def.defaults.off == nil) then
+                setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_off_icon', caption='[img=im_no_default_off]', tooltip={'gui-cheats.no-default-off-tooltip'}}
+            end
+            return {checkbox}
+        elseif cheat_def.type == 'number' then
+            local setting_flow = parent.add{type='flow', name='im_cheats-'..cheat_name..'-flow', direction='horizontal'}
+            setting_flow.style.vertical_align = 'center'
+            setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-label',
+                caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
+                tooltip=elem_table.tooltip and {'gui-cheats-'..locale_name..'-tooltip'} or nil}
+            if defs.cheats_gui_elems[cheat[1]].has_defaults and (cheat_def.defaults == nil or cheat_def.defaults.on == nil) then
+                setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_on_icon', caption='[img=im_no_default_on]', tooltip={'gui-cheats.no-default-on-tooltip'}}
+            end
+            if defs.cheats_gui_elems[cheat[1]].has_defaults and (cheat_def.defaults == nil or cheat_def.defaults.off == nil) then
+                setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_off_icon', caption='[img=im_no_default_off]', tooltip={'gui-cheats.no-default-off-tooltip'}}
+            end
+            setting_flow.add{type='empty-widget', name='im_cheats-'..cheat_name..'-filler', style='invisible_horizontal_filler'}
+            local slider
+            if elem_table.slider then
+                slider = setting_flow.add{type='slider', name='im_cheats-'..cheat_name..'-slider', style=elem_table.slider.value_step and 'notched_slider' or nil,
+                    minimum_value=elem_table.slider.min_value or cheat_def.min_value or 1,
+                    maximum_value=elem_table.slider.max_value or cheat_def.max_value or 10,
+                    value_step=elem_table.slider.value_step or nil, discrete_slider=elem_table.slider.value_step and true or nil,
+                    discrete_values=elem_table.slider.value_step and true or nil}
+                slider.style.right_margin = 5
+            end
+            local textfield = setting_flow.add{type='textfield', name='im_cheats-'..cheat_name..'-textfield', style='short_number_textfield',
+                text='---', numeric=true, lose_focus_on_confirm=true,
+                allow_decimal=elem_table.textfield and elem_table.textfield.allow_decimal or false}
+            if elem_table.textfield and elem_table.textfield.width then
+                textfield.style.width = elem_table.textfield.width
+            end
+            if elem_table.slider then
+                textfield.style.horizontal_align = 'center'
+            end
+            return {slider, textfield}
+        elseif cheat_def.type == 'action' then
+            local button = parent.add{type='button', name='im_cheats-'..cheat_name..'-button', style='stretchable_button',
+                caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=im-info-black-inline]' or nil},
+                tooltip=elem_table.tooltip and {'gui-cheats-'..locale_name..'-tooltip'} or nil}
+            return {button}
+        elseif cheat_def.type == 'list' then
+            local setting_flow = parent.add{type='flow', name='im_cheats-'..cheat_name..'-flow', direction='horizontal'}
+            setting_flow.style.vertical_align = 'center'
+            setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-label',
+                caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
+                tooltip=elem_table.tooltip and {'gui-cheats-'..locale_name..'-tooltip'} or nil}
+            if defs.cheats_gui_elems[cheat[1]].has_defaults and (cheat_def.defaults == nil or cheat_def.defaults.on == nil) then
+                setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_on_icon', caption='[img=im_no_default_on]', tooltip={'gui-cheats.no-default-on-tooltip'}}
+            end
+            if defs.cheats_gui_elems[cheat[1]].has_defaults and (cheat_def.defaults == nil or cheat_def.defaults.off == nil) then
+                setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_off_icon', caption='[img=im_no_default_off]', tooltip={'gui-cheats.no-default-off-tooltip'}}
+            end
+            setting_flow.add{type='empty-widget', name='im_cheats-'..cheat_name..'-filler', style='invisible_horizontal_filler'}
+            local dropdown = setting_flow.add{type='drop-down', name='im_cheats-'..cheat_name..'-dropdown'}
+            for i,n in pairs(cheat_def.items) do
+                dropdown.add_item({'gui-cheats-'..locale_name..'-item-'..i..'-caption'})
+            end
+            return {dropdown}
         end
-        if cheat_def.defaults == nil or cheat_def.defaults.off == nil then
-            setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_off_icon', caption='[img=im_no_default_off]', tooltip={'gui-cheats.no-default-off-tooltip'}}
-        end
-    elseif cheat_def.type == 'number' then
-        local setting_flow = parent.add{type='flow', name='im_cheats-'..cheat_name..'-flow', direction='horizontal'}
-        setting_flow.style.vertical_align = 'center'
-        setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-label',
-            caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
-            tooltip=elem_table.tooltip and {'gui-cheats-'..locale_name..'-tooltip'} or nil}
-        if cheat_def.defaults == nil or cheat_def.defaults.on == nil then
-            setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_on_icon', caption='[img=im_no_default_on]', tooltip={'gui-cheats.no-default-on-tooltip'}}
-        end
-        if cheat_def.defaults == nil or cheat_def.defaults.off == nil then
-            setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_off_icon', caption='[img=im_no_default_off]', tooltip={'gui-cheats.no-default-off-tooltip'}}
-        end
-        setting_flow.add{type='empty-widget', name='im_cheats-'..cheat_name..'-filler', style='invisible_horizontal_filler'}
-        if elem_table.slider then
-            local slider = setting_flow.add{type='slider', name='im_cheats-'..cheat_name..'-slider', style=elem_table.slider.value_step and 'notched_slider' or nil,
-                minimum_value=elem_table.slider.min_value or cheat_def.min_value or 1,
-                maximum_value=elem_table.slider.max_value or cheat_def.max_value or 10,
-                value_step=elem_table.slider.value_step or nil, discrete_slider=elem_table.slider.value_step and true or nil,
-                discrete_values=elem_table.slider.value_step and true or nil}
-            slider.style.right_margin = 5
-        end
-        element = setting_flow.add{type='textfield', name='im_cheats-'..cheat_name..'-textfield', style='short_number_textfield',
-            text='---', numeric=true, lose_focus_on_confirm=true,
-            allow_decimal=elem_table.textfield and elem_table.textfield.allow_decimal or false}
-        if elem_table.textfield and elem_table.textfield.width then
-            element.style.width = elem_table.textfield.width
-        end
-        if elem_table.slider then
-            element.style.horizontal_align = 'center'
-        end
-    elseif cheat_def.type == 'action' then
-        element = parent.add{type='button', name='im_cheats-'..cheat_name..'-button', style='stretchable_button',
-            caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=im-info-black-inline]' or nil},
-            tooltip=elem_table.tooltip and {'gui-cheats-'..locale_name..'-tooltip'} or nil}
-    elseif cheat_def.type == 'list' then
-        local setting_flow = parent.add{type='flow', name='im_cheats-'..cheat_name..'-flow', direction='horizontal'}
-        setting_flow.style.vertical_align = 'center'
-        setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-label',
-            caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
-            tooltip=elem_table.tooltip and {'gui-cheats-'..locale_name..'-tooltip'} or nil}
-        if cheat_def.defaults == nil or cheat_def.defaults.on == nil then
-            setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_on_icon', caption='[img=im_no_default_on]', tooltip={'gui-cheats.no-default-on-tooltip'}}
-        end
-        if cheat_def.defaults == nil or cheat_def.defaults.off == nil then
-            setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_off_icon', caption='[img=im_no_default_off]', tooltip={'gui-cheats.no-default-off-tooltip'}}
-        end
-        setting_flow.add{type='empty-widget', name='im_cheats-'..cheat_name..'-filler', style='invisible_horizontal_filler'}
-        element = setting_flow.add{type='drop-down', name='im_cheats-'..cheat_name..'-dropdown'}
-        for i,n in pairs(cheat_def.items) do
-            element.add_item({'gui-cheats-'..locale_name..'-item-'..i..'-caption'})
-        end
-        element.selected_index = 1
     end
-    return element
+    for _,elem in pairs(create_elems(parent, obj, cheat, elem_table)) do
+        table.insert(add_to_table, elem)
+    end
 end
 
 local function add_defaults_gui(pane, category)
@@ -138,13 +146,13 @@ local function create_tabbed_pane(player, player_table, window_frame)
         flow.style.horizontally_stretchable = true
         flow.add{type='label', name='im_cheats_player_toggles_'..group..'_label', style='caption_label', caption={'gui-cheats-player.group-'..group..'-caption'}}
         for n,t in pairs(cheats) do
-            table.insert(elems_list.player, create_cheat_ui(flow, cur_player, {'player',n}, t, player_is_god, player_is_editor))
+            create_cheat_ui(flow, cur_player, {'player',n}, t, elems_list.player)
         end
     end
     -- bonuses
     pane.add{type='label', name='im_cheats_player_bonuses_label', style='caption_label', caption={'gui-cheats-player.group-bonuses-caption'}}.style.top_margin = 2
     for n,t in pairs(elems_def.player.bonuses) do
-        table.insert(elems_list.player, create_cheat_ui(pane, cur_player, {'player',n}, t, player_is_god, player_is_editor))
+        create_cheat_ui(pane, cur_player, {'player',n}, t, elems_list.player)
     end
     -- actions
     local player_actions_label = pane.add{type='label', name='im_cheats_player_actions_label', style='caption_label', caption={'gui-cheats-player.group-actions-caption'}}
@@ -152,7 +160,7 @@ local function create_tabbed_pane(player, player_table, window_frame)
     player_actions_label.style.bottom_margin = 6
     local action_flow = pane.add{type='flow', name='im_cheats_player_actions_flow', direction='horizontal'}
     for n,t in pairs(elems_def.player.actions) do
-        table.insert(elems_list.player, create_cheat_ui(pane, cur_player, {'player',n}, t, player_is_god, player_is_editor))
+        create_cheat_ui(pane, cur_player, {'player',n}, t, elems_list.player)
     end
     add_defaults_gui(pane, 'player')
     
@@ -174,12 +182,12 @@ local function create_tabbed_pane(player, player_table, window_frame)
     pane.add{type='line', name='im_cheats_force_switcher_line', direction='horizontal'}.style.horizontally_stretchable = true
     -- toggles
     for n,t in pairs(elems_def.force.toggles) do
-        table.insert(elems_list.force, create_cheat_ui(pane, cur_force, {'force',n}, t))
+        create_cheat_ui(pane, cur_force, {'force',n}, t, elems_list.force)
     end
     -- bonuses
     pane.add{type='label', name='im_cheats_force_bonuses_label', style='caption_label', caption={'gui-cheats-force.group-bonuses-caption'}}.style.top_margin = 2
     for n,t in pairs(elems_def.force.bonuses) do
-        table.insert(elems_list.force, create_cheat_ui(pane, cur_force, {'force',n}, t, player_is_god, player_is_editor))
+        create_cheat_ui(pane, cur_force, {'force',n}, t, elems_list.force)
     end
     -- actions
     local force_actions_label = pane.add{type='label', name='im_cheats_force_actions_label', style='caption_label', caption={'gui-cheats-force.group-actions-caption'}}
@@ -187,7 +195,7 @@ local function create_tabbed_pane(player, player_table, window_frame)
     force_actions_label.style.bottom_margin = 6
     local action_flow = pane.add{type='flow', name='im_cheats_force_actions_flow', direction='horizontal'}
     for n,t in pairs(elems_def.force.actions) do
-        table.insert(elems_list.force, create_cheat_ui(action_flow, cur_force, {'force',n}, t))
+        create_cheat_ui(action_flow, cur_force, {'force',n}, t, elems_list.force)
     end
     local technology_flow = pane.add{type='flow', name='im_cheats_force_technology_flow', direction='horizontal'}
     technology_flow.add{type='button', name='im_cheats-force-research_all_technologies-button', caption={'gui-cheats-force.setting-research_all_technologies-caption'}}.style.horizontally_stretchable = true
@@ -217,39 +225,34 @@ local function create_tabbed_pane(player, player_table, window_frame)
     local toggles_flow = pane.add{type='flow', name='im_cheats_surface_toggles_flow', direction='vertical'}
     toggles_flow.style.horizontally_stretchable = true
     for n,t in pairs(elems_def.surface.toggles) do
-        table.insert(elems_list.surface, create_cheat_ui(toggles_flow, cur_surface, {'surface',n}, t))
+        create_cheat_ui(toggles_flow, cur_surface, {'surface',n}, t, elems_list.surface)
     end
     pane.add{type='line', name='im_cheats_surface_toggles_line', direction='horizontal'}
     -- time
     local time_flow = pane.add{type='flow', name='im_cheats_surface_time_flow', direction='vertical'}
     for n,t in pairs(elems_def.surface.time) do
-        table.insert(elems_list.surface, create_cheat_ui(time_flow, cur_surface, {'surface',n}, t))
+        create_cheat_ui(time_flow, cur_surface, {'surface',n}, t, elems_list.surface)
     end
     pane.add{type='line', name='im_cheats_surface_time_line', direction='horizontal'}
     -- clear
     local clear_flow = pane.add{type='flow', name='im_cheats_surface_clear_flow', direction='vertical'}
     for n,t in pairs(elems_def.surface.clear_entities) do
-        table.insert(elems_list.surface, create_cheat_ui(clear_flow, cur_surface, {'surface',n}, t))
+        create_cheat_ui(clear_flow, cur_surface, {'surface',n}, t, elems_list.surface)
     end
     pane.add{type='line', name='im_cheats_surface_clear_line', direction='horizontal'}
     -- fill
     local fill_flow = pane.add{type='flow', name='im_cheats_surface_fill_flow', direction='vertical'}
     for n,t in pairs(elems_def.surface.fill) do
-        table.insert(elems_list.surface, create_cheat_ui(fill_flow, cur_surface, {'surface',n}, t))
+        create_cheat_ui(fill_flow, cur_surface, {'surface',n}, t, elems_list.surface)
     end
-    add_defaults_gui(pane, 'surface')
 
     -- GAME
     elems_list.game = {}
     pane = tabs[4].content
     local toggles_flow = pane.add{type='flow', name='im_cheats_game_toggle_flow', direction='vertical'}
     for n,t in pairs(elems_def.game.toggles) do
-        table.insert(elems_list.game, create_cheat_ui(toggles_flow, game, {'game',n}, t))
+        create_cheat_ui(toggles_flow, game, {'game',n}, t, elems_list.game)
     end
-end
-
-local function set_cheat_gui_state(obj, cheat, cheat_table, elem)
-    
 end
 
 function cheats_gui.create(player, parent)
@@ -302,6 +305,8 @@ function cheats_gui.update(player, category)
                 -- set value
                 if elem.type == 'checkbox' then
                     elem.state = elem.enabled and cur_value or false
+                elseif elem.type == 'slider' then
+                    elem.slider_value = cur_value
                 elseif elem.type == 'textfield' then
                     elem.text = elem.enabled and cur_value or '---'
                 elseif elem.type == 'drop-down' then

@@ -20,7 +20,7 @@ local vanilla_loaders_recipes = {
 -- cheat data and functions
 defs.cheats = {
     player = {
-        god_mode = {type='toggle', defaults={on=false, off=false}, functions={
+        god_mode = {type='toggle', functions={
             value_changed = function(player, cheat, cheat_global, new_value)
                 local player_table = util.player_table(player)
                 local character = player.character
@@ -749,14 +749,6 @@ defs.cheats = {
                 return game.map_settings.enemy_expansion.enabled
             end
         }},
-        research_queue = {type='list', items={'always','after-victory','never'}, functions={
-            value_changed = function(game, cheat, cheat_global, selected_index)
-                game.difficulty_settings.research_queue_setting = cheat.items[selected_index]
-            end,
-            get_value = function(game, cheat, cheat_global)
-                return table.invert(cheat.items)[game.difficulty_settings.research_queue_setting]
-            end
-        }},
         recipe_difficulty = {type='list', items={'normal','expensive'}, functions={
             value_changed = function(game, cheat, cheat_global, selected_index)
                 game.difficulty_settings.recipe_difficulty = defines.difficulty_settings.recipe_difficulty[cheat.items[selected_index]]
@@ -779,6 +771,7 @@ defs.cheats = {
 -- cheats GUI parameters
 defs.cheats_gui_elems = {
     player = {
+        has_defaults = true,
         toggles = {
             interaction = {
                 god_mode = {},
@@ -815,6 +808,7 @@ defs.cheats_gui_elems = {
         }
     },
     force = {
+        has_defaults = true,
         toggles = {
             instant_research = {},
             research_queue = {},
@@ -852,6 +846,7 @@ defs.cheats_gui_elems = {
         }
     },
     surface = {
+        has_defaults = false,
         toggles = {
             peaceful_mode = {},
             dont_generate_biters = {tooltip=true},
@@ -876,11 +871,11 @@ defs.cheats_gui_elems = {
         }
     },
     game = {
+        has_defaults = false,
         toggles = {
             pollution = {},
             evolution = {},
             biter_expansion = {},
-            -- research_queue = {tooltip=true},
             -- recipe_difficulty = {},
             game_speed = {
                 slider = {min_value=1, max_value=10, value_step=1},
