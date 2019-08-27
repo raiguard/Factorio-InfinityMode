@@ -219,18 +219,21 @@ local function create_tabbed_pane(player, player_table, window_frame)
     for n,t in pairs(elems_def.surface.toggles) do
         table.insert(elems_list.surface, create_cheat_ui(toggles_flow, cur_surface, {'surface',n}, t))
     end
-    -- table
-    local surface_table = pane.add{type='table', name='im_cheats_surface_table', style='bordered_table', column_count=1}
-    surface_table.style.top_margin = 5
-    local time_flow = surface_table.add{type='flow', name='im_cheats_surface_time_flow', direction='vertical'}
+    pane.add{type='line', name='im_cheats_surface_toggles_line', direction='horizontal'}
+    -- time
+    local time_flow = pane.add{type='flow', name='im_cheats_surface_time_flow', direction='vertical'}
     for n,t in pairs(elems_def.surface.time) do
         table.insert(elems_list.surface, create_cheat_ui(time_flow, cur_surface, {'surface',n}, t))
     end
-    local clear_flow = surface_table.add{type='flow', name='im_cheats_surface_clear_flow', direction='vertical'}
+    pane.add{type='line', name='im_cheats_surface_time_line', direction='horizontal'}
+    -- clear
+    local clear_flow = pane.add{type='flow', name='im_cheats_surface_clear_flow', direction='vertical'}
     for n,t in pairs(elems_def.surface.clear_entities) do
         table.insert(elems_list.surface, create_cheat_ui(clear_flow, cur_surface, {'surface',n}, t))
     end
-    local fill_flow = surface_table.add{type='flow', name='im_cheats_surface_fill_flow', direction='vertical'}
+    pane.add{type='line', name='im_cheats_surface_clear_line', direction='horizontal'}
+    -- fill
+    local fill_flow = pane.add{type='flow', name='im_cheats_surface_fill_flow', direction='vertical'}
     for n,t in pairs(elems_def.surface.fill) do
         table.insert(elems_list.surface, create_cheat_ui(fill_flow, cur_surface, {'surface',n}, t))
     end
