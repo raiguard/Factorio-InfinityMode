@@ -197,6 +197,12 @@ local function create_tabbed_pane(player, player_table, window_frame)
     for n,t in pairs(elems_def.force.actions) do
         create_cheat_ui(action_flow, cur_force, {'force',n}, t, elems_list.force)
     end
+    -- current research
+    local research_action_flow = pane.add{type='flow', name='im_cheats_force_research_actions_flow', direction='horizontal'}
+    for n,t in pairs(elems_def.force.research_actions) do
+        create_cheat_ui(research_action_flow, cur_force, {'force',n}, t, elems_list.force)
+    end
+    -- technologies
     local technology_flow = pane.add{type='flow', name='im_cheats_force_technology_flow', direction='horizontal'}
     technology_flow.add{type='button', name='im_cheats-force-research_all_technologies-button', caption={'gui-cheats-force.setting-research_all_technologies-caption'}}.style.horizontally_stretchable = true
     local reset_button = technology_flow.add{type='sprite-button', name='im_cheats-force-reset_technologies-button', style='red_button', sprite='utility/reset'}
@@ -227,19 +233,19 @@ local function create_tabbed_pane(player, player_table, window_frame)
     for n,t in pairs(elems_def.surface.toggles) do
         create_cheat_ui(toggles_flow, cur_surface, {'surface',n}, t, elems_list.surface)
     end
-    pane.add{type='line', name='im_cheats_surface_toggles_line', direction='horizontal'}
+    pane.add{type='line', name='im_cheats_surface_toggles_line', direction='horizontal'}.style.top_margin = 4
     -- time
     local time_flow = pane.add{type='flow', name='im_cheats_surface_time_flow', direction='vertical'}
     for n,t in pairs(elems_def.surface.time) do
         create_cheat_ui(time_flow, cur_surface, {'surface',n}, t, elems_list.surface)
     end
-    pane.add{type='line', name='im_cheats_surface_time_line', direction='horizontal'}
+    pane.add{type='line', name='im_cheats_surface_time_line', direction='horizontal'}.style.top_margin = 4
     -- clear
     local clear_flow = pane.add{type='flow', name='im_cheats_surface_clear_flow', direction='vertical'}
     for n,t in pairs(elems_def.surface.clear_entities) do
         create_cheat_ui(clear_flow, cur_surface, {'surface',n}, t, elems_list.surface)
     end
-    pane.add{type='line', name='im_cheats_surface_clear_line', direction='horizontal'}
+    pane.add{type='line', name='im_cheats_surface_clear_line', direction='horizontal'}.style.top_margin = 4
     -- fill
     local fill_flow = pane.add{type='flow', name='im_cheats_surface_fill_flow', direction='vertical'}
     for n,t in pairs(elems_def.surface.fill) do

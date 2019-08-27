@@ -3,6 +3,11 @@ Version: 0.5.0
 Date: 2019.8.24
   Features:
     - You can now dock/undock the cheats window to/from the mod GUI
+    - Added new cheats:
+      - Force cheats:
+        - Restart current research
+        - Finish current research
+    - Added 'enable all' and 'disable all' buttons for player and force cheats
   Changes:
     - The cheats window will now remember its position if you move it (reset by docking to the mod GUI)
     - /enable-infinity-mode command is now only usable by admins

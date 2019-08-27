@@ -597,17 +597,25 @@ defs.cheats = {
         research_all_technologies = {type='action', defaults={on=true}, functions={
             action = function(force, cheat, cheat_global)
                 force.research_all_technologies()
-            end,
-            get_value = function(force, cheat, cheat_global)
-                
             end
         }},
         reset_technologies = {type='action', functions={
             action = function(force, cheat, cheat_global)
                 force.reset()
-            end,
-            get_value = function(force, cheat, cheat_global)
-
+            end
+        }},
+        restart_current_research = {type='action', functions={
+            action = function(force, cheat, cheat_global)
+                if force.current_research then
+                    force.research_progress = 0
+                end
+            end
+        }},
+        finish_current_research = {type='action', functions={
+            action = function(force, cheat, cheat_global)
+                if force.current_research then
+                    force.research_progress = 1
+                end
             end
         }}
     },
@@ -843,6 +851,10 @@ defs.cheats_gui_elems = {
         actions = {
             chart_all = {tooltip=true},
             kill_all_units = {tooltip=true}
+        },
+        research_actions = {
+            restart_current_research = {},
+            finish_current_research = {}
         }
     },
     surface = {
