@@ -125,7 +125,7 @@ local function create_tabbed_pane(player, player_table, window_frame)
         for i,player in pairs(game.players) do
             players[i] = player.name
         end
-        switcher_flow.add{type='drop-down', name='im_cheats_player_switcher_dropdown', items=players, selected_index=player_table.cheats_gui.cur_player.index}
+        switcher_flow.add{type='drop-down', name='im_cheats-player-switcher_dropdown', items=players, selected_index=player_table.cheats_gui.cur_player.index}
         switcher_flow.style.bottom_margin = 4
         pane.add{type='line', name='im_cheats_player_switcher_line', direction='horizontal'}.style.horizontally_stretchable = true
     end
@@ -168,7 +168,7 @@ local function create_tabbed_pane(player, player_table, window_frame)
     for i,force in pairs(game.forces) do
         forces[i] = force.name
     end
-    switcher_flow.add{type='drop-down', name='im_cheats_force_switcher_dropdown', items=forces, selected_index=player_table.cheats_gui.cur_force.index}
+    switcher_flow.add{type='drop-down', name='im_cheats-force-switcher_dropdown', items=forces, selected_index=player_table.cheats_gui.cur_force.index}
     switcher_flow.style.bottom_margin = 4
     pane.add{type='line', name='im_cheats_force_switcher_line', direction='horizontal'}.style.horizontally_stretchable = true
     -- toggles
@@ -215,7 +215,7 @@ local function create_tabbed_pane(player, player_table, window_frame)
     for i,surface in pairs(game.surfaces) do
         surfaces[i] = surface.name
     end
-    switcher_flow.add{type='drop-down', name='im_cheats_surface_switcher_dropdown', items=surfaces, selected_index=player_table.cheats_gui.cur_surface.index}
+    switcher_flow.add{type='drop-down', name='im_cheats-surface-switcher_dropdown', items=surfaces, selected_index=player_table.cheats_gui.cur_surface.index}
     switcher_flow.style.bottom_margin = 4
     pane.add{type='line', name='im_cheats_surface_switcher_line', direction='horizontal'}.style.horizontally_stretchable = true
     -- toggles

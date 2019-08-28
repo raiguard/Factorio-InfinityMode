@@ -119,12 +119,14 @@ end)
 -- ----------------------------------------------------------------------------------------------------
 -- CHEATS WINDOW
 
+-- tabs
 on_event(defines.events.on_gui_selected_tab_changed, function(e)
     if e.element.name == 'im_cheats_tabbed_pane' then
         util.player_table(e.player_index).cheats_gui.cur_tab = e.element.selected_tab_index
     end
 end)
 
+-- checkboxes
 on_event(defines.events.on_gui_checked_state_changed, function(e)
     local params = string.split(e.element.name, '-')
     local player = util.get_player(e)
@@ -135,6 +137,7 @@ on_event(defines.events.on_gui_checked_state_changed, function(e)
     end
 end)
 
+-- textfields
 on_event(defines.events.on_gui_confirmed, function(e)
     local params = string.split(e.element.name, '-')
     local player = util.get_player(e)
@@ -152,6 +155,7 @@ on_event(defines.events.on_gui_confirmed, function(e)
     end
 end)
 
+-- also textfields
 on_event(defines.events.on_gui_text_changed, function(e)
     local params = string.split(e.element.name, '-')
     local player = util.get_player(e)
@@ -175,6 +179,7 @@ on_event(defines.events.on_gui_text_changed, function(e)
     end
 end)
 
+-- sliders
 on_event(defines.events.on_gui_value_changed, function(e)
     local params = string.split(e.element.name, '-')
     local player = util.get_player(e)
@@ -192,12 +197,14 @@ on_event(defines.events.on_gui_value_changed, function(e)
     end
 end)
 
+-- dropdowns
 on_event(defines.events.on_gui_click, function(e)
     local params = string.split(e.element.name, '-')
     local player = util.get_player(e)
     if params[1] == 'im_cheats' and params[4] == 'button' and cheats.is_valid(params[2], params[3]) then
         local obj = util.player_table(player).cheats_gui['cur_'..params[2]] or game
         cheats.trigger_action(obj, {params[2], params[3]})
+    -- player/force/surface selection dropdowns
     elseif params[1] == 'im_cheats' and params[3] == 'defaults_button' then
         local player_table = util.player_table(player)
         util.cheat_table(params[2]).default_ref = params[4]
@@ -212,31 +219,16 @@ on_event(defines.events.on_gui_selection_state_changed, function(e)
     if params[1] == 'im_cheats' and params[4] == 'dropdown' and cheats.is_valid(params[2], params[3]) then
         local obj = util.player_table(player).cheats_gui['cur_'..params[2]] or game
         cheats.update(obj, {params[2], params[3]}, e.element.selected_index)
-        
+    elseif params[1] == 'im_cheats' and params[3] == 'switcher_dropdown' then
+        local obj = game[params[2]..'s'][e.element.items[e.element.selected_index]]
+        util.player_table(player).cheats_gui['cur_'..params[2]] = obj
+        cheats_gui.update(player, params[2])
     end
 end)
 
 on_event(defines.events.on_player_toggled_map_editor, function(e)
     local player = util.get_player(e)
     cheats_gui.update(player)
-end)
-
-gui.on_selection_state_changed('im_cheats_player_switcher_dropdown', function(e)
-    local player = util.get_player(e)
-    util.player_table(player).cheats_gui.cur_player = game.players[e.element.selected_index]
-    cheats_gui.update(player, 'player')
-end)
-
-gui.on_selection_state_changed('im_cheats_force_listbox', function(e)
-    local player = util.get_player(e)
-    util.player_table(player).cheats_gui.cur_force = game.forces[e.element.selected_index]
-    cheats_gui.update(player, 'force')
-end)
-
-gui.on_selection_state_changed('im_cheats_surface_listbox', function(e)
-    local player = util.get_player(e)
-    util.player_table(player).cheats_gui.cur_surface = game.surfaces[e.element.selected_index]
-    cheats_gui.update(player, 'surface')
 end)
 
 gui.on_click('im_cheats_titlebar_button_close', function(e)
