@@ -25,12 +25,9 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, add_to_table)
             local checkbox = setting_flow.add{type='checkbox', name='im_cheats-'..cheat_name..'-checkbox', state=false,
                 caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
                 tooltip=elem_table.tooltip and {'gui-cheats-'..locale_name..'-tooltip'} or nil}
-            if defs.cheats_gui_elems[cheat[1]].has_defaults and (cheat_def.defaults == nil or cheat_def.defaults.on == nil) then
-                setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_on_icon', caption='[img=im_no_default_on]', tooltip={'gui-cheats.no-default-on-tooltip'}}
-            end
-            if defs.cheats_gui_elems[cheat[1]].has_defaults and (cheat_def.defaults == nil or cheat_def.defaults.off == nil) then
-                setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_off_icon', caption='[img=im_no_default_off]', tooltip={'gui-cheats.no-default-off-tooltip'}}
-            end
+                if defs.cheats_gui_elems[cheat[1]].has_defaults and cheat_def.defaults == nil then
+                    setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_defaults_icon', caption='[img=restart_required]', tooltip={'gui-cheats.no-defaults-tooltip'}}
+                end
             return {checkbox}
         elseif cheat_def.type == 'number' then
             local setting_flow = parent.add{type='flow', name='im_cheats-'..cheat_name..'-flow', direction='horizontal'}
@@ -38,11 +35,8 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, add_to_table)
             setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-label',
                 caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
                 tooltip=elem_table.tooltip and {'gui-cheats-'..locale_name..'-tooltip'} or nil}
-            if defs.cheats_gui_elems[cheat[1]].has_defaults and (cheat_def.defaults == nil or cheat_def.defaults.on == nil) then
-                setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_on_icon', caption='[img=im_no_default_on]', tooltip={'gui-cheats.no-default-on-tooltip'}}
-            end
-            if defs.cheats_gui_elems[cheat[1]].has_defaults and (cheat_def.defaults == nil or cheat_def.defaults.off == nil) then
-                setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_off_icon', caption='[img=im_no_default_off]', tooltip={'gui-cheats.no-default-off-tooltip'}}
+            if defs.cheats_gui_elems[cheat[1]].has_defaults and cheat_def.defaults == nil then
+                setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_defaults_icon', caption='[img=restart_required]', tooltip={'gui-cheats.no-defaults-tooltip'}}
             end
             setting_flow.add{type='empty-widget', name='im_cheats-'..cheat_name..'-filler', style='invisible_horizontal_filler'}
             local slider
@@ -75,11 +69,8 @@ local function create_cheat_ui(parent, obj, cheat, elem_table, add_to_table)
             setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-label',
                 caption={'', {'gui-cheats-'..locale_name..'-caption'}, elem_table.tooltip and ' [img=info]' or nil},
                 tooltip=elem_table.tooltip and {'gui-cheats-'..locale_name..'-tooltip'} or nil}
-            if defs.cheats_gui_elems[cheat[1]].has_defaults and (cheat_def.defaults == nil or cheat_def.defaults.on == nil) then
-                setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_on_icon', caption='[img=im_no_default_on]', tooltip={'gui-cheats.no-default-on-tooltip'}}
-            end
-            if defs.cheats_gui_elems[cheat[1]].has_defaults and (cheat_def.defaults == nil or cheat_def.defaults.off == nil) then
-                setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_default_off_icon', caption='[img=im_no_default_off]', tooltip={'gui-cheats.no-default-off-tooltip'}}
+            if defs.cheats_gui_elems[cheat[1]].has_defaults and cheat_def.defaults == nil then
+                setting_flow.add{type='label', name='im_cheats-'..cheat_name..'-no_defaults_icon', caption='[img=restart_required]', tooltip={'gui-cheats.no-defaults-tooltip'}}
             end
             setting_flow.add{type='empty-widget', name='im_cheats-'..cheat_name..'-filler', style='invisible_horizontal_filler'}
             local dropdown = setting_flow.add{type='drop-down', name='im_cheats-'..cheat_name..'-dropdown'}
@@ -97,8 +88,8 @@ end
 local function add_defaults_gui(pane, category)
     pane.add{type='line', name='im_cheats_'..category..'_defaults_line', direction=horizontal}.style.top_margin = 2
     local buttons_flow = pane.add{type='flow', name='im_cheats_'..category..'_defaults_flow', direction='horizontal'}
-    buttons_flow.add{type='button', name='im_cheats-'..category..'-defaults_button-on', style='green_button', caption='Enable all'}.style.horizontally_stretchable = true
-    buttons_flow.add{type='button', name='im_cheats-'..category..'-defaults_button-off', style='red_button', caption='Disable all'}.style.horizontally_stretchable = true
+    buttons_flow.add{type='button', name='im_cheats-'..category..'-defaults_button-on', caption='Enable all'}.style.horizontally_stretchable = true
+    buttons_flow.add{type='button', name='im_cheats-'..category..'-defaults_button-off', caption='Disable all'}.style.horizontally_stretchable = true
 end
 
 local function create_tabbed_pane(player, player_table, window_frame)
