@@ -7,43 +7,6 @@ local function shortcut_sprite(suffix, size)
         flags = {'icon'}
     }
 end
--- Generates data for the smoke of magic wands.
-local function magic_wand_smoke(entity_name, color)
-	return {
-		affected_by_wind = false,
-		animation = {
-			animation_speed = 60 / 40,
-			axially_symmetrical = false,
-			direction_count = 1,
-			filename = "__base__/graphics/entity/smoke/smoke.png",
-			flags = {
-				"smoke"
-			},
-			frame_count = 60,
-			height = 120,
-			line_length = 5,
-			priority = "high",
-			shift = {
-				-0.53125,
-				-0.4375
-			},
-			width = 152
-		},
-		color = color,
-		cyclic = true,
-		duration = 40,
-		end_scale = 3.0,
-		fade_away_duration = 40,
-		fade_in_duration = 0,
-		flags = {
-			"not-on-map"
-		},
-		name = entity_name,
-		spread_duration = 40,
-		start_scale = 0.5,
-		type = "trivial-smoke"
-	}
-end
 -- INFINITY SELECTOR
 data:extend{
     -- selection tool
@@ -55,10 +18,10 @@ data:extend{
         stackable = false,
         selection_color = infinity_tint,
         alt_selection_color = infinity_tint,
-        selection_mode = {'any-tile', 'same-force'},
-        alt_selection_mode = {'any-entity', 'same-force'},
-        selection_cursor_box_type = 'entity',
-        alt_selection_cursor_box_type = 'entity'
+        selection_mode = {'any-entity', 'same-force'},
+        alt_selection_mode = {'any-entity'},
+        selection_cursor_box_type = 'electricity',
+        alt_selection_cursor_box_type = 'electricity'
     },
     -- shortcut
     {
@@ -74,7 +37,34 @@ data:extend{
         toggleable = true
     },
     -- smoke
-    magic_wand_smoke('infinity-selector-smoke', infinity_tint),
+    {
+        type = 'trivial-smoke',
+        name = 'infinity-selector-smoke',
+        animation = {
+			animation_speed = 60 / 40,
+			axially_symmetrical = false,
+			direction_count = 1,
+			filename = '__base__/graphics/entity/smoke/smoke.png',
+			flags = {'smoke'},
+			frame_count = 60,
+			height = 120,
+			line_length = 5,
+			priority = 'high',
+			shift = {-0.53125, -0.4375},
+			width = 152
+        },
+        affected_by_wind = false,
+        color = infinity_tint,
+		cyclic = true,
+		duration = 40,
+		end_scale = 3.0,
+		fade_away_duration = 40,
+		fade_in_duration = 0,
+		flags = {'not-on-map'},
+		name = entity_name,
+		spread_duration = 40,
+		start_scale = 0.5
+    }
     -- custom input
     {
         type = 'custom-input',
