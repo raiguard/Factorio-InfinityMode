@@ -99,6 +99,7 @@ commands.add_command('enable-infinity-mode', {'chat-message.enable-command-help'
 -- MOD GUI
 
 local function toggle_cheats_gui(e)
+    if not global.mod_enabled then return end
     local player = util.get_player(e)
     local parent = util.player_table(player).cheats_gui.docked and mod_gui.get_frame_flow(player) or player.gui.screen
     if not parent.im_cheats_window then
@@ -230,7 +231,9 @@ end)
 
 on_event(defines.events.on_player_toggled_map_editor, function(e)
     local player = util.get_player(e)
-    cheats_gui.update(player)
+    if util.player_table(player).cheats_gui and util.player_table(player).cheats_gui.window then
+        cheats_gui.update(player)
+    end
 end)
 
 gui.on_click('im_cheats_titlebar_button_close', function(e)

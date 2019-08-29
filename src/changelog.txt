@@ -16,6 +16,8 @@ Date: 2019.8.29
     - Force and Surface selectors are now dropdowns instead of listboxes, to save room
   Bugfixes:
     - Potentially fixed a compatibility issue with Krastorio (#11)
+    - Fixed a crash when using the cheats GUI hotkey before enabling the mod
+    - Fixed a crash when toggling /editor when the cheats GUI is not open
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.4.0
