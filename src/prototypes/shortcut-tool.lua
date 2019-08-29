@@ -61,10 +61,9 @@ data:extend{
 		fade_away_duration = 40,
 		fade_in_duration = 0,
 		flags = {'not-on-map'},
-		name = entity_name,
 		spread_duration = 40,
-		start_scale = 0.5
-    }
+        start_scale = 0.5
+    },
     -- custom input
     {
         type = 'custom-input',
