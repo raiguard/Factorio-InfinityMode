@@ -54,3 +54,18 @@ for _,t in pairs(data.raw['equipment-category']) do
 end
 data.raw['generator-equipment']['infinity-fusion-reactor-equipment'].categories = categories
 data.raw['roboport-equipment']['infinity-personal-roboport-equipment'].categories = categories
+
+-- MODULES
+local modules = {
+    'super-speed-module',
+    'super-effectivity-module',
+    'super-productivity-module',
+    'super-clean-module',
+    'super-slow-module',
+    'super-ineffectivity-module',
+    'super-dirty-module'
+}
+-- reset all modules to be able to be used in all recipes
+for _,name in pairs(modules) do
+    data.raw['module'][name].limitation = nil
+end

@@ -2,7 +2,6 @@ infinity_tint = {r=1, g=0.5, b=1, a=1}
 
 function apply_infinity_tint(t)
     t.tint = infinity_tint
-    -- t.blend_mode = 'additive'
     return t
 end
 
