@@ -197,14 +197,14 @@ on_event(defines.events.on_gui_value_changed, function(e)
     end
 end)
 
--- dropdowns
+-- buttons
 on_event(defines.events.on_gui_click, function(e)
     local params = string.split(e.element.name, '-')
     local player = util.get_player(e)
     if params[1] == 'im_cheats' and params[4] == 'button' and cheats.is_valid(params[2], params[3]) then
         local obj = util.player_table(player).cheats_gui['cur_'..params[2]] or game
         cheats.trigger_action(obj, {params[2], params[3]})
-    -- player/force/surface selection dropdowns
+        cheats_gui.update(player, params[2])
     elseif params[1] == 'im_cheats' and params[3] == 'defaults_button' then
         local player_table = util.player_table(player)
         util.cheat_table(params[2]).default_ref = params[4]
@@ -213,12 +213,14 @@ on_event(defines.events.on_gui_click, function(e)
     end
 end)
 
+-- dropdowns
 on_event(defines.events.on_gui_selection_state_changed, function(e)
     local params = string.split(e.element.name, '-')
     local player = util.get_player(e)
     if params[1] == 'im_cheats' and params[4] == 'dropdown' and cheats.is_valid(params[2], params[3]) then
         local obj = util.player_table(player).cheats_gui['cur_'..params[2]] or game
         cheats.update(obj, {params[2], params[3]}, e.element.selected_index)
+    -- player/force/surface selection dropdowns
     elseif params[1] == 'im_cheats' and params[3] == 'switcher_dropdown' then
         local obj = game[params[2]..'s'][e.element.items[e.element.selected_index]]
         util.player_table(player).cheats_gui['cur_'..params[2]] = obj
