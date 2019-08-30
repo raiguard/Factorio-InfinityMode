@@ -86,7 +86,7 @@ styles['list_box_in_tabbed_pane'] = {
                 position = {85, 0},
                 corner_size = 8,
                 center = {position = {42, 8}, size = 1},
-                draw_type = "outer"
+                draw_type = 'outer'
             },
             shadow = default_inner_shadow
         }
@@ -120,15 +120,32 @@ styles['close_button_active'] = {
     parent = 'close_button',
     default_graphical_set = {
         base = {position = {272, 169}, corner_size = 8},
-        shadow = {position = {440, 24}, corner_size = 8, draw_type = "outer"}
+        shadow = {position = {440, 24}, corner_size = 8, draw_type = 'outer'}
     },
     hovered_graphical_set = {
         base = {position={369,17}, corner_size=8},
-        shadow = {position = {440, 24}, corner_size = 8, draw_type = "outer"}
+        shadow = {position = {440, 24}, corner_size = 8, draw_type = 'outer'}
     },
     clicked_graphical_set = {
         base = {position={352,17}, corner_size=8},
-        shadow = {position = {440, 24}, corner_size = 8, draw_type = "outer"}
+        shadow = {position = {440, 24}, corner_size = 8, draw_type = 'outer'}
+    }
+}
+
+styles['virtual_slot_table_scroll_pane'] = {
+    type = 'scroll_pane_style',
+    parent = 'train_schedule_scroll_pane',
+    background_graphical_set = {
+        base = {
+            position = {282,17},
+            corner_size = 8,
+            overall_tiling_vertical_size = 32,
+            overall_tiling_horizontal_size = 32,
+            overall_tiling_horizontal_padding = 4,
+            overall_tiling_horizontal_spacing = 8,
+            overall_tiling_vertical_spacing = 8,
+            overall_tiling_vertical_padding = 4
+        }
     }
 }
 
