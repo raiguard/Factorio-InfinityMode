@@ -96,6 +96,25 @@ end)
 commands.add_command('enable-infinity-mode', {'chat-message.enable-command-help'}, process_enable_command)
 
 -- ----------------------------------------------------------------------------------------------------
+-- MAP EDITOR TOGGLE LOGIC
+-- This is here because there is no better place to put it...
+
+local function toggle_shortcut(player)
+    player.set_shortcut_toggled('im-toggle-map-editor', not player.is_shortcut_toggled('im-toggle-map-editor'))
+end
+
+on_event(defines.events.on_lua_shortcut, function(e)
+    if e.prototype_name ~= 'im-toggle-map-editor' then return end
+    local player = util.get_player(e)
+    -- we can't actually toggle the editor yet, so just make the button toggle for now
+    toggle_shortcut(player)
+end)
+
+on_event('im-toggle-map-editor', function(e)
+    toggle_shortcut(util.get_player(e))
+end)
+
+-- ----------------------------------------------------------------------------------------------------
 -- MOD GUI
 
 local function toggle_cheats_gui(e)
@@ -105,7 +124,7 @@ local function toggle_cheats_gui(e)
     if not parent.im_cheats_window then
         cheats_gui.create(player, parent)
     else
-        parent.im_cheats_window.destroy()
+        cheats_gui.destroy(player)
     end
 end
 
@@ -231,13 +250,15 @@ end)
 
 on_event(defines.events.on_player_toggled_map_editor, function(e)
     local player = util.get_player(e)
-    if util.player_table(player).cheats_gui and util.player_table(player).cheats_gui.window then
+    local cheats_gui = util.player_table(player).cheats_gui
+    log(serpent.block(cheats_gui))
+    if cheats_gui and cheats_gui.window and cheats_gui.window.is_valid then
         cheats_gui.update(player)
     end
 end)
 
 gui.on_click('im_cheats_titlebar_button_close', function(e)
-    e.element.parent.parent.destroy()
+    cheats_gui.destroy(util.get_player(e))
 end)
 
 gui.on_click('im_cheats_titlebar_button_pin', function(e)
@@ -252,7 +273,7 @@ gui.on_click('im_cheats_titlebar_button_pin', function(e)
         player_table.cheats_gui.docked = false
     end
     player_table.cheats_gui.location = {x=0, y=(44*player.display_scale)}
-    e.element.parent.parent.destroy()
+    cheats_gui.destroy(player)
     toggle_cheats_gui{player_index=player.index}
 end)
 

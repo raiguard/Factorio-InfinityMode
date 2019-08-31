@@ -284,6 +284,13 @@ function cheats_gui.create(player, parent)
     player_table.cheats_gui.window = window_frame
 end
 
+-- destroys the cheat GUI
+function cheats_gui.destroy(player)
+    local player_table = util.player_table(player)
+    player_table.cheats_gui.window.destroy()
+    player_table.cheats_gui.window = nil
+end
+
 -- update the values/states of cheat GUIs
 function cheats_gui.update(player, category)
     local player_table = util.player_table(player)
@@ -324,7 +331,7 @@ end
 -- destroys and recreates the GUI
 function cheats_gui.refresh(player, parent)
     if parent.im_cheats_window then
-        parent.im_cheats_window.destroy()
+        cheats_gui.destroy(player)
         cheats_gui.create(player, parent)
         cheats_gui.update(player)
     end
