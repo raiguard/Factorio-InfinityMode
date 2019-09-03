@@ -99,19 +99,18 @@ commands.add_command('enable-infinity-mode', {'chat-message.enable-command-help'
 -- MAP EDITOR TOGGLE LOGIC
 -- This is here because there is no better place to put it...
 
-local function toggle_shortcut(player)
-    player.set_shortcut_toggled('im-toggle-map-editor', not player.is_shortcut_toggled('im-toggle-map-editor'))
+local function toggle_map_editor(player)
+    player.toggle_map_editor()
+    player.set_shortcut_toggled('im-toggle-map-editor', player.controller_type == defines.controllers.editor)
 end
 
 on_event(defines.events.on_lua_shortcut, function(e)
     if e.prototype_name ~= 'im-toggle-map-editor' then return end
-    local player = util.get_player(e)
-    -- we can't actually toggle the editor yet, so just make the button toggle for now
-    toggle_shortcut(player)
+    toggle_map_editor(util.get_player(e))
 end)
 
 on_event('im-toggle-map-editor', function(e)
-    toggle_shortcut(util.get_player(e))
+    toggle_map_editor(util.get_player(e))
 end)
 
 -- ----------------------------------------------------------------------------------------------------
