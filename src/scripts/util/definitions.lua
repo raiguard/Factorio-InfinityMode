@@ -99,7 +99,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end,
             get_enabled = function(player, cheat, cheat_global)
-                return player.controller_type ~= defines.controllers.god
+                return player.controller_type ~= defines.controllers.editor
             end
         }},
         instant_upgrade = {type='toggle', defaults={on=true, off=false}, functions={
@@ -114,7 +114,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end,
             get_enabled = function(player, cheat, cheat_global)
-                return player.controller_type ~= defines.controllers.god
+                return player.controller_type ~= defines.controllers.editor
             end
         }},
         instant_deconstruction = {type='toggle', defaults={on=true, off=false}, functions={
@@ -132,7 +132,7 @@ defs.cheats = {
                 return cheat_global.cur_value
             end,
             get_enabled = function(player, cheat, cheat_global)
-                return player.controller_type ~= defines.controllers.god
+                return player.controller_type ~= defines.controllers.editor
             end
         }},
         cheat_mode = {type='toggle', defaults={on=true, off=false}, functions={
@@ -143,7 +143,7 @@ defs.cheats = {
                 return player.cheat_mode
             end,
             get_enabled = function(player, cheat, cheat_global)
-                return player.controller_type ~= defines.controllers.god
+                return player.controller_type ~= defines.controllers.editor
             end
         }},
         keep_last_item = {type='toggle', defaults={on=true, off=false}, functions={
@@ -156,6 +156,9 @@ defs.cheats = {
             end,
             get_value = function(player, cheat, cheat_global)
                 return cheat_global.cur_value
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type ~= defines.controllers.editor
             end
         }},
         single_stack_limit = {type='toggle', defaults={on=true, off=false}, functions={
@@ -169,6 +172,9 @@ defs.cheats = {
             end,
             get_value = function(player, cheat, cheat_global)
                 return cheat_global.cur_value
+            end,
+            get_enabled = function(player, cheat, cheat_global)
+                return player.controller_type ~= defines.controllers.editor
             end
         }},
         repair_used_item = {type='toggle', defaults={on=true, off=false}, functions={

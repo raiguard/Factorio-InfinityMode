@@ -19,6 +19,7 @@ local events_def = {
                 on_built_entity = {{defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built}, function(e)
                     if not e.player_index then return end
                     if not util.cheat_enabled('player', 'instant_blueprint', e.player_index) then return end
+                    if util.get_player(e).controller_type == defines.controllers.editor then return end
                     local entity = e.created_entity or e.entity
                     local global_table = util.cheat_table('player', 'instant_blueprint', 'global')
                     if util.is_ghost(entity) then
@@ -72,6 +73,7 @@ local events_def = {
                 on_marked_for_upgrade = {{defines.events.on_marked_for_upgrade}, function(e)
                     if not e.player_index then return end
                     if not util.cheat_enabled('player', 'instant_upgrade', e.player_index) then return end
+                    if util.get_player(e).controller_type == defines.controllers.editor then return end
                     local entity = e.entity
                     local belt_to_ground_type
                     if entity.type == 'underground-belt' then belt_to_ground_type = entity.belt_to_ground_type end
@@ -93,6 +95,7 @@ local events_def = {
                 on_deconstruction = {{defines.events.on_marked_for_deconstruction}, function(e)
                     if not e.player_index then return end
                     if not util.cheat_enabled('player', 'instant_deconstruction', e.player_index) then return end
+                    if util.get_player(e).controller_type == defines.controllers.editor then return end
                     local entity = e.entity
                     local global_table = util.cheat_table('player', 'instant_deconstruction', 'global')
                     -- attempt to destroy the entity
@@ -136,6 +139,7 @@ local events_def = {
                 on_put_item = {{defines.events.on_put_item}, function(e)
                     local player = util.get_player(e)
                     if not util.cheat_enabled('player', 'keep_last_item', player.index) then return end
+                    if player.controller_type == defines.controllers.editor then return end
                     local cursor_stack = player.cursor_stack
                     if cursor_stack.valid_for_read and cursor_stack.count == 1 and not (cursor_stack.type == 'blueprint' or cursor_stack.type == 'blueprint-book') then
                         player.get_main_inventory().insert{name=cursor_stack.name, count=cursor_stack.count}
@@ -146,6 +150,7 @@ local events_def = {
                 on_main_inventory_changed = {{defines.events.on_player_main_inventory_changed}, function(e)
                     local player = util.get_player(e)
                     if not util.cheat_enabled('player', 'single_stack_limit', player.index) then return end
+                    if player.controller_type == defines.controllers.editor then return end
                     local inventory = player.get_main_inventory()
                     local prototypes = game.item_prototypes
                     for name,count in pairs(inventory.get_contents()) do

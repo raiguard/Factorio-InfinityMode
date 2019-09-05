@@ -30,6 +30,8 @@ local function player_setup(e)
         cur_tab = 1,
         docked = true
     }
+    player.set_shortcut_available('im-toggle-map-editor', true)
+    player.set_shortcut_toggled('im-toggle-map-editor', player.controller_type == defines.controllers.editor)
 end
 
 local function enable_infinity_mode(default_ref)
@@ -78,6 +80,9 @@ event.on_init(function()
     global.mod_enabled = false
     global.prompt_shown = false
     event.register(defines.events.on_tick, show_dialog)
+    for _,p in pairs(game.players) do
+        p.set_shortcut_available('im-toggle-map-editor', false)
+    end
 end)
 
 event.on_load(function()
