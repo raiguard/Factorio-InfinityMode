@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.6.0
+Date: 2019.9.6
+  Features:
+    - Added map editor shortcut
+  Bugfixes:
+    - Fixed several cheats being available in the map editor that shouldn't have been
+    - Fixed infinity loader belt type detection with Krastorio and Replicating Belts
+
+---------------------------------------------------------------------------------------------------
 Version: 0.5.0
 Date: 2019.8.29
   Features:

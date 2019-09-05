@@ -19,40 +19,44 @@ local titlebar = require('scripts/util/gui-elems/titlebar')
 -- ----------------------------------------------------------------------------------------------------
 -- UTILITIES
 
--- connected belt name -> loader suffix
--- this table is to be used when the auto-detection fails
-local belt_type_overrides = {
-    -- ultimate belts - https://mods.factorio.com/mod/UltimateBelts
-    ['ultimate-belt'] = 'original-ultimate'
-}
-
--- removing all of these patterns from the connected belt name will result in the suffix 
+-- pattern -> replacement
+-- iterate through all of these to result in the belt type
 local belt_type_patterns = {
-    '%-?belt',
-    '%-?transport',
-    '%-?underground',
-    '%-?splitter',
-    'infinity%-loader%-loader%-?',
-    '%-?loader',
-    'layer%-connector'
+    -- infinity mode :D
+    ['infinity%-loader%-loader%-?'] = '',
+    -- beltlayer: https://mods.factorio.com/mod/beltlayer
+    ['layer%-connector'] = '',
+    -- ultimate belts: https://mods.factorio.com/mod/UltimateBelts
+    ['ultimate%-belt'] = 'original-ultimate',
+    -- krastorio: https://mods.factorio.com/mod/Krastorio
+    ['%-?kr%-01'] = '',
+    ['%-?kr%-02'] = 'fast',
+    ['%-?kr%-03'] = 'express',
+    ['%-?kr%-04'] = 'k',
+    ['%-?kr'] = '',
+    -- replicating belts: https://mods.factorio.com/mod/replicating-belts
+    ['replicating%-?'] = '',
+    -- vanilla
+    ['%-?belt'] = '',
+    ['%-?transport'] = '',
+    ['%-?underground'] = '',
+    ['%-?splitter'] = '',
+    ['%-?loader'] = ''
 }
 
 local function get_belt_type(entity)
-    local type = belt_type_overrides[entity.name]
-	if not type then
-		type = entity.name
-        for _,pattern in pairs(belt_type_patterns) do
-            type = type:gsub(pattern, '')
-        end
-		-- check to see if the loader prototype exists
-		if type ~= '' and not game.entity_prototypes['infinity-loader-loader-'..type] then
-			-- print warning message
-			game.print{'', 'INFINITY MODE: ', {'chat-message.unable-to-identify-belt-warning'}}
-			game.print('belt_name=\''..entity.name..'\', parse_result=\''..type..'\'')
-			-- set to default type
-			type = 'express'
-		end
-	end
+    local type = entity.name
+    for pattern,replacement in pairs(belt_type_patterns) do
+        type = type:gsub(pattern, replacement)
+    end
+    -- check to see if the loader prototype exists
+    if type ~= '' and not game.entity_prototypes['infinity-loader-loader-'..type] then
+        -- print warning message
+        game.print{'', 'INFINITY MODE: ', {'chat-message.unable-to-identify-belt-warning'}}
+        game.print('belt_name=\''..entity.name..'\', parse_result=\''..type..'\'')
+        -- set to default type
+        type = 'express'
+    end
 	return type
 end
 
