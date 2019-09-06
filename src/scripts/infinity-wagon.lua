@@ -1,4 +1,5 @@
 local abs = math.abs
+local area = require('__stdlib__/stdlib/area/area')
 local event = require('__stdlib__/stdlib/event/event')
 local on_event = event.register
 local position = require('__stdlib__/stdlib/area/position')
@@ -20,7 +21,7 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
             conditional_event.register('infinity_wagon.on_tick')
         end
         -- create all api lookups here to save time in on_tick()
-        global.wagons[entity.unit_number] = {
+        local data = {
             wagon = entity,
             wagon_name = entity.name,
             wagon_inv = entity.get_inventory(defines.inventory.cargo_wagon),
@@ -30,6 +31,15 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
             proxy_fluidbox = proxy.fluidbox,
             flip = 0
         }
+        global.wagons[entity.unit_number] = data
+        -- apply any pre-existing filters
+        if e.tags and e.tags.InfinityMode then
+            if entity.name == 'infinity-cargo-wagon' then
+                data.proxy.infinity_container_filters = e.tags.InfinityMode
+            elseif entity.name == 'infinity-fluid-wagon' then
+                data.proxy.set_infinity_pipe_filter(e.tags.InfinityMode)
+            end
+        end
     end
 end)
 
@@ -76,7 +86,7 @@ end)
 
 -- override cargo wagon's default GUI opening
 on_event(defines.events.on_gui_opened, function(e)
-    if e.entity and e.entity.name == 'infinity-cargo-wagon' then
+    if e.entity and (e.entity.name == 'infinity-cargo-wagon' or e.entity.name == 'infinity-fluid-wagon') then
         game.players[e.player_index].opened = global.wagons[e.entity.unit_number].proxy
     end
 end)
@@ -88,4 +98,33 @@ on_event(defines.events.on_entity_settings_pasted, function(e)
     elseif e.source.name == 'infinity-fluid-wagon' and e.destination.name == 'infinity-fluid-wagon' then
         global.wagons[e.destination.unit_number].proxy.copy_settings(global.wagons[e.source.unit_number].proxy)
     end
+end)
+
+-- when a player selects an area for blueprinting
+on_event(defines.events.on_player_setup_blueprint, function(e)
+    print(serpent.block(global.wagons))
+    local player = util.get_player(e)
+    local bp = player.blueprint_to_setup
+    if not bp or not bp.valid_for_read then
+        bp = player.cursor_stack
+    end
+    local entities = bp.get_blueprint_entities()
+    if not entities then return end
+    local chests = player.surface.find_entities_filtered{name='infinity-wagon-chest'}
+    local pipes = player.surface.find_entities_filtered{name='infinity-wagon-pipe'}
+    local chest_index = 0
+    local pipe_index = 0
+    for _,en in pairs(entities) do
+        -- if the entity is an infinity wagon
+        if en.name == 'infinity-cargo-wagon' then
+            chest_index = chest_index + 1
+            if not en.tags then en.tags = {} end
+            en.tags.InfinityMode = chests[chest_index].infinity_container_filters
+        elseif en.name == 'infinity-fluid-wagon' then
+            pipe_index = pipe_index + 1
+            if not en.tags then en.tags = {} end
+            en.tags.InfinityMode = pipes[pipe_index].get_infinity_pipe_filter()
+        end
+    end
+    bp.set_blueprint_entities(entities)
 end)
