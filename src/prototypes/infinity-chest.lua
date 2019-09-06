@@ -96,6 +96,7 @@ for lm,d in pairs(tess_chest_data) do
     chest.picture.layers[1].tint = d.t
     chest.picture.layers[1].hr_version.tint = d.t
     chest.logistic_slots_count = 0
+    chest.minable.result = 'tesseract-chest'..suffix
     chest.enable_inventory_bar = false
     chest.flags = {'player-creation', 'hide-alt-info'}
     data:extend{chest}
