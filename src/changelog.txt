@@ -3,8 +3,10 @@ Version: 0.6.0
 Date: 2019.9.6
   Features:
     - Added map editor shortcut
-    - Added editor-only mode. This mode adds the infinity tools to the map editor only, and does not enable any cheats.
+    - Added editor-only mode, which adds the infinity tools to the map editor only, and does not enable any cheats
     - Infinity wagon filters are now stored in blueprints
+  Changes:
+    - Tesseract chests are now openable by players
   Bugfixes:
     - Fixed several cheats being available in the map editor that shouldn't have been
     - Fixed infinity loader belt type detection with Krastorio and Replicating Belts

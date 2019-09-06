@@ -53,7 +53,6 @@ end)
 on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built}, function(e)
     local entity = e.created_entity or e.entity
     if entity.name:find('tesseract') then
-        entity.operable = false
         update_chest_filters(entity)
     end
 end)
