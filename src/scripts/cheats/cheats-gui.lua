@@ -342,10 +342,11 @@ function cheats_gui.create_initial_dialog(player)
     local window = player.gui.screen.add{type='frame', name='im_enable_window', direction='vertical'}
     window.style.bottom_padding = 4
     local titlebar = titlebar.create(window, 'im_enable_titlebar', {label={'gui-initial-dialog.titlebar-label-caption'}, draggable=true})
-    local buttons_flow = window.add{type='flow', name='im_enable_buttons_flow', direction='horizontal'}
-    buttons_flow.add{type='button', name='im_enable_button_yes_off', style='stretchable_button', caption={'', {'gui-initial-dialog.yes-off-button-caption'}, ' [img=im-info-black-inline]'}, tooltip={'gui-initial-dialog.yes-off-button-tooltip'}}
-    buttons_flow.add{type='button', name='im_enable_button_yes_on', style='stretchable_button', caption={'', {'gui-initial-dialog.yes-on-button-caption'}, ' [img=im-info-black-inline]'}, tooltip={'gui-initial-dialog.yes-on-button-tooltip'}}
-    buttons_flow.add{type='button', name='im_enable_button_no', style='stretchable_button', caption={'', {'gui-initial-dialog.no-button-caption'}, ' [img=im-info-black-inline]'}, tooltip={'gui-initial-dialog.no-button-tooltip'}}
+    local buttons_table = window.add{type='table', name='im_enable_buttons_table', column_count=2}
+    buttons_table.add{type='button', name='im_enable_button_yes_off', style='stretchable_button', caption={'', {'gui-initial-dialog.yes-off-button-caption'}, ' [img=im-info-black-inline]'}, tooltip={'gui-initial-dialog.yes-off-button-tooltip'}}
+    buttons_table.add{type='button', name='im_enable_button_yes_on', style='stretchable_button', caption={'', {'gui-initial-dialog.yes-on-button-caption'}, ' [img=im-info-black-inline]'}, tooltip={'gui-initial-dialog.yes-on-button-tooltip'}}
+    buttons_table.add{type='button', name='im_enable_button_editor', style='stretchable_button', caption={'', {'gui-initial-dialog.editor-button-caption'}, ' [img=im-info-black-inline]'}, tooltip={'gui-initial-dialog.editor-button-tooltip'}}
+    buttons_table.add{type='button', name='im_enable_button_no', style='stretchable_button', caption={'', {'gui-initial-dialog.no-button-caption'}, ' [img=im-info-black-inline]'}, tooltip={'gui-initial-dialog.no-button-tooltip'}}
     window.force_auto_center()
 end
 

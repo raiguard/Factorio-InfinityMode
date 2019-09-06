@@ -4,7 +4,7 @@ data:extend{
         name = 'im-new-map-behavior',
         setting_type = 'runtime-global',
         default_value = 'Ask',
-        allowed_values = {'Ask', 'Yes, cheats on', 'Yes, cheats off', 'No'},
+        allowed_values = {'Ask', 'Yes, cheats on', 'Yes, cheats off', 'Editor-only mode', 'No'},
         order = 'a'
     },
     {
