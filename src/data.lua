@@ -27,7 +27,7 @@ require('prototypes/infinity-pole')
 require('prototypes/infinity-robot')
 require('prototypes/infinity-wagon')
 require('prototypes/item-group')
-require('prototypes/shortcut-tool')
+require('prototypes/shortcut')
 require('prototypes/style')
 
 data:extend{
