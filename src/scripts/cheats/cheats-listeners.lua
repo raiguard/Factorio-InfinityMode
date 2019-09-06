@@ -30,8 +30,10 @@ local function player_setup(e)
         cur_tab = 1,
         docked = true
     }
-    player.set_shortcut_available('im-toggle-map-editor', true)
-    player.set_shortcut_toggled('im-toggle-map-editor', player.controller_type == defines.controllers.editor)
+    if player.admin then
+        player.set_shortcut_available('im-toggle-map-editor', true)
+        player.set_shortcut_toggled('im-toggle-map-editor', player.controller_type == defines.controllers.editor)
+    end
 end
 
 local function enable_infinity_mode(default_ref)
@@ -56,8 +58,10 @@ local function process_enable_command(e)
             global.editor_only_mode = true
             game.print{'chat-message.editor-only-mode'}
             for _,player in pairs(game.players) do
-                player.set_shortcut_available('im-toggle-map-editor', true)
-                player.set_shortcut_toggled('im-toggle-map-editor', player.controller_type == defines.controllers.editor)
+                if player.admin then
+                    player.set_shortcut_available('im-toggle-map-editor', true)
+                    player.set_shortcut_toggled('im-toggle-map-editor', player.controller_type == defines.controllers.editor)
+                end
             end
         else
             enable_infinity_mode(e.parameter or 'on')
@@ -79,8 +83,10 @@ local function show_dialog()
                 global.editor_only_mode = true
                 game.print{'chat-message.editor-only-mode'}
                 for _,player in pairs(game.connected_players) do
-                    player.set_shortcut_available('im-toggle-map-editor', true)
-                    player.set_shortcut_toggled('im-toggle-map-editor', player.controller_type == defines.controllers.editor)
+                    if player.admin then
+                        player.set_shortcut_available('im-toggle-map-editor', true)
+                        player.set_shortcut_toggled('im-toggle-map-editor', player.controller_type == defines.controllers.editor)
+                    end
                 end
             elseif dialog_behavior ~= 'No' then
                 global.mod_enabled = true
@@ -138,6 +144,14 @@ end)
 
 on_event('im-toggle-map-editor', function(e)
     toggle_map_editor(util.get_player(e))
+end)
+
+on_event({defines.events.on_player_promoted, defines.events.on_player_demoted}, function(e)
+    if global.mod_enabled or global.editor_only_mode then
+        local player = util.get_player(e)
+        player.set_shortcut_available('im-toggle-map-editor', player.admin)
+        player.set_shortcut_toggled('im-toggle-map-editor', player.controller_type == defines.controllers.editor)
+    end
 end)
 
 -- ----------------------------------------------------------------------------------------------------
@@ -322,8 +336,10 @@ on_event({defines.events.on_player_created, defines.events.on_force_created, def
         end
     elseif global.editor_only_mode and e.player_index then
         local player = util.get_player(e)
-        player.set_shortcut_available('im-toggle-map-editor', true)
-        player.set_shortcut_toggled('im-toggle-map-editor', player.controller_type == defines.controllers.editor)
+        if player.admin then
+            player.set_shortcut_available('im-toggle-map-editor', true)
+            player.set_shortcut_toggled('im-toggle-map-editor', player.controller_type == defines.controllers.editor)
+        end
         player.print{'chat-message.editor-only-mode'}
     elseif e.player_index then
         util.get_player(e).set_shortcut_available('im-toggle-map-editor', false)
