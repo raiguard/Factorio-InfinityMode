@@ -7,7 +7,6 @@ local on_event = event.register
 local util = require('scripts/util/util')
 
 -- GUI ELEMENTS
-local ia_page = require('scripts/util/gui-elems/ia-page')
 local entity_camera = require('scripts/util/gui-elems/entity-camera')
 local titlebar = require('scripts/util/gui-elems//titlebar')
 
@@ -71,25 +70,82 @@ end
 -- ----------------------------------------------------------------------------------------------------
 -- GUI
 
--- Destroy and recreate the dialog with the new parameters
-local function refresh_ia_gui(player, entity)
-    local entity_frame = player.gui.screen.im_ia_window
-    if entity_frame then
-        entity_frame.im_ia_content_flow.im_ia_page_frame.destroy()
-        util.player_table(player).ia_gui = ia_page.create(entity_frame.im_ia_content_flow, {entity=entity})
-    end
+local pti_ref = {
+    input = 1,
+    output = 2,
+    buffer = 3,
+    primary = 1,
+    secondary = 2,
+    tertiary = 1
+}
+
+local power_prefixes = {'kilo','mega','giga','tera','peta','exa','zetta','yotta'}
+local power_suffixes_by_mode = {'watt','watt','joule'}
+
+local function get_ia_options(entity)
+    local name = entity.name:gsub('(%a+)-(%a+)-', '')
+    if name == 'tertiary' then return {mode=3, priority=1} end
+    local _,_,priority,mode = string.find(name, '(%a+)-(%a+)')
+    return {mode=pti_ref[mode], priority=pti_ref[priority]}
 end
 
--- Creates the main dialog frame
-local function create_ia_gui(player, entity)
-    local main_frame = player.gui.screen.add {
-        type = 'frame',
-        name = 'im_ia_window',
-        style = 'dialog_frame',
-        direction = 'vertical'
-    }
+local function create_dropdown(parent, name, caption, tooltip, items, selected_index, button_disabled)
+    local flow = parent.add{type='flow', name=name..'_flow', style='vertically_centered_flow', direction='horizontal'}
+    flow.add{type='label', name=name..'_label', caption=caption, tooltip=tooltip}
+    flow.add {type='empty-widget', name=name..'_filler', style='invisible_horizontal_filler'}
 
-    local titlebar = titlebar.create(main_frame, 'im_ia_titlebar', {
+    return flow.add{type='drop-down', name=name..'_dropdown', items=items, selected_index=selected_index}
+end
+
+-- create the ia settings page and add it to global
+local function create_ia_pane(parent, entity)
+    local ia_gui = {}
+    local mode = get_ia_options(entity).mode
+    local priority = get_ia_options(entity).priority
+    local page_frame = parent.add{type='frame', name='im_ia_page_frame', style='entity_dialog_page_frame', direction='vertical'}
+    -- mode dropdown
+    ia_gui.mode_dropdown = create_dropdown(page_frame, 'im_ia_mode',
+        {'', {'gui-infinity-accumulator.mode-label-caption'}, ' [img=info]'}, {'gui-infinity-accumulator.mode-label-tooltip'}, {{'gui-infinity-accumulator.mode-dropdown-input'}, {'gui-infinity-accumulator.mode-dropdown-output'}, {'gui-infinity-accumulator.mode-dropdown-buffer'}}, mode)
+    -- priority dropdown
+    ia_gui.priority_dropdown = create_dropdown(page_frame, 'im_ia_priority',
+    {'', {'gui-infinity-accumulator.priority-label-caption'}, ' [img=info]'}, {'gui-infinity-accumulator.priority-label-tooltip'}, {{'gui-infinity-accumulator.priority-dropdown-primary'}, {'gui-infinity-accumulator.priority-dropdown-secondary'}}, priority)
+    page_frame.im_ia_priority_flow.style.vertically_stretchable = true
+    if mode == 3 then
+        -- disabled button
+        ia_gui.priority_dropdown.visible = false
+        local disabled = ia_gui.priority_dropdown.parent.add{type='button', name='im_ia_priority_disabled_button', caption={'gui-infinity-accumulator.priority-dropdown-tertiary'}}
+        disabled.enabled = false
+        disabled.style.horizontal_align = 'left'
+        disabled.style.minimal_width = 116
+    end
+    -- slider
+    local slider_flow = page_frame.add{type='flow', name='im_ia_slider_flow', direction='horizontal'}
+    slider_flow.style.vertical_align = 'center'
+    local value = entity.electric_buffer_size
+    local len = string.len(string.format("%.0f", math.floor(value)))
+    local exponent = math.max(len - (len % 3 == 0 and 3 or len % 3),3)
+    value = math.floor(value / 10^exponent)
+    ia_gui.slider = slider_flow.add{type='slider', name='im_ia_slider', minimum_value=0, maximum_value=999, value=value}
+    ia_gui.slider.style.horizontally_stretchable = true
+    ia_gui.slider_textfield = slider_flow.add{type='textfield', name='im_ia_slider_textfield', text=value, numeric=true, lose_focus_on_confirm=true}
+    ia_gui.slider_textfield.style.width = 48
+    ia_gui.slider_textfield.style.horizontal_align = 'center'
+    ia_gui.prev_textfield_value = value
+    local items = {}
+    for i,v in pairs(power_prefixes) do
+        items[i] = {'', {'si-prefix-symbol-' .. v}, {'si-unit-symbol-' .. power_suffixes_by_mode[mode]}}
+    end
+    ia_gui.slider_dropdown = slider_flow.add{type='drop-down', name='im_ia_slider_dropdown', items=items, selected_index=(exponent/3)}
+    ia_gui.slider_dropdown.style.width = 65
+    -- add to global
+    ia_gui.entity = entity
+    return ia_gui
+end
+
+-- creates the main dialog frame
+local function create_ia_gui(player, entity)
+    local window = player.gui.screen.add{type='frame', name='im_ia_window', style='dialog_frame', direction='vertical'}
+    local titlebar = titlebar.create(window, 'im_ia_titlebar', {
         label = {'gui-infinity-accumulator.titlebar-label-caption'},
         draggable = true,
         buttons = {
@@ -101,19 +157,21 @@ local function create_ia_gui(player, entity)
             }
         }
     })
-
-    local content_flow = main_frame.add {
-        type = 'flow',
-        name = 'im_ia_content_flow',
-        direction = 'horizontal'
-    }
-
+    local content_flow = window.add {type='flow', name='im_ia_content_flow', direction='horizontal'}
     content_flow.style.horizontal_spacing = 10
-
     local camera = entity_camera.create(content_flow, 'im_camera', 110, {player=player, entity=entity, camera_zoom=1, camera_offset={0,-0.5}})
-    util.set_open_gui(player, main_frame, titlebar.children[3], 'ia_gui')
-    util.player_table(player).ia_gui = ia_page.create(content_flow, {entity=entity})
-    return main_frame
+    util.set_open_gui(player, window, titlebar.children[3], 'ia_gui')
+    util.player_table(player).ia_gui = create_ia_pane(content_flow, entity)
+    return window
+end
+
+-- destroy and recreate the dialog with the new parameters
+local function refresh_ia_gui(player, entity)
+    local entity_frame = player.gui.screen.im_ia_window
+    if entity_frame then
+        entity_frame.im_ia_content_flow.im_ia_page_frame.destroy()
+        util.player_table(player).ia_gui = create_ia_pane(entity_frame.im_ia_content_flow, entity)
+    end
 end
 
 -- ----------------------------------------------------------------------------------------------------
