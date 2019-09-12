@@ -11,6 +11,8 @@ Date: 2019.9.6
     - Fixed several cheats being available in the map editor that shouldn't have been
     - Fixed infinity loader belt type detection with Krastorio and Replicating Belts
     - Fixed mining tesseract chests would give the player an infinity chest instead
+    - Fixed crash when insta-blueprinting or insta-deconstructing invalid entities
+    - Fixed robots deconstructing infinity loaders being banished to the shadow realm
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.5.0

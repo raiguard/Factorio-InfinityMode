@@ -575,7 +575,11 @@ on_event({defines.events.on_player_mined_entity, defines.events.on_robot_mined_e
             end
         end
         local entities = entity.surface.find_entities_filtered{position=entity.position}
-        for _,e in pairs(entities) do e.destroy() end
+        for _,e in pairs(entities) do
+            if e.name:find('infinity%-loader') then
+                e.destroy()
+            end
+        end
     end
 end)
 
