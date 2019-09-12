@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.6.0
-Date: 2019.9.6
+Date: 2019.9.12
   Features:
     - Added map editor shortcut
     - Added editor-only mode, which adds the infinity tools to the map editor only, and does not enable any cheats
