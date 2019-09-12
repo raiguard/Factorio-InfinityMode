@@ -25,10 +25,26 @@ local function check_is_accumulator(e)
     return e and entity_list[e.name] or false
 end
 
-local ia_states = {
-    priority = {'primary', 'secondary', 'tertiary'},
-    mode = {'input', 'output', 'buffer'}
+local pti_ref = {
+    input = 1,
+    output = 2,
+    buffer = 3,
+    primary = 1,
+    secondary = 2,
+    tertiary = 1
 }
+
+local ia_states = {
+    mode = {'input', 'output', 'buffer'},
+    priority = {'primary', 'secondary'}
+}
+
+local function get_ia_options(entity)
+    local name = entity.name:gsub('(%a+)-(%a+)-', '')
+    if name == 'tertiary' then return {mode=3, priority=1} end
+    local _,_,priority,mode = string.find(name, '(%a+)-(%a+)')
+    return {mode=pti_ref[mode], priority=pti_ref[priority]}
+end
 
 local function set_ia_params(entity, mode, value, exponent)
     entity.power_usage = 0
@@ -46,16 +62,33 @@ local function set_ia_params(entity, mode, value, exponent)
     end
 end
 
-local function change_ia_mode_or_priority(e)
-    local data = util.player_table(e.player_index).ia_gui
-    local entity = data.entity
-
-    local priority = ia_states.priority[data.priority_dropdown.selected_index]
-    local mode = ia_states.mode[data.mode_dropdown.selected_index]
-
-    if priority == 'tertiary' and mode ~= 'buffer' then priority = 'primary' end
+-- arg1 can either be a table of elements, or the entity
+-- if arg1 is an entity, then arg2 must be the destination entity of a copy/paste
+local function change_ia_mode_or_priority(arg1, arg2)
+    local data, entity, dest, mode, priority
+    if not arg1.valid then
+        -- changed through GUI
+        data = arg1
+        entity = data.entity
+        mode = ia_states.mode[data.mode_dropdown.selected_index]
+        priority = ia_states.priority[data.priority_dropdown.selected_index]
+    else
+        -- changed through copy/paste
+        entity = arg2
+        mode = ia_states.mode[get_ia_options(arg1).mode]
+        priority = ia_states.priority[get_ia_options(arg1).priority]
+    end
     if mode == 'buffer' then priority = 'tertiary' end
-
+    local value, exponent
+    if data then
+        value = data.slider.slider_value
+        exponent = data.slider_dropdown.selected_index * 3
+    else
+        value = entity.electric_buffer_size
+        local len = string.len(string.format("%.0f", math.floor(value)))
+        exponent = math.max(len - (len % 3 == 0 and 3 or len % 3),3)
+        value = math.floor(value / 10^exponent)
+    end
     local new_entity = entity.surface.create_entity{
         name = 'infinity-accumulator-' .. (mode == 'buffer' and 'tertiary' or priority) .. (mode ~= 'buffer' and ('-' .. mode) or ''),
         position = entity.position,
@@ -63,31 +96,15 @@ local function change_ia_mode_or_priority(e)
         create_build_effect_smoke = false
     }
     entity.destroy()
-    set_ia_params(new_entity, mode, data.slider.slider_value, data.slider_dropdown.selected_index * 3)
+    set_ia_params(new_entity, mode, value, exponent)
     return new_entity
 end
 
 -- ----------------------------------------------------------------------------------------------------
 -- GUI
 
-local pti_ref = {
-    input = 1,
-    output = 2,
-    buffer = 3,
-    primary = 1,
-    secondary = 2,
-    tertiary = 1
-}
-
 local power_prefixes = {'kilo','mega','giga','tera','peta','exa','zetta','yotta'}
 local power_suffixes_by_mode = {'watt','watt','joule'}
-
-local function get_ia_options(entity)
-    local name = entity.name:gsub('(%a+)-(%a+)-', '')
-    if name == 'tertiary' then return {mode=3, priority=1} end
-    local _,_,priority,mode = string.find(name, '(%a+)-(%a+)')
-    return {mode=pti_ref[mode], priority=pti_ref[priority]}
-end
 
 local function create_dropdown(parent, name, caption, tooltip, items, selected_index, button_disabled)
     local flow = parent.add{type='flow', name=name..'_flow', style='vertically_centered_flow', direction='horizontal'}
@@ -186,11 +203,11 @@ on_event(defines.events.on_gui_opened, function(e)
 end)
 
 gui.on_selection_state_changed('im_ia_mode_dropdown', function(e)
-    refresh_ia_gui(util.get_player(e), change_ia_mode_or_priority(e))
+    refresh_ia_gui(util.get_player(e), change_ia_mode_or_priority(util.player_table(e.player_index).ia_gui))
 end)
 
 gui.on_selection_state_changed('im_ia_priority_dropdown', function(e)
-    refresh_ia_gui(util.get_player(e), change_ia_mode_or_priority(e))
+    refresh_ia_gui(util.get_player(e), change_ia_mode_or_priority(util.player_table(e.player_index).ia_gui))
 end)
 
 gui.on_value_changed('im_ia_slider', function(e)
@@ -256,11 +273,11 @@ end)
 -- OTHER LISTENERS
 
 -- -- when an entity settings copy/paste occurs
--- on_event(defines.events.on_entity_settings_pasted, function(e)
---     if check_is_accumulator(e.source) and check_is_accumulator(e.destination) and e.source.name ~= e.destination.name then
-        
---     end
--- end)
+on_event(defines.events.on_entity_settings_pasted, function(e)
+    if check_is_accumulator(e.source) and check_is_accumulator(e.destination) and e.source.name ~= e.destination.name then
+        change_ia_mode_or_priority(e.source, e.destination)
+    end
+end)
 
 -- when an entity is destroyed
 on_event({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity, defines.events.on_entity_died, defines.events.script_raised_destroy}, function(e)
