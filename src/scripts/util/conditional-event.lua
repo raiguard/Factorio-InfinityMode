@@ -49,16 +49,19 @@ local events_def = {
                     if #global_table.next_tick_entities > 0 then
                         -- for each entity in the table
                         for i,t in pairs(global_table.next_tick_entities) do
-                            -- try to revive the entity and act on the result
-                            if t.entity.revive{raise_revive=true} then
-                                global_table.next_tick_entities[i] = nil
-                            else
-                                t.tries = t.tries + 1
-                                -- after ten tries, remove the entity from the table
-                                if t.tries >= 10 then
+                            -- check if the entity is valid
+                            if t.entity.valid then
+                                -- try to revive the entity and act on the result
+                                if t.entity.revive{raise_revive=true} then
                                     global_table.next_tick_entities[i] = nil
                                 else
-                                    deregister = false
+                                    t.tries = t.tries + 1
+                                    -- after ten tries, remove the entity from the table
+                                    if t.tries >= 10 then
+                                        global_table.next_tick_entities[i] = nil
+                                    else
+                                        deregister = false
+                                    end
                                 end
                             end
                         end     
@@ -115,16 +118,19 @@ local events_def = {
                     if #global_table.next_tick_entities > 0 then
                         -- for each entity in the table
                         for i,t in pairs(global_table.next_tick_entities) do
-                            -- try to revive the entity and act on the result
-                            if t.entity.destroy{do_cliff_correction=true, raise_destroy=true} then
-                                global_table.next_tick_entities[i] = nil
-                            else
-                                t.tries = t.tries + 1
-                                -- after ten tries, remove the entity from the table
-                                if t.tries >= 10 then
+                            -- check if the entity is valid
+                            if t.entity.valid then
+                                -- try to destroy the entity and act on the result
+                                if t.entity.destroy{do_cliff_correction=true, raise_destroy=true} then
                                     global_table.next_tick_entities[i] = nil
                                 else
-                                    deregister = false
+                                    t.tries = t.tries + 1
+                                    -- after ten tries, remove the entity from the table
+                                    if t.tries >= 10 then
+                                        global_table.next_tick_entities[i] = nil
+                                    else
+                                        deregister = false
+                                    end
                                 end
                             end
                         end     
