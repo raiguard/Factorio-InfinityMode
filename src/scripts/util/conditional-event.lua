@@ -360,13 +360,6 @@ local events_def = {
             }
         }
     },
-    infinity_loader = {
-        on_tick = {{defines.events.on_tick}, function(e)
-            for i,e in pairs(global.loaders) do
-                remote.call('infinity_mode', 'update_loader_filters', e)
-            end
-        end}
-    },
     infinity_wagon = {
         on_tick = {{defines.events.on_tick}, function(e)
             for _,t in pairs(global.wagons) do

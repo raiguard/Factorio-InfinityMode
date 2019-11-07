@@ -143,7 +143,10 @@ on_event(defines.events.on_lua_shortcut, function(e)
 end)
 
 on_event('im-toggle-map-editor', function(e)
-    toggle_map_editor(util.get_player(e))
+    local player = util.get_player(e)
+    if player.is_shortcut_available('im-toggle-map-editor') then
+        toggle_map_editor(util.get_player(e))
+    end
 end)
 
 on_event({defines.events.on_player_promoted, defines.events.on_player_demoted}, function(e)
