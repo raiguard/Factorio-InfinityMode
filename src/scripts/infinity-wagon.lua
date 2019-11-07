@@ -102,7 +102,6 @@ end)
 
 -- when a player selects an area for blueprinting
 on_event(defines.events.on_player_setup_blueprint, function(e)
-    print(serpent.block(global.wagons))
     local player = util.get_player(e)
     local bp = player.blueprint_to_setup
     if not bp or not bp.valid_for_read then

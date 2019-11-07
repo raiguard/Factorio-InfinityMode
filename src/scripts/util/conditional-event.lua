@@ -80,7 +80,6 @@ local events_def = {
                     local entity = e.entity
                     local belt_to_ground_type
                     if entity.type == 'underground-belt' then belt_to_ground_type = entity.belt_to_ground_type end
-                    -- game.print('upgrading entity ' .. entity.name .. ' at position ' .. entity.position.x .. ',' .. entity.position.y .. ' to: ' .. e.target.name)
                     entity.surface.create_entity{
                         name = e.target.name,
                         position = entity.position,

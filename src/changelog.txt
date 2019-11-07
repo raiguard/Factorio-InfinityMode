@@ -5,6 +5,7 @@ Date: 2019.11.6
     - Fixed toggle map editor hotkey would always work, even if the shortcut was disabled
     - Fixed crash with diesel locomotives mod
     - Fixed several incorrect entity icons
+    - Fixed crash when creating blueprints with infinity fluid wagons when their fluidbox was invalid
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.6.0
