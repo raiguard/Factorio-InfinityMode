@@ -51,19 +51,21 @@ for _,t in pairs(cw_entity.vertical_doors.layers) do
     apply_infinity_tint(t)
     apply_infinity_tint(t.hr_version)
 end
+cw_entity.flags = {'hidden'}
 
 local fw_entity = table.deepcopy(data.raw['fluid-wagon']['fluid-wagon'])
 fw_entity.name = 'infinity-fluid-wagon'
-cw_entity.icons = fw_item.icons
+fw_entity.icons = fw_item.icons
 fw_entity.minable.result = 'infinity-fluid-wagon'
 for _,t in pairs(fw_entity.pictures.layers) do
     apply_infinity_tint(t)
     apply_infinity_tint(t.hr_version)
 end
+fw_entity.flags = {'hidden'}
 
 local l_entity = table.deepcopy(data.raw['locomotive']['locomotive'])
 l_entity.name = 'infinity-locomotive'
-cw_entity.icons = l_item.icons
+l_entity.icons = l_item.icons
 l_entity.max_power = '10MW'
 l_entity.energy_source = {type='void'}
 l_entity.max_speed = 10
@@ -72,9 +74,13 @@ l_entity.braking_force = 100
 l_entity.minable.result = 'infinity-locomotive'
 l_entity.allow_manual_color = false
 l_entity.color = {r=0, g=0, b=0, a=0.5}
+l_entity.flags = {'hidden'}
 for i=1,2 do
     apply_infinity_tint(l_entity.pictures.layers[i])
-    apply_infinity_tint(l_entity.pictures.layers[i].hr_version)
+    -- diesel locomotives compatability
+    if l_entity.pictures.layers[i].hr_version then
+        apply_infinity_tint(l_entity.pictures.layers[i].hr_version)
+    end
 end
 
 -- non-interactable chest and pipe
@@ -84,7 +90,7 @@ ic_entity.picture = sprites.empty_picture()
 ic_entity.collision_mask = {'layer-15'}
 ic_entity.selection_box = nil
 ic_entity.selectable_in_game = false
-ic_entity.flags = {'hide-alt-info'}
+ic_entity.flags = {'hide-alt-info', 'hidden'}
 
 local ip_entity = table.deepcopy(data.raw['infinity-pipe']['infinity-pipe'])
 ip_entity.name = 'infinity-wagon-pipe'
@@ -92,7 +98,7 @@ ip_entity.collision_mask = {'layer-15'}
 ip_entity.selection_box = nil
 ip_entity.selectable_in_game = false
 ip_entity.order = 'a'
-ip_entity.flags = {'hide-alt-info'}
+ip_entity.flags = {'hide-alt-info', 'hidden'}
 
 for k,t in pairs(ip_entity.pictures) do
     ip_entity.pictures[k] = sprites.empty_picture()

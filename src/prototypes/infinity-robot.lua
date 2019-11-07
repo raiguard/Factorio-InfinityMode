@@ -56,11 +56,13 @@ local cr_entity = table.deepcopy(data.raw['construction-robot']['construction-ro
 cr_entity.name = 'infinity-construction-robot'
 cr_entity.icons = cr_item.icons
 set_params(cr_entity)
+cr_entity.flags = {'hidden'}
 
 local lr_entity = table.deepcopy(data.raw['logistic-robot']['logistic-robot'])
 lr_entity.name = 'infinity-logistic-robot'
 lr_entity.icons = lr_item.icons
 set_params(lr_entity)
+lr_entity.flags = {'hidden'}
 
 local ir_tint_keys = {'base', 'base_patch', 'base_animation', 'door_animation_up', 'door_animation_down', 'recharging_animation'}
 local ir_entity = table.deepcopy(data.raw['roboport']['roboport'])
@@ -71,6 +73,7 @@ ir_entity.construction_radius = 400
 ir_entity.energy_source = {type='void'}
 ir_entity.charging_energy = "1000YW"
 ir_entity.minable.result = 'infinity-roboport'
+ir_entity.flags = {'hidden'}
 
 for _,k in pairs(ir_tint_keys) do
     if ir_entity[k].layers then

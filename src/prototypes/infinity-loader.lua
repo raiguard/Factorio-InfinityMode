@@ -137,6 +137,6 @@ data:extend{
         -- hand_open_picture = filter_inserter.hand_open_picture,
         -- hand_closed_picture = filter_inserter.hand_closed_picture,
         draw_inserter_arrow = false,
-        flags = {'hide-alt-info'}
+        flags = {'hide-alt-info', 'hidden'}
     }
 }
