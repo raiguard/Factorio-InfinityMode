@@ -170,7 +170,6 @@ for _,k in pairs{'on_animation', 'off_animation'} do
         if lab_entity[k].hr_version then apply_infinity_tint(lab_entity[k].hr_version) end
     end
 end
-lab_entity.flags = {'hidden'}
 
 -- infinity inserter
 local ii_entity = table.deepcopy(data.raw['inserter']['filter-inserter'])
@@ -190,7 +189,6 @@ for _,k in pairs{'hand_base_picture', 'hand_closed_picture', 'hand_open_picture'
 end
 apply_infinity_tint(ii_entity.platform_picture.sheet)
 apply_infinity_tint(ii_entity.platform_picture.sheet.hr_version)
-ii_entity.flags = {'hidden'}
 
 -- infinity pump
 local p_entity = table.deepcopy(data.raw['pump']['pump'])

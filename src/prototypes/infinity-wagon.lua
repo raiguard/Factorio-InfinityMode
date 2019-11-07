@@ -51,7 +51,6 @@ for _,t in pairs(cw_entity.vertical_doors.layers) do
     apply_infinity_tint(t)
     apply_infinity_tint(t.hr_version)
 end
-cw_entity.flags = {'hidden'}
 
 local fw_entity = table.deepcopy(data.raw['fluid-wagon']['fluid-wagon'])
 fw_entity.name = 'infinity-fluid-wagon'
@@ -61,7 +60,6 @@ for _,t in pairs(fw_entity.pictures.layers) do
     apply_infinity_tint(t)
     apply_infinity_tint(t.hr_version)
 end
-fw_entity.flags = {'hidden'}
 
 local l_entity = table.deepcopy(data.raw['locomotive']['locomotive'])
 l_entity.name = 'infinity-locomotive'
@@ -74,7 +72,6 @@ l_entity.braking_force = 100
 l_entity.minable.result = 'infinity-locomotive'
 l_entity.allow_manual_color = false
 l_entity.color = {r=0, g=0, b=0, a=0.5}
-l_entity.flags = {'hidden'}
 for i=1,2 do
     apply_infinity_tint(l_entity.pictures.layers[i])
     -- diesel locomotives compatability

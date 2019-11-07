@@ -1,8 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.6.1
 Date: 2019.11.6
-  Changes:
-    - Removed all infinity tools from bonuses screen
   Bugfixes:
     - Fixed toggle map editor hotkey would always work, even if the shortcut was disabled
     - Fixed crash with diesel locomotives mod

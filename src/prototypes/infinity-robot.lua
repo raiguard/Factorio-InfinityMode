@@ -73,7 +73,6 @@ ir_entity.construction_radius = 400
 ir_entity.energy_source = {type='void'}
 ir_entity.charging_energy = "1000YW"
 ir_entity.minable.result = 'infinity-roboport'
-ir_entity.flags = {'hidden'}
 
 for _,k in pairs(ir_tint_keys) do
     if ir_entity[k].layers then
