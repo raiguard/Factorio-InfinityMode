@@ -294,7 +294,6 @@ end)
 on_event(defines.events.on_player_toggled_map_editor, function(e)
     local player = util.get_player(e)
     local cheats_gui = util.player_table(player).cheats_gui
-    log(serpent.block(cheats_gui))
     if cheats_gui and cheats_gui.window and cheats_gui.window.is_valid then
         cheats_gui.update(player)
     end
