@@ -1,6 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.6.1
 Date: 2019.11.12
+  Changes:
+    - Aligned tesseract chest sprite with the infinity chest sprite so they don't look weird side-by-side
+    - Improved infinity and tesseract chest descriptions
+    - Improved locale style
   Bugfixes:
     - Fixed toggle map editor hotkey would always work, even if the shortcut was disabled
     - Fixed several incorrect entity icons

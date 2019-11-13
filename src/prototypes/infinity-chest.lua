@@ -27,7 +27,7 @@ ic_item = table.deepcopy(data.raw['item']['infinity-chest'])
 for lm,d in pairs(chest_data) do
     local chest = table.deepcopy(ic_item)
     chest.name = 'infinity-chest-' .. lm
-    chest.localised_description = {'', {'item-description.infinity-chest'}, '\n', {'entity-description.logistic-chest-'..lm}}
+    chest.localised_description = {'', {'entity-description.infinity-chest'}, '\n', {'entity-description.logistic-chest-'..lm}}
     chest.icons = {{icon=chest.icon, icon_size=chest.icon_size, icon_mipmaps=chest.icon_mipmaps, tint=d.t}}
     chest.place_result = 'infinity-chest-' .. lm
     chest.order = d.o
@@ -43,7 +43,7 @@ for lm,d in pairs(tess_chest_data) do
     local suffix = lm == '' and lm or '-'..lm
     local chest = table.deepcopy(ic_item)
     chest.name = 'tesseract-chest'..suffix
-    chest.localised_description = {'', {'item-description.tesseract-chest'}, lm ~= '' and {'', '\n', {'entity-description.logistic-chest-'..lm}} or '', '\n[color=255,57,48]', {'item-description.tesseract-chest-warning'}, '[/color]'}
+    chest.localised_description = {'', {'entity-description.tesseract-chest'}, lm ~= '' and {'', '\n', {'entity-description.logistic-chest-'..lm}} or '', '\n[color=255,57,48]', {'entity-description.tesseract-chest-warning'}, '[/color]'}
     chest.icons = {{icon=base_comp_chest.icon, icon_size=base_comp_chest.icon_size, icon_mipmaps=base_comp_chest.icon_mipmaps, tint=d.t}}
     chest.place_result = 'tesseract-chest'..suffix
     chest.order = d.o
