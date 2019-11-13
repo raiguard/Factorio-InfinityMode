@@ -3,9 +3,10 @@ Version: 0.6.1
 Date: 2019.11.12
   Bugfixes:
     - Fixed toggle map editor hotkey would always work, even if the shortcut was disabled
-    - Fixed crash with diesel locomotives mod
     - Fixed several incorrect entity icons
-    - Fixed crash when creating blueprints with infinity fluid wagons when their fluidbox was invalid
+    - Fixed infinity personal roboport transmuting to personal roboport mk2 when unequipped (#17)
+    - Fixed crash with diesel locomotives mod
+    - Fixed crash when creating blueprints with infinity fluid wagons when their fluidbox was invalid (#14)
     - Fixed crash when opening a mini-tutorial
 
 ---------------------------------------------------------------------------------------------------

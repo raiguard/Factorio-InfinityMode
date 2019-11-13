@@ -236,6 +236,7 @@ pr_equipment.charging_energy = '1000GJ'
 pr_equipment.charging_station_count = 1000
 pr_equipment.robot_limit = 1000
 pr_equipment.construction_radius = 100
+pr_equipment.take_result = 'infinity-personal-roboport-equipment'
 
 data:extend{pr_equipment}
 
