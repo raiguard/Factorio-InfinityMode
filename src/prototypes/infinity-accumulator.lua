@@ -25,6 +25,7 @@ local ia_entity = table.deepcopy(data.raw['electric-energy-interface']['electric
 ia_entity.minable.result = 'infinity-accumulator'
 ia_entity.picture.layers[1] = apply_infinity_tint(ia_entity.picture.layers[1])
 ia_entity.picture.layers[1].hr_version = apply_infinity_tint(ia_entity.picture.layers[1].hr_version)
+ia_entity.localised_description = {'entity-description.infinity-accumulator'}
 local ia_icons = data.raw['item']['infinity-accumulator'].icons
 
 for _,t in pairs(ia_types) do

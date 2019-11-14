@@ -100,6 +100,7 @@ end
 -- dummy combinator (for placement and blueprints)
 local dummy_combinator = table.deepcopy(data.raw['constant-combinator']['infinity-loader-logic-combinator'])
 dummy_combinator.name = 'infinity-loader-dummy-combinator'
+dummy_combinator.localised_description = {'entity-description.infinity-loader'}
 dummy_combinator.selection_box = nil
 dummy_combinator.minable = nil
 dummy_combinator.flags = {'player-creation'}
