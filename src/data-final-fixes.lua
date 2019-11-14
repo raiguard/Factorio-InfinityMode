@@ -13,7 +13,6 @@ local to_check = {
     'item-with-inventory',
     'item-with-label',
     'item-with-tags',
-    'mining-tool',
     'module',
     'rail-planner',
     'repair-tool',
