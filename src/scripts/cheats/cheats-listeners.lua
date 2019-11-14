@@ -10,7 +10,7 @@ local mod_gui = require('mod-gui')
 
 local cheats = require('cheats')
 local cheats_gui = require('cheats-gui')
-local defs = require('scripts/util/definitions')
+local defs = require('cheats-definitions')
 local util = require('scripts/util/util')
 
 -- ----------------------------------------------------------------------------------------------------

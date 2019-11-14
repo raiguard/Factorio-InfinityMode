@@ -8,7 +8,7 @@ local table = require('__stdlib__/stdlib/utils/table')
 -- local tabbed_pane = require('scripts/util/gui-elems/tabbed-pane')
 local titlebar = require('scripts/util/gui-elems/titlebar')
 
-local defs = require('scripts/util/definitions')
+local defs = require('cheats-definitions')
 local util = require('scripts/util/util')
 
 local cheats_gui = {}

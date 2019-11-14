@@ -4,7 +4,7 @@
 
 local table = require('__stdlib__/stdlib/utils/table')
 
-local defs = require('scripts/util/definitions')
+local defs = require('cheats-definitions')
 local util = require('scripts/util/util')
 
 local cheats = {}
