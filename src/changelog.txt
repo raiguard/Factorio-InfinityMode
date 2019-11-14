@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.6.1
-Date: 2019.11.12
+Date: 2019.11.14
   Optimisations:
     - Significantly improved performance when placing a tesseract chest
   Changes:
