@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.6.1
 Date: 2019.11.12
+  Optimisations:
+    - Significantly improved performance when placing a tesseract chest
   Changes:
     - Aligned tesseract chest sprite with the infinity chest sprite so they don't look weird side-by-side
     - Improved infinity and tesseract chest descriptions
