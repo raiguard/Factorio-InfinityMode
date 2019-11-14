@@ -4,6 +4,7 @@ local function shortcut_sprite(suffix, size)
         priority = 'extra-high-no-scale',
         size = size,
         scale = 1,
+        mipmap_count = 2,
         flags = {'icon'}
     }
 end
