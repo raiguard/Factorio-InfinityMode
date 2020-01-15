@@ -36,6 +36,10 @@ local belt_type_patterns = {
     ['%-?kr'] = '',
     -- replicating belts: https://mods.factorio.com/mod/replicating-belts
     ['replicating%-?'] = '',
+    -- subterranean: https://mods.factorio.com/mod/Subterranean
+    ['subterranean'] = '',
+    -- factorioextended plus transport: https://mods.factorio.com/mod/FactorioExtended-Plus-Transport
+    ['%-to%-ground'] = '',
     -- vanilla
     ['%-?belt'] = '',
     ['%-?transport'] = '',

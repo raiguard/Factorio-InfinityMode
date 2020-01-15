@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.6.2
+Date: 2020.1.15
+  Bugfixes:
+    - Fixed incompatilibities with FactorioExtended Plus Transport and Subterranean Belts mods
+
+---------------------------------------------------------------------------------------------------
 Version: 0.6.1
 Date: 2019.11.14
   Optimisations:
